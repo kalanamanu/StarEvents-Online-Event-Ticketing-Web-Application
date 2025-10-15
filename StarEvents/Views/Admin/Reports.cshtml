@@ -1,0 +1,723 @@
+﻿@{
+    ViewBag.Title = "Reports";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #f8fafc;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--dark);
+        line-height: 1.6;
+    }
+
+    .reports-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header Section */
+    .dashboard-header {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .header-info {
+        flex: 1;
+    }
+
+    .dashboard-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dashboard-icon {
+        color: var(--primary);
+    }
+
+    .dashboard-subtitle {
+        color: var(--gray);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    /* Reports Grid */
+    .reports-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .report-card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+        .report-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .report-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+    .report-card-sales::before {
+        background: linear-gradient(135deg, var(--success), #059669);
+    }
+
+    .report-card-events::before {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    .report-card-users::before {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    }
+
+    .report-card-organizers::before {
+        background: linear-gradient(135deg, var(--warning), #d97706);
+    }
+
+    .report-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2rem;
+    }
+
+    .report-icon-sales {
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        color: var(--success);
+    }
+
+    .report-icon-events {
+        background: linear-gradient(135deg, #e8efff, #d4e1ff);
+        color: var(--primary);
+    }
+
+    .report-icon-users {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        color: #0ea5e9;
+    }
+
+    .report-icon-organizers {
+        background: linear-gradient(135deg, #fef7cd, #fef3c7);
+        color: var(--warning);
+    }
+
+    .report-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 12px;
+    }
+
+    .report-description {
+        color: var(--gray);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 25px;
+        flex: 1;
+    }
+
+    .report-features {
+        text-align: left;
+        margin-bottom: 25px;
+    }
+
+    .feature-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 0;
+        font-size: 0.85rem;
+        color: var(--gray);
+    }
+
+    .feature-icon {
+        color: var(--success);
+        font-size: 0.7rem;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        justify-content: center;
+        width: 100%;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-success {
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: white;
+    }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-info {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        color: white;
+    }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-warning {
+        background: linear-gradient(135deg, var(--warning), #d97706);
+        color: white;
+    }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    /* Quick Stats Section */
+    .quick-stats-section {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .section-header {
+        background: var(--gray-light);
+        padding: 20px 25px;
+        border-bottom: 1px solid var(--gray-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-icon {
+        color: var(--primary);
+    }
+
+    .quick-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0;
+    }
+
+    .quick-stat {
+        padding: 25px;
+        text-align: center;
+        border-right: 1px solid var(--gray-border);
+        transition: all 0.3s ease;
+    }
+
+        .quick-stat:hover {
+            background: var(--gray-light);
+        }
+
+        .quick-stat:last-child {
+            border-right: none;
+        }
+
+    .quick-stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px;
+        font-size: 1.3rem;
+    }
+
+    .quick-stat-sales {
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        color: var(--success);
+    }
+
+    .quick-stat-events {
+        background: linear-gradient(135deg, #e8efff, #d4e1ff);
+        color: var(--primary);
+    }
+
+    .quick-stat-users {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        color: #0ea5e9;
+    }
+
+    .quick-stat-organizers {
+        background: linear-gradient(135deg, #fef7cd, #fef3c7);
+        color: var(--warning);
+    }
+
+    .quick-stat-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 5px;
+        line-height: 1;
+    }
+
+    .quick-stat-label {
+        font-size: 0.85rem;
+        color: var(--gray);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Info Banner */
+    .info-banner {
+        background: linear-gradient(135deg, #e8efff, #d4e1ff);
+        border: 1px solid var(--primary-light);
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .info-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+    .banner-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .banner-icon {
+        color: var(--primary);
+        font-size: 1.5rem;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .banner-text {
+        flex: 1;
+    }
+
+    .banner-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 8px;
+    }
+
+    .banner-description {
+        color: var(--gray);
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* Export Options */
+    .export-options {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        flex-wrap: wrap;
+    }
+
+    .export-btn {
+        padding: 8px 16px;
+        border: 1px solid var(--gray-border);
+        border-radius: 6px;
+        background: white;
+        color: var(--gray);
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+    }
+
+        .export-btn:hover {
+            background: var(--gray-light);
+            color: var(--dark);
+            text-decoration: none;
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 1024px) {
+        .reports-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .quick-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .quick-stat:nth-child(2) {
+            border-right: none;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .reports-container {
+            padding: 15px;
+        }
+
+        .dashboard-header {
+            padding: 25px 20px;
+        }
+
+        .header-content {
+            flex-direction: column;
+        }
+
+        .reports-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .quick-stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .quick-stat {
+            border-right: none;
+            border-bottom: 1px solid var(--gray-border);
+        }
+
+            .quick-stat:last-child {
+                border-bottom: none;
+            }
+
+        .banner-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .export-options {
+            justify-content: center;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .dashboard-title {
+            font-size: 1.6rem;
+        }
+
+        .report-card {
+            padding: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+        }
+    }
+</style>
+
+<div class="reports-container">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-chart-bar dashboard-icon"></i>
+                    Reports & Analytics
+                </h1>
+                <div class="dashboard-subtitle">
+                    Comprehensive system analytics and performance insights across all platform activities
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Quick Stats Section -->
+    @*<div class="quick-stats-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-tachometer-alt section-icon"></i>
+                Quick Overview
+            </h2>
+        </div>
+        <div class="quick-stats-grid">
+            <div class="quick-stat">
+                <div class="quick-stat-icon quick-stat-sales">
+                    <i class="fas fa-money-check-alt"></i>
+                </div>
+                <div class="quick-stat-value">LKR 2.4M</div>
+                <div class="quick-stat-label">Total Revenue</div>
+            </div>
+            <div class="quick-stat">
+                <div class="quick-stat-icon quick-stat-events">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="quick-stat-value">47</div>
+                <div class="quick-stat-label">Active Events</div>
+            </div>
+            <div class="quick-stat">
+                <div class="quick-stat-icon quick-stat-users">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="quick-stat-value">1,248</div>
+                <div class="quick-stat-label">Registered Users</div>
+            </div>
+            <div class="quick-stat">
+                <div class="quick-stat-icon quick-stat-organizers">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="quick-stat-value">28</div>
+                <div class="quick-stat-label">Active Organizers</div>
+            </div>
+        </div>
+    </div>*@
+
+    <!-- Reports Grid -->
+    <div class="reports-grid">
+        <!-- Sales Report Card -->
+        <div class="report-card report-card-sales">
+            <div class="report-icon report-icon-sales">
+                <i class="fas fa-money-check-alt"></i>
+            </div>
+            <h3 class="report-title">Sales Analytics</h3>
+            <p class="report-description">
+                Comprehensive revenue tracking, ticket sales performance, and financial insights across all events and categories.
+            </p>
+           
+            
+            <a href="@Url.Action("Reports", "Admin", new { reportType = "Sales" })" class="btn btn-success mt-3">
+                <i class="fas fa-chart-line"></i>
+                Generate Sales Report
+            </a>
+        </div>
+
+        <!-- Events Report Card -->
+        <div class="report-card report-card-events">
+            <div class="report-icon report-icon-events">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3 class="report-title">Event Performance</h3>
+            <p class="report-description">
+                Detailed analysis of event performance, attendance metrics, and organizer effectiveness across the platform.
+            </p>
+           
+            <a href="@Url.Action("Reports", "Admin", new { reportType = "Event" })" class="btn btn-primary mt-3">
+                <i class="fas fa-chart-bar"></i>
+                Generate Event Report
+            </a>
+        </div>
+
+        <!-- Users Report Card -->
+        <div class="report-card report-card-users">
+            <div class="report-icon report-icon-users">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 class="report-title">User Analytics</h3>
+            <p class="report-description">
+                User behavior analysis, registration trends, loyalty program performance, and customer segmentation insights.
+            </p>
+            
+            
+            <a href="@Url.Action("Reports", "Admin", new { reportType = "User" })" class="btn btn-info mt-3">
+                <i class="fas fa-user-chart"></i>
+                Generate User Report
+            </a>
+        </div>
+
+        <!-- Organizers Report Card -->
+        <div class="report-card report-card-organizers">
+            <div class="report-icon report-icon-organizers">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <h3 class="report-title">Organizer Performance</h3>
+            <p class="report-description">
+                Organizer productivity analysis, revenue contribution, event quality metrics, and partnership performance.
+            </p>
+           
+            
+            <a href="@Url.Action("Reports", "Admin", new { reportType = "Organizer" })" class="btn btn-warning mt-3">
+                <i class="fas fa-chart-pie"></i>
+                Generate Organizer Report
+            </a>
+        </div>
+    </div>
+
+    <!-- Info Banner -->
+    <div class="info-banner">
+        <div class="banner-content">
+            <div class="banner-icon">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <div class="banner-text">
+                <h4 class="banner-title">Advanced Reporting Features</h4>
+                <p class="banner-description">
+                    All reports support custom date ranges, category filters, event selection, and organizer segmentation.
+                    Export your data in multiple formats (PDF, Excel, CSV) for further analysis or presentation.
+                    Real-time data updates ensure you're always working with the latest information.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add smooth animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.dashboard-header, .quick-stats-section, .reports-grid, .info-banner');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    section.style.transition = 'all 0.5s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Add loading states to report buttons
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (this.tagName === 'A' && this.href !== '#') {
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                        this.style.pointerEvents = 'none';
+
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.style.pointerEvents = '';
+                        }, 3000);
+                    }
+                });
+            });
+        });
+    </script>
+}

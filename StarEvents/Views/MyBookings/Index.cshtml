@@ -1,0 +1,683 @@
+﻿@model StarEvents.ViewModels.MyBookingsViewModel
+
+@{
+    ViewBag.Title = "My Bookings";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--dark);
+        min-height: 100vh;
+        padding: 20px 0;
+    }
+
+    .bookings-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* Header Section */
+    .bookings-header {
+        text-align: center;
+        padding: 50px 20px 30px 20px;
+        background: linear-gradient(135deg, var(--primary-light) 0%, #f0f7ff 100%);
+        border-radius: 20px;
+        margin: 20px 0 30px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .bookings-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="rgba(18,89,243,0.03)"><path d="M50,0 L60,40 L100,50 L60,60 L50,100 L40,60 L0,50 L40,40 Z"/></svg>');
+            background-size: 60px 60px;
+            animation: float 20s infinite linear;
+        }
+
+    @@keyframes float {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: 60px 60px;
+        }
+    }
+
+    .bookings-header h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 1;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .bookings-header p {
+        color: var(--gray);
+        font-size: 1.1rem;
+        margin-bottom: 0;
+        position: relative;
+        z-index: 1;
+        font-weight: 500;
+        line-height: 1.6;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Alert Notice */
+    .alert-notice {
+        background: linear-gradient(135deg, #fff3cd, #fffbea);
+        border: 2px solid #ffc107;
+        border-radius: 12px;
+        padding: 20px 25px;
+        margin: 0 auto 30px auto;
+        max-width: 800px;
+        position: relative;
+        box-shadow: var(--shadow);
+    }
+
+    .alert-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .alert-icon {
+        width: 24px;
+        height: 24px;
+        background: #ffc107;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .alert-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #856404;
+        margin: 0;
+    }
+
+    .alert-content {
+        color: #856404;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+        .alert-content a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+            .alert-content a:hover {
+                color: var(--primary-dark);
+                text-decoration: underline;
+            }
+
+    /* Bookings Section */
+    .bookings-section {
+        margin-bottom: 50px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding: 0 10px;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-icon {
+        color: var(--primary);
+    }
+
+    .bookings-count {
+        background: var(--primary);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    /* Booking Cards */
+    .booking-cards {
+        display: grid;
+        gap: 20px;
+    }
+
+    .booking-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+        .booking-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-light);
+        }
+
+        .booking-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 2px 0 0 2px;
+        }
+
+    .booking-card-header {
+        padding: 20px 25px 15px 25px;
+        border-bottom: 1px solid var(--gray-border);
+        background: var(--gray-light);
+    }
+
+    .booking-main-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .event-info {
+        flex: 1;
+    }
+
+    .event-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 5px;
+        line-height: 1.3;
+    }
+
+    .event-meta {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--gray);
+        font-size: 0.9rem;
+    }
+
+    .meta-icon {
+        color: var(--primary);
+        width: 14px;
+        text-align: center;
+    }
+
+    .booking-status {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .status-confirmed {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .status-cancelled {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .status-pending {
+        background: linear-gradient(135deg, #fef9c3, #fef08a);
+        color: #92400e;
+        border: 1px solid #fef08a;
+    }
+
+    .status-unknown {
+        background: var(--gray-light);
+        color: var(--gray);
+        border: 1px solid var(--gray-border);
+    }
+
+    .booking-card-body {
+        padding: 20px 25px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .detail-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .detail-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .booking-card-footer {
+        padding: 15px 25px 20px 25px;
+        border-top: 1px solid var(--gray-border);
+        background: var(--gray-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .booking-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 2px dashed var(--gray-border);
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        color: var(--gray);
+        margin-bottom: 20px;
+    }
+
+    .empty-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 10px;
+    }
+
+    .empty-description {
+        color: var(--gray);
+        font-size: 1rem;
+        margin-bottom: 25px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.5;
+    }
+
+    .btn-explore {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+        .btn-explore:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .bookings-header {
+            padding: 40px 20px 25px 20px;
+        }
+
+            .bookings-header h1 {
+                font-size: 2rem;
+            }
+
+        .booking-main-info {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .booking-status {
+            align-self: flex-start;
+        }
+
+        .booking-card-body {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .booking-card-footer {
+            flex-direction: column;
+            gap: 15px;
+            align-items: stretch;
+        }
+
+        .booking-actions {
+            justify-content: center;
+        }
+
+        .section-header {
+            flex-direction: column;
+            gap: 15px;
+            align-items: flex-start;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .bookings-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .booking-card-header {
+            padding: 15px 20px 10px 20px;
+        }
+
+        .booking-card-body {
+            padding: 15px 20px;
+        }
+
+        .booking-card-footer {
+            padding: 12px 20px 15px 20px;
+        }
+
+        .booking-actions {
+            flex-direction: column;
+        }
+
+        .event-meta {
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+</style>
+
+<div class="bookings-container">
+    <!-- Header Section -->
+    <div class="bookings-header">
+        <h1>My Bookings</h1>
+        <p>
+            Manage and view all your event bookings in one place.<br />
+            Need to make changes? Contact our support team for assistance.
+        </p>
+    </div>
+
+    <!-- Alert Notice -->
+    @*<div class="alert-notice">
+        <div class="alert-header">
+            <div class="alert-icon">
+                <i class="fas fa-info"></i>
+            </div>
+            <h3 class="alert-title">Booking Cancellation Policy</h3>
+        </div>
+        <div class="alert-content">
+            Online booking cancellation is not available. If you need to cancel a booking, please
+            <a href="/Contact">contact StarEvents PVT LTD</a> with your booking details for assistance.
+        </div>
+    </div>*@
+
+    <!-- Bookings Section -->
+    <div class="bookings-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-ticket-alt section-icon"></i>
+                Your Bookings
+                @if (Model.Bookings != null && Model.Bookings.Any())
+                {
+                    <span class="bookings-count">@Model.Bookings.Count() @(Model.Bookings.Count() == 1 ? "Booking" : "Bookings")</span>
+                }
+            </h2>
+        </div>
+
+        @if (Model.Bookings != null && Model.Bookings.Any())
+        {
+            <div class="booking-cards">
+                @foreach (var booking in Model.Bookings)
+                {
+                    <div class="booking-card">
+                        <div class="booking-card-header">
+                            <div class="booking-main-info">
+                                <div class="event-info">
+                                    <div class="event-title">@booking.EventTitle</div>
+                                    <div class="event-meta">
+                                        <div class="meta-item">
+                                            <i class="fas fa-calendar-alt meta-icon"></i>
+                                            <span>@booking.EventDate.ToString("MMM dd, yyyy")</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <i class="fas fa-clock meta-icon"></i>
+                                            <span>@booking.EventDate.ToString("h:mm tt")</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <i class="fas fa-map-marker-alt meta-icon"></i>
+                                            <span>@booking.VenueName</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="booking-status status-@(booking.Status?.ToLower() ?? "unknown")">
+                                    <i class="fas fa-circle" style="font-size: 0.6rem;"></i>
+                                    @(booking.Status ?? "Unknown")
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="booking-card-body">
+                            <div class="detail-group">
+                                <div class="detail-label">Booking Code</div>
+                                <div class="detail-value">@booking.BookingCode</div>
+                            </div>
+                            <div class="detail-group">
+                                <div class="detail-label">Booked On</div>
+                                <div class="detail-value">@booking.BookingDate.ToString("MMM dd, yyyy")</div>
+                            </div>
+                            <div class="detail-group">
+                                <div class="detail-label">Tickets</div>
+                                <div class="detail-value">@booking.Quantity</div>
+                            </div>
+                            <div class="detail-group">
+                                <div class="detail-label">Amount Paid</div>
+                                <div class="detail-value">
+                                    @if (booking.TotalAmount.HasValue)
+                                    {
+                                        <text>LKR @booking.TotalAmount.Value.ToString("N2")</text>
+                                    }
+                                    else
+                                    {
+                                        <text>-</text>
+                                    }
+                                </div>
+                            </div>
+                            <div class="detail-group">
+                                <div class="detail-label">Payment Reference</div>
+                                <div class="detail-value">@booking.PaymentReference</div>
+                            </div>
+                        </div>
+
+                        <div class="booking-card-footer">
+                            <div class="booking-actions">
+                                <a href="@Url.Action("BookingDetails", "MyBookings", new { id = booking.BookingId })" class="btn-primary">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </a>
+                                <a href="/Contact" class="btn-secondary">
+                                    <i class="fas fa-headset"></i>
+                                    Get Help
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <h3 class="empty-title">No Bookings Yet</h3>
+                <p class="empty-description">
+                    You haven't made any bookings yet. Explore our exciting events and be the first to book your spot!
+                </p>
+                <a href="/Events" class="btn-explore">
+                    <i class="fas fa-calendar-alt"></i>
+                    Explore Events
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add smooth animations to cards
+        const cards = document.querySelectorAll('.booking-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Add loading states to buttons
+        document.querySelectorAll('.btn-primary, .btn-secondary, .btn-explore').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!this.href || this.href === '#') return;
+
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                this.disabled = true;
+
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                }, 2000);
+            });
+        });
+    });
+</script>

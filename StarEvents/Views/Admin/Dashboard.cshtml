@@ -1,0 +1,865 @@
+﻿@model StarEvents.ViewModels.AdminDashboardViewModel
+@{
+    ViewBag.Title = "Admin Dashboard";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #f8fafc;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--dark);
+    }
+
+    .admin-dashboard {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header Section */
+    .dashboard-header {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .header-info {
+        flex: 1;
+    }
+
+    .dashboard-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dashboard-icon {
+        color: var(--primary);
+    }
+
+    .dashboard-subtitle {
+        color: var(--gray);
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 2px 0 0 2px;
+        }
+
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+
+    .stat-info {
+        flex: 1;
+    }
+
+    .stat-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        line-height: 1;
+    }
+
+    .stat-subtitle {
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-top: 4px;
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+    }
+
+    .stat-card:nth-child(1) .stat-icon {
+        background: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .stat-card:nth-child(2) .stat-icon {
+        background: #fef3c7;
+        color: var(--warning);
+    }
+
+    .stat-card:nth-child(3) .stat-icon {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .stat-card:nth-child(4) .stat-icon {
+        background: #dcfce7;
+        color: var(--success);
+    }
+
+    /* Charts Section */
+    .charts-section {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+    }
+
+    .chart-header {
+        margin-bottom: 20px;
+    }
+
+    .chart-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .chart-icon {
+        color: var(--primary);
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+
+    /* Data Sections */
+    .data-section {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .section-header {
+        background: var(--gray-light);
+        padding: 20px 25px;
+        border-bottom: 1px solid var(--gray-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-icon {
+        color: var(--primary);
+    }
+
+    .section-count {
+        background: var(--primary);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .data-table th {
+            background: var(--gray-light);
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--dark);
+            border-bottom: 1px solid var(--gray-border);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--gray-border);
+            color: var(--dark);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover {
+            background: var(--gray-light);
+        }
+
+    .event-title {
+        font-weight: 600;
+        color: var(--primary);
+    }
+
+    .revenue-amount {
+        font-weight: 700;
+        color: var(--success);
+        font-size: 0.95rem;
+    }
+
+    .activity-type {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .type-user {
+        background: #dbeafe;
+        color: #1e40af;
+        border: 1px solid #93c5fd;
+    }
+
+    .type-event {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fde68a;
+    }
+
+    .type-system {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    /* User Growth Section */
+    .user-growth-section {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+    }
+
+    /* Empty States */
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--gray);
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+
+    .empty-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--dark);
+    }
+
+    .empty-description {
+        font-size: 0.95rem;
+        max-width: 400px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 1024px) {
+        .charts-section {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .admin-dashboard {
+            padding: 15px;
+        }
+
+        .dashboard-header {
+            padding: 25px 20px;
+        }
+
+        .header-content {
+            flex-direction: column;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .data-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .dashboard-title {
+            font-size: 1.6rem;
+        }
+
+        .stat-card {
+            padding: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 15px;
+        }
+    }
+</style>
+
+<div class="admin-dashboard">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-tachometer-alt dashboard-icon"></i>
+                    Admin Dashboard
+                </h1>
+                <div class="dashboard-subtitle">
+                    Comprehensive overview of platform performance and analytics
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="@Url.Action("Users", "Admin")" class="btn-primary">
+                    <i class="fas fa-users"></i>
+                    Manage Users
+                </a>
+                <a href="@Url.Action("Events", "Admin")" class="btn-primary">
+                    <i class="fas fa-calendar-alt"></i>
+                    Manage Events
+                </a>
+                <a href="@Url.Action("Reports", "Admin")" class="btn-primary">
+                    <i class="fas fa-chart-line"></i>
+                    View Reports
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-info">
+                    <div class="stat-title">Total Users</div>
+                    <div class="stat-value">@Model.TotalUsers</div>
+                    <div class="stat-subtitle">
+                        @Model.TotalOrganizers Organizers • @Model.TotalCustomers Customers
+                    </div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-info">
+                    <div class="stat-title">Total Events</div>
+                    <div class="stat-value">@Model.TotalEvents</div>
+                    <div class="stat-subtitle">Active events on platform</div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-info">
+                    <div class="stat-title">Tickets Sold</div>
+                    <div class="stat-value">@Model.TotalTicketsSold</div>
+                    <div class="stat-subtitle">Total bookings processed</div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-info">
+                    <div class="stat-title">Total Revenue</div>
+                    <div class="stat-value">LKR @Model.TotalRevenue.ToString("N0")</div>
+                    <div class="stat-subtitle">Platform gross revenue</div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+        <!-- Sales Overview -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">
+                    <i class="fas fa-chart-line chart-icon"></i>
+                    Sales Overview
+                </h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- User Growth -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">
+                    <i class="fas fa-user-plus chart-icon"></i>
+                    User Growth
+                </h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="userGrowthChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Events Section -->
+    <div class="data-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-trophy section-icon"></i>
+                Top Performing Events
+                <span class="section-count">@((Model.TopEvents?.Count ?? 0)) Events</span>
+            </h2>
+        </div>
+
+        @if (Model.TopEvents != null && Model.TopEvents.Any())
+        {
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Tickets Sold</th>
+                            <th>Revenue</th>
+                            <th>Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ev in Model.TopEvents)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="event-title">@ev.EventTitle</div>
+                                </td>
+                                <td>
+                                    <strong>@ev.TicketsSold</strong>
+                                </td>
+                                <td>
+                                    <span class="revenue-amount">LKR @ev.Revenue.ToString("N0")</span>
+                                </td>
+                                <td>
+                                    @{
+                                        var performance = ev.TicketsSold > 100 ? "High" : ev.TicketsSold > 50 ? "Medium" : "Low";
+                                        var performanceColor = ev.TicketsSold > 100 ? "var(--success)" : ev.TicketsSold > 50 ? "var(--warning)" : "var(--gray)";
+                                    }
+                                    <span style="color: @performanceColor; font-weight: 600;">@performance</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3 class="empty-title">No Event Data</h3>
+                <p class="empty-description">
+                    No event performance data available yet.
+                </p>
+            </div>
+        }
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="data-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-history section-icon"></i>
+                Recent System Activity
+                <span class="section-count">@((Model.RecentActivities?.Count ?? 0)) Activities</span>
+            </h2>
+        </div>
+
+        @if (Model.RecentActivities != null && Model.RecentActivities.Any())
+        {
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Performed By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var act in Model.RecentActivities)
+                        {
+                            var typeClass = "type-system";
+                            var typeIcon = "fas fa-cog";
+                            var activityType = act.ActivityType?.ToLower();
+
+                            if (activityType == "user")
+                            {
+                                typeClass = "type-user";
+                                typeIcon = "fas fa-user";
+                            }
+                            else if (activityType == "event")
+                            {
+                                typeClass = "type-event";
+                                typeIcon = "fas fa-calendar";
+                            }
+                            <tr>
+                                <td>
+                                    <strong>@act.Timestamp.ToString("MMM dd, yyyy")</strong>
+                                    <div style="font-size: 0.8rem; color: var(--gray);">@act.Timestamp.ToString("HH:mm")</div>
+                                </td>
+                                <td>
+                                    <span class="activity-type @typeClass">
+                                        <i class="@typeIcon"></i>
+                                        @act.ActivityType
+                                    </span>
+                                </td>
+                                <td>@act.Description</td>
+                                <td>
+                                    <strong>@act.PerformedBy</strong>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3 class="empty-title">No Recent Activity</h3>
+                <p class="empty-description">
+                    No system activities recorded recently.
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Add smooth animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.stat-card, .chart-card, .data-section');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Initialize charts after animations
+            setTimeout(initializeCharts, 500);
+        });
+
+        function initializeCharts() {
+            // Sales Overview Chart
+            var ctx = document.getElementById('salesChart').getContext('2d');
+            var salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.SalesTrend.Select(x => x.Date.ToString("MMM dd")))),
+                    datasets: [{
+                        label: 'Tickets Sold',
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.SalesTrend.Select(x => x.TicketsSold))),
+                        borderColor: '#1259f3',
+                        backgroundColor: 'rgba(18, 89, 243, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Revenue (LKR)',
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.SalesTrend.Select(x => x.Revenue))),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Tickets Sold'
+                            },
+                            grid: {
+                                drawOnChartArea: true,
+                            },
+                        },
+                        y1: {
+                            beginAtZero: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Revenue (LKR)'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label.includes('Revenue')) {
+                                        return label + ': LKR ' + context.parsed.y.toLocaleString();
+                                    }
+                                    return label + ': ' + context.parsed.y;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // User Growth Chart
+            var ctx2 = document.getElementById('userGrowthChart').getContext('2d');
+            var userGrowthChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserGrowth.Select(x => x.Month))),
+                    datasets: [{
+                        label: 'New Users',
+                        data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserGrowth.Select(x => x.Count))),
+                        backgroundColor: '#f59e0b',
+                        borderColor: '#d97706',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'New Users'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+        }
+
+        // Add loading states to action buttons
+        document.querySelectorAll('.btn-primary').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                this.style.pointerEvents = 'none';
+
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.style.pointerEvents = '';
+                }, 2000);
+            });
+        });
+    </script>
+}

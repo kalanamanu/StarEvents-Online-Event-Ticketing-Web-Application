@@ -1,0 +1,724 @@
+﻿@model StarEvents.ViewModels.ChangePasswordViewModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutOrganizer.cshtml";
+    ViewBag.Title = "Organizer Settings";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #f8fafc;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--dark);
+        line-height: 1.6;
+    }
+
+    .settings-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header */
+    .dashboard-header {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .header-info {
+        flex: 1;
+    }
+
+    .dashboard-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dashboard-icon {
+        color: var(--primary);
+    }
+
+    .dashboard-subtitle {
+        color: var(--gray);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    /* Main Settings Card */
+    .main-settings-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    /* Settings Sections */
+    .settings-section {
+        padding: 40px;
+        border-bottom: 1px solid var(--gray-border);
+        transition: all 0.3s ease;
+    }
+
+        .settings-section:last-child {
+            border-bottom: none;
+        }
+
+        .settings-section:hover {
+            background: var(--gray-light);
+        }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+    .section-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+    }
+
+    .icon-password {
+        background: linear-gradient(135deg, #e8efff, #d4e1ff);
+        color: var(--primary);
+    }
+
+    .icon-deactivate {
+        background: linear-gradient(135deg, #fef7cd, #fef3c7);
+        color: var(--warning);
+    }
+
+    .icon-delete {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: var(--danger);
+    }
+
+    .section-title-group {
+        flex: 1;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0 0 4px 0;
+    }
+
+    .section-description {
+        color: var(--gray);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    /* Forms */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        max-width: 800px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .required::after {
+        content: '*';
+        color: var(--danger);
+        margin-left: 4px;
+    }
+
+    .input-group {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+    }
+
+    .form-control {
+        padding: 14px 16px;
+        border: 2px solid var(--gray-border);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: white;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        width: 100%;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+        }
+
+    .password-toggle {
+        background: transparent;
+        border: 2px solid var(--gray-border);
+        border-left: none;
+        border-radius: 0 8px 8px 0;
+        padding: 0 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray);
+    }
+
+        .password-toggle:hover {
+            background: var(--gray-light);
+            color: var(--dark);
+        }
+
+    .form-control:focus + .password-toggle {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .form-hint {
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-top: 6px;
+    }
+
+    .form-warning {
+        font-size: 0.8rem;
+        color: var(--danger);
+        margin-top: 6px;
+        font-weight: 500;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 28px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-warning {
+        background: linear-gradient(135deg, var(--warning), #d97706);
+        color: white;
+    }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-danger {
+        background: linear-gradient(135deg, var(--danger), #dc2626);
+        color: white;
+    }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-outline {
+        background: white;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+    }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+    /* Danger Zone */
+    .danger-zone {
+        border-left: 4px solid var(--danger);
+        background: #fef2f2;
+        padding: 25px;
+        border-radius: 12px;
+        margin: 25px 0;
+    }
+
+    .danger-title {
+        color: var(--danger);
+        font-weight: 700;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.1rem;
+    }
+
+    .danger-description {
+        color: #991b1b;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* Action Area */
+    .action-area {
+        margin-top: 30px;
+        padding-top: 25px;
+        border-top: 1px solid var(--gray-border);
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .settings-container {
+            padding: 15px;
+        }
+
+        .dashboard-header {
+            padding: 25px 20px;
+        }
+
+        .header-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .settings-section {
+            padding: 30px 25px;
+        }
+
+        .section-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 20px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .dashboard-title {
+            font-size: 1.6rem;
+        }
+
+        .settings-section {
+            padding: 25px 20px;
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+
+<div class="settings-container">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-cog dashboard-icon"></i>
+                    Account Settings
+                </h1>
+                <div class="dashboard-subtitle">
+                    Manage your account security and preferences in one place
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Settings Card -->
+    <div class="main-settings-card">
+        <!-- Change Password Section -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-icon icon-password">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="section-title-group">
+                    <h3 class="section-title">Change Password</h3>
+                    <p class="section-description">
+                        Update your password to keep your account secure. Use a strong, unique password that you don't use elsewhere.
+                    </p>
+                </div>
+            </div>
+
+            @using (Html.BeginForm("ChangePassword", "Organizer", FormMethod.Post, new { autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label required">
+                            <i class="fas fa-key"></i>
+                            Current Password
+                        </label>
+                        <div class="input-group">
+                            @Html.PasswordFor(m => m.CurrentPassword, new
+                            {
+                                @class = "form-control",
+                                autocomplete = "current-password",
+                                required = "required",
+                                minlength = "6",
+                                id = "CurrentPassword",
+                                placeholder = "Enter your current password"
+                            })
+                            <span class="password-toggle" onclick="togglePassword('CurrentPassword', this)">
+                                <i class="far fa-eye"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">
+                            <i class="fas fa-lock"></i>
+                            New Password
+                        </label>
+                        <div class="input-group">
+                            @Html.PasswordFor(m => m.NewPassword, new
+                            {
+                                @class = "form-control",
+                                autocomplete = "new-password",
+                                required = "required",
+                                minlength = "6",
+                                id = "NewPassword",
+                                placeholder = "Enter your new password"
+                            })
+                            <span class="password-toggle" onclick="togglePassword('NewPassword', this)">
+                                <i class="far fa-eye"></i>
+                            </span>
+                        </div>
+                        <div class="form-hint">Password must be at least 6 characters long</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">
+                            <i class="fas fa-lock"></i>
+                            Confirm New Password
+                        </label>
+                        <div class="input-group">
+                            @Html.PasswordFor(m => m.ConfirmPassword, new
+                            {
+                                @class = "form-control",
+                                autocomplete = "new-password",
+                                required = "required",
+                                minlength = "6",
+                                id = "ConfirmPassword",
+                                placeholder = "Confirm your new password"
+                            })
+                            <span class="password-toggle" onclick="togglePassword('ConfirmPassword', this)">
+                                <i class="far fa-eye"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-area">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Update Password
+                    </button>
+                </div>
+            }
+        </div>
+
+        <!-- Deactivate Account Section -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-icon icon-deactivate">
+                    <i class="fas fa-user-slash"></i>
+                </div>
+                <div class="section-title-group">
+                    <h3 class="section-title">Deactivate Account</h3>
+                    <p class="section-description">
+                        Temporarily disable your account. Your data will be preserved and you can reactivate your account at any time by logging in again.
+                    </p>
+                </div>
+            </div>
+
+            <div class="action-area">
+                @using (Html.BeginForm("Deactivate", "Organizer", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-warning" onclick="return confirmDeactivate()">
+                        <i class="fas fa-user-slash"></i>
+                        Deactivate Account
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Delete Account Section -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-icon icon-delete">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <div class="section-title-group">
+                    <h3 class="section-title">Delete Account</h3>
+                    <p class="section-description">
+                        Permanently remove your account and all associated data from our system. This action is irreversible.
+                    </p>
+                </div>
+            </div>
+
+            <div class="danger-zone">
+                <h4 class="danger-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Danger Zone
+                </h4>
+                <p class="danger-description">
+                    This action cannot be undone. This will permanently delete your account, remove all your events, bookings,
+                    and personal data from our servers. All your organizer information will be lost.
+                </p>
+            </div>
+
+            @using (Html.BeginForm("Delete", "Organizer", FormMethod.Post, new { autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label required">
+                            <i class="fas fa-keyboard"></i>
+                            Type DELETE to confirm
+                        </label>
+                        <input type="text" name="confirm" id="confirmDelete" class="form-control"
+                               required autocomplete="off" pattern="DELETE"
+                               placeholder="Type DELETE exactly as shown" />
+                        <div class="form-warning">You must type "DELETE" exactly as shown to proceed with account deletion</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">
+                            <i class="fas fa-key"></i>
+                            Current Password
+                        </label>
+                        <div class="input-group">
+                            <input type="password" name="CurrentPassword" id="currentDeletePassword"
+                                   class="form-control" autocomplete="current-password"
+                                   required minlength="6" placeholder="Enter your current password to confirm" />
+                            <span class="password-toggle" onclick="togglePassword('currentDeletePassword', this)">
+                                <i class="far fa-eye"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-area">
+                    <button type="submit" class="btn btn-danger" onclick="return confirmDelete()">
+                        <i class="fas fa-trash-alt"></i>
+                        Delete Account Permanently
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Success/Error alerts
+        @if (TempData["Success"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '@TempData["Success"]',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            </text>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '@TempData["Error"]',
+                timer: 4000
+            });
+            </text>
+        }
+
+        // Add smooth animations
+        const sections = document.querySelectorAll('.settings-section');
+        sections.forEach((section, index) => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                section.style.transition = 'all 0.5s ease';
+                section.style.opacity = '1';
+                section.style.transform = 'translateY(0)';
+            }, index * 150);
+        });
+    });
+
+    // Password toggle function
+    function togglePassword(fieldId, btn) {
+        const input = document.getElementById(fieldId);
+        const icon = btn.querySelector('i');
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+
+    // Confirmation functions
+    function confirmDeactivate() {
+        return Swal.fire({
+            title: 'Deactivate Account?',
+            text: 'Your account will be temporarily disabled. You can reactivate it later by logging in.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Deactivate',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#f59e0b',
+            reverseButtons: true
+        }).then((result) => {
+            return result.isConfirmed;
+        });
+    }
+
+    function confirmDelete() {
+        const confirmInput = document.getElementById('confirmDelete');
+        if (confirmInput.value !== 'DELETE') {
+            Swal.fire({
+                title: 'Confirmation Required',
+                text: 'Please type "DELETE" exactly as shown to confirm account deletion.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return false;
+        }
+
+        return Swal.fire({
+            title: 'Permanently Delete Account?',
+            text: 'This action cannot be undone. All your events, bookings, and personal data will be permanently lost.',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Delete Permanently',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#ef4444',
+            reverseButtons: true
+        }).then((result) => {
+            return result.isConfirmed;
+        });
+    }
+</script>

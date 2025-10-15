@@ -1,0 +1,510 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicketHub - Discover Your Next Experience</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1259f3;
+            --primary-hover: #0d47c1;
+            --secondary-color: #1a237e;
+            --accent-color: #ffc107;
+            --light-text-color: #f8f9fa;
+            --dark-text-color: #181c32;
+            --card-shadow: 0 4px 24px rgba(18,89,243,0.09);
+            --border-radius: 20px;
+            --section-bg: #f5f7fa;
+            --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            --gradient-accent: linear-gradient(135deg, #03A9F4 0%, #3F51B5 100%);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-text-color);
+            overflow-x: hidden;
+        }
+
+        .section-spacer { padding-top: 80px; padding-bottom: 80px; }
+        .section-heading {
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #232b36;
+            text-align: center;
+            position: relative;
+        }
+        .bg-offwhite { background: #f5f7fa; }
+        .bg-white { background: #fff; }
+
+        .hero-banner-custom {
+            width: 100vw;
+            position: relative;
+            left: 50%; right: 50%;
+            margin-left: -50vw; margin-right: -50vw;
+            background: var(--gradient-primary);
+            color: #fff;
+            padding: 100px 0 80px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .hero-banner-custom::before {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.03"><polygon points="0,0 1000,50 1000,100 0,100"></polygon></svg>');
+            background-size: cover;
+        }
+        .hero-banner-custom .container {
+            position: relative; z-index: 2;
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+        }
+        .hero-banner-custom h1 {
+            font-weight: 800;
+            font-size: 3.5rem;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+            line-height: 1.1;
+        }
+        .hero-banner-custom p.lead {
+            color: #dbeafe;
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin-bottom: 0;
+            max-width: 600px;
+        }
+        .hero-search-bar-wrapper {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 40px;
+        }
+        .hero-search-bar {
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(18,89,243,0.15);
+            max-width: 610px;
+            width: 100%;
+            padding-left: 24px;
+            height: 70px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .hero-search-bar:focus-within {
+            box-shadow: 0 12px 40px rgba(18,89,243,0.25);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        .hero-search-bar .search-icon {
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 12px; color: #23436e;
+        }
+        .hero-search-bar input[type="search"] {
+            border: none; outline: none;
+            background: transparent; color: #23436e;
+            font-size: 1.2rem; font-weight: 500;
+            flex: 1 1 auto; height: 64px; padding-left: 0; padding-right: 10px;
+        }
+        .hero-search-bar input[type="search"]::placeholder {
+            color: #89a2c0; opacity: 1; font-weight: 500;
+        }
+        .hero-search-bar button[type="submit"] {
+            background: var(--primary-color); color: #fff;
+            border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 700;
+            padding: 0 32px; height: 54px;
+            margin-right: 8px; margin-left: 8px; cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(18,89,243,0.2);
+        }
+        .hero-search-bar button[type="submit"]:hover,
+        .hero-search-bar button[type="submit"]:focus {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(18,89,243,0.3);
+        }
+
+        /* Featured Events Grid */
+        .featured-events-section {
+            width: 100vw;
+            position: relative;
+            left: 50%; right: 50%;
+            margin-left: -50vw; margin-right: -50vw;
+            background: #f5f7fa;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .centered-container {
+            max-width: 1440px;
+            margin-left: auto; margin-right: auto;
+            padding-left: 20px; padding-right: 20px;
+            width: 100%;
+        }
+        .event-section-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 3rem; }
+        .featured-events-heading { margin-bottom: 36px !important; font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em; color: #181c32; text-align: center; }
+
+        .event-filter-btns {
+            margin-top: 8px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .month-btn {
+            background: #fff;
+            border: 1.5px solid #eaeaea;
+            color: #181c32;
+            font-weight: 600;
+            border-radius: 999px;
+            padding: 0.7rem 1.8rem;
+            margin: 0 0.19em;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: none !important;
+        }
+        .month-btn.active, .month-btn:hover, .month-btn:focus {
+            background: var(--primary-color);
+            color: #fff;
+            border: 1.5px solid var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(18,89,243,0.2);
+        }
+
+        .event-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 28px;
+            align-items: stretch;
+            justify-items: center;
+            margin-top: 30px;
+        }
+
+        .event-card-modern {
+            width: 100%;
+            max-width: 220px;
+            min-width: 0;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 20px rgba(18,89,243,0.09);
+            border: 1px solid #eceef2;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            transition: box-shadow .17s, transform .17s;
+        }
+        .event-card-modern:hover {
+            box-shadow: 0 8px 32px rgba(18,89,243,0.15);
+            transform: translateY(-3px) scale(1.012);
+        }
+        .event-card-img-wrap-modern {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            border-radius: 18px 18px 0 0;
+            background: #f7f8fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .event-card-img-modern {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: inherit;
+        }
+        .event-category-badge-modern {
+            position: absolute;
+            top: 14px; left: 14px;
+            background: #2563eb;
+            color: #fff;
+            border-radius: 24px;
+            font-size: 0.96rem;
+            padding: 6px 16px 6px 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: 0 1.5px 7px rgba(37,99,235,0.15);
+            z-index: 2;
+        }
+        .event-category-badge-modern i { color: #fff; font-size: 1.02em; }
+        .event-card-body-modern {
+            padding: 22px 18px 0 18px;
+            display: flex;
+            flex-direction: column;
+        }
+        .event-card-title-modern {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.08rem;
+            color: #222c3d;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .event-card-meta-modern {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.97rem;
+            color: #47506a;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .meta-item i { margin-right: 3px; color: #a1a5b7; font-size: 1em; }
+        .meta-sep { color: #bcc0c8; font-size: 1.1em; }
+        .event-card-location-modern {
+            font-size: 0.97rem;
+            color: #6c747f;
+            margin-bottom: 8px;
+            display: flex; align-items: center; gap: 7px; font-weight: 400;
+        }
+        .event-card-desc-modern {
+            color: #525d72;
+            font-size: 0.97rem;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+        .event-card-price-modern {
+            font-size: 1.06rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .event-price-modern {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.10rem;
+            font-weight: 800;
+            color: #2563eb;
+        }
+        .event-upwards {
+            color: #7b8499;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .event-card-btn-modern {
+            width: 100%;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 0 0 18px 18px;
+            font-weight: 700;
+            font-size: 1.04rem;
+            padding: 14px 0 14px 0;
+            text-align: center;
+            text-decoration: none;
+            transition: background .15s, box-shadow .16s;
+            margin-top: auto;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+            letter-spacing: 0.01em;
+            cursor: pointer;
+            display: block;
+        }
+        .event-card-btn-modern:hover, .event-card-btn-modern:focus {
+            background: #1a48b9;
+            color: #fff;
+            text-decoration: none;
+            box-shadow: 0 4px 18px rgba(37,99,235,0.16);
+        }
+
+        /* Category Cards Section */
+        .category-section { background: #f5f7fa; margin-bottom: 0; }
+        .category-cards-row {
+            display: flex; justify-content: center; gap: 40px;
+            flex-wrap: wrap; margin-top: 0; margin-bottom: 0;
+        }
+        .category-card {
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 8px 30px rgba(18,89,243,0.1);
+            min-width: 220px; max-width: 240px; width: 100%; height: 200px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: all 0.3s ease;
+            padding: 40px 30px; margin-bottom: 0;
+            position: relative; overflow: hidden;
+        }
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 5px;
+            background: var(--gradient-accent);
+        }
+        .category-card:hover, .category-card:focus {
+            background: #fff; color: var(--primary-color);
+            box-shadow: 0 15px 40px rgba(18,89,243,0.2);
+            text-decoration: none; transform: translateY(-8px);
+        }
+        .category-icon { font-size: 3.2rem; color: var(--primary-color); margin-bottom: 0.8em; transition: all 0.3s ease; }
+        .category-card:hover .category-icon { transform: scale(1.1); color: #2196F3; }
+        .category-label { font-size: 1.1rem; font-weight: 700; color: #232b36; margin-top: 0.25em; letter-spacing: 0.01em; text-align: center; }
+
+        /* Loyalty Promo Banner */
+        .loyalty-promo-banner {
+            margin-top: 80px !important;
+            margin-bottom: 80px !important;
+            width: 100vw;
+            position: relative;
+            left: 50%; right: 50%;
+            margin-left: -50vw; margin-right: -50vw;
+            display: flex; justify-content: center;
+            background: transparent;
+        }
+        .loyalty-promo-inner {
+            background: var(--gradient-primary);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(18,89,243,0.15);
+            color: #fff; max-width: 1200px; width: 100%; min-height: 280px;
+            padding: 60px;
+            display: flex; align-items: center; justify-content: space-between; gap: 40px;
+            position: relative; overflow: hidden;
+        }
+        .loyalty-promo-inner::before {
+            content: '';
+            position: absolute; top: 0; right: 0; width: 40%; height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="%23ffffff" opacity="0.03"><circle cx="100" cy="100" r="80"/></svg>');
+            background-size: cover;
+        }
+        .loyalty-promo-content { flex: 1 1 0%; min-width: 0; margin-bottom: 0; position: relative; z-index: 2; }
+        .loyalty-promo-title { font-size: 2.3rem; font-weight: 800; margin-bottom: 1.2rem; letter-spacing: -0.02em; color: #fff; text-align: left; }
+        .loyalty-promo-desc { color: #e4eaf6; font-size: 1.25rem; font-weight: 500; margin-bottom: 2.2rem; max-width: 600px; text-align: left; line-height: 1.6; }
+        .loyalty-promo-actions { display: flex; flex-wrap: wrap; gap: 20px; }
+        .loyalty-promo-actions .btn {
+            font-size: 1.1rem; font-weight: 700; border-radius: 12px;
+            height: 56px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; padding: 0 30px;
+        }
+        .loyalty-promo-actions .btn-primary {
+            background: #fff; border-color: #fff; color: var(--primary-color);
+        }
+        .loyalty-promo-actions .btn-primary:hover {
+            background: #f0f4ff; border-color: #f0f4ff; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .loyalty-promo-actions .btn-light {
+            background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.3);
+        }
+        .loyalty-promo-actions .btn-light:hover {
+            background: rgba(255,255,255,0.1); color: #fff; border: 2px solid rgba(255,255,255,0.5); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .loyalty-promo-illus img {
+            max-height: 220px; width: auto; object-fit: contain; display: block;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2)); position: relative; z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <!-- HERO -->
+    <div class="hero-banner-custom section-spacer bg-white">
+        <div class="container">
+            <h1>Discover Your Next Experience</h1>
+            <p class="lead">Find and book tickets for concerts, theatre, cultural events and more</p>
+            <form class="hero-search-bar-wrapper" action="/Events/Search" method="get" autocomplete="off">
+                <div class="hero-search-bar">
+                    <span class="search-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#23436e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="7"></circle>
+                            <line x1="18" y1="18" x2="15.5" y2="15.5"></line>
+                        </svg>
+                    </span>
+                    <input type="search" name="query" placeholder="Search by Event, Category, Date or Location" aria-label="Search" required />
+                    <button type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- FEATURED EVENTS -->
+    <div class="featured-events-section section-spacer bg-offwhite">
+        <div class="centered-container">
+            <div class="event-section-header text-center">
+                <h2 class="featured-events-heading section-heading mb-3">
+                    What's Happening <span class="text-primary">This Month</span>
+                </h2>
+                <div class="event-filter-btns">
+                    <a href="/Events/Featured?filter=thismonth" class="month-btn @(ViewBag.CurrentFilter=="thismonth" ? "active" : "")">This Month</a>
+                    <a href="/Events/Featured?filter=nextmonth" class="month-btn @(ViewBag.CurrentFilter=="nextmonth" ? "active" : "")">Next Month</a>
+                    <a href="/Events/Featured?filter=upcoming" class="month-btn @(ViewBag.CurrentFilter=="upcoming" ? "active" : "")">Upcoming</a>
+                    <a href="/Events/Featured?filter=featured" class="month-btn @(ViewBag.CurrentFilter=="featured" ? "active" : "")">Featured</a>
+                </div>
+            </div>
+            @if (Model?.FeaturedEvents != null && Model.FeaturedEvents.Count > 0)
+            {
+                <div class="event-cards-grid">
+                    @foreach (var ev in Model.FeaturedEvents)
+                    {
+                        @Html.DisplayFor(modelItem => ev)
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center text-muted my-5 py-5">
+                    <i class="fas fa-calendar-times fa-3x mb-3" style="color: #ccc;"></i>
+                    <h4>No featured events found</h4>
+                    <p>Check back soon for upcoming events!</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- CATEGORY CARDS -->
+    <div class="category-section section-spacer bg-offwhite">
+        <div class="centered-container">
+            <h2 class="section-heading">Browse by Category</h2>
+            <div class="category-cards-row">
+                <a href="/Events/Category/Concert" class="category-card text-decoration-none">
+                    <div class="category-icon mb-2"><i class="fas fa-music"></i></div>
+                    <div class="category-label">Concerts</div>
+                </a>
+                <a href="/Events/Category/Theatre" class="category-card text-decoration-none">
+                    <div class="category-icon mb-2"><i class="fas fa-theater-masks"></i></div>
+                    <div class="category-label">Theatre</div>
+                </a>
+                <a href="/Events/Category/Cultural" class="category-card text-decoration-none">
+                    <div class="category-icon mb-2"><i class="fas fa-flag"></i></div>
+                    <div class="category-label">Cultural</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOYALTY PROMO -->
+    <div class="loyalty-promo-banner d-flex justify-content-center">
+        <div class="loyalty-promo-inner d-flex flex-column flex-md-row align-items-center justify-content-between w-100">
+            <div class="loyalty-promo-content text-start">
+                <h2 class="loyalty-promo-title mb-2">Join Our Loyalty Program & Earn Rewards!</h2>
+                <div class="loyalty-promo-desc mb-4">
+                    For every ticket you purchase, earn points redeemable for discounts and exclusive perks.
+                    Get early access to popular events and special member-only offers.
+                </div>
+                <div class="loyalty-promo-actions">
+                    <a href="/Account/Register" class="btn btn-primary btn-lg px-4 me-3">
+                        Join Now
+                    </a>
+                    <a href="/Loyalty/Details" class="btn btn-light btn-lg px-4 border">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="loyalty-promo-illus ms-md-5 mt-4 mt-md-0 text-center">
+                <img src="~/Content/loyalty-illustration.png" alt="Loyalty Program Illustration" style="width: 240px; max-width: 100%;" />
+            </div>
+        </div>
+    </div>
+</body>
+</html>

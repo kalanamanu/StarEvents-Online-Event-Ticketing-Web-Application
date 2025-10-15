@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="fff8812f2af9405ea7ff9e2a6a8f64b2" Name="Diagram1" ZoomLevel="61">
+        <EntityTypeShape EntityType="StarEventsDBModel.CustomerProfile" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="StarEventsDBModel.User" Width="1.5" PointX="0.75" PointY="2.375" IsExpanded="true" />
+        <AssociationConnector Association="StarEventsDBModel.FK_CustomerProfiles_Users" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="StarEventsDBModel.OrganizerProfile" Width="1.5" PointX="3" PointY="4.25" />
+        <AssociationConnector Association="StarEventsDBModel.FK_OrganizerProfiles_Users" />
+        <EntityTypeShape EntityType="StarEventsDBModel.CustomerCard" Width="1.5" PointX="5.25" PointY="1.375" />
+        <AssociationConnector Association="StarEventsDBModel.FK_CustomerCards_Customers" />
+        <EntityTypeShape EntityType="StarEventsDBModel.Booking" Width="1.5" PointX="8.25" PointY="6.125" />
+        <EntityTypeShape EntityType="StarEventsDBModel.Event" Width="1.5" PointX="3" PointY="9.125" />
+        <EntityTypeShape EntityType="StarEventsDBModel.Payment" Width="1.5" PointX="10.5" PointY="10.125" />
+        <EntityTypeShape EntityType="StarEventsDBModel.SeatCategory" Width="1.5" PointX="5.25" PointY="8.125" />
+        <EntityTypeShape EntityType="StarEventsDBModel.Ticket" Width="1.5" PointX="10.5" PointY="6" />
+        <EntityTypeShape EntityType="StarEventsDBModel.Venue" Width="1.5" PointX="6.125" PointY="4.75" />
+        <AssociationConnector Association="StarEventsDBModel.FK_Bookings_Customers" />
+        <AssociationConnector Association="StarEventsDBModel.FK_Bookings_Events" />
+        <AssociationConnector Association="StarEventsDBModel.FK_Payments_Bookings" />
+        <AssociationConnector Association="StarEventsDBModel.FK_Tickets_Bookings" />
+        <AssociationConnector Association="StarEventsDBModel.FK_Events_Organizer" />
+        <AssociationConnector Association="StarEventsDBModel.FK_SeatCategories_Events" />
+        <AssociationConnector Association="StarEventsDBModel.FK_Tickets_SeatCategories" />
+        <AssociationConnector Association="StarEventsDBModel.FK_Event_Venue" />
+        <EntityTypeShape EntityType="StarEventsDBModel.EventDiscount" Width="1.5" PointX="5.25" PointY="12.375" />
+        <AssociationConnector Association="StarEventsDBModel.FK_EventDiscounts_Events" />
+        <EntityTypeShape EntityType="StarEventsDBModel.LoyaltyPoint" Width="1.5" PointX="3" PointY="14.625" />
+        <AssociationConnector Association="StarEventsDBModel.FK__LoyaltyPo__UserI__04E4BC85" />
+        <EntityTypeShape EntityType="StarEventsDBModel.Admin" Width="1.5" PointX="3" PointY="17.875" />
+        <AssociationConnector Association="StarEventsDBModel.FK_Admins_Users" />
+        <EntityTypeShape EntityType="StarEventsDBModel.ActivityLog" Width="1.5" PointX="7.375" PointY="0.75" />
+        <AssociationConnector Association="StarEventsDBModel.FK_ActivityLogs_Users" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

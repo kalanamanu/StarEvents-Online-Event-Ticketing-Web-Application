@@ -1,0 +1,1138 @@
+﻿@model List<StarEvents.ViewModels.PromotionListViewModel>
+@{
+    ViewBag.Title = "Promotions";
+    var eventList = ViewBag.EventList as List<StarEvents.Models.Event>;
+    Layout = "~/Views/Shared/_LayoutOrganizer.cshtml";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1a1d28;
+        --gray: #64748b;
+        --gray-light: #f8fafc;
+        --gray-border: #e2e8f0;
+        --border-radius: 12px;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .promotions-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+    .page-title-section {
+        flex: 1;
+    }
+
+    .page-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: var(--gray);
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    /* Stats Overview */
+    .stats-overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.75rem;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--dark);
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--gray);
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* Filters Section */
+    .filters-section {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .filter-row {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 0.875rem;
+    }
+
+    .form-control {
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--gray-border);
+        border-radius: var(--border-radius);
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+        }
+
+    /* View Toggle */
+    .view-toggle {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .toggle-btn {
+        background: white;
+        border: 2px solid var(--gray-border);
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .toggle-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+    /* Cards View */
+    .promotions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .promotion-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+        .promotion-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+    .promotion-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .promotion-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .promotion-type {
+        opacity: 0.9;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .promotion-body {
+        padding: 1.5rem;
+    }
+
+    .promotion-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .detail-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+        font-weight: 500;
+        color: var(--dark);
+    }
+
+    .event-info {
+        background: var(--gray-light);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .event-title {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.25rem;
+    }
+
+    .event-meta {
+        font-size: 0.875rem;
+        color: var(--gray);
+    }
+
+    .promotion-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background: var(--gray-light);
+        border-top: 1px solid var(--gray-border);
+    }
+
+    /* Status Badges */
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .status-active {
+        background: var(--success);
+        color: white;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+    }
+
+    .status-inactive {
+        background: var(--gray);
+        color: white;
+        box-shadow: 0 2px 4px rgba(107, 114, 128, 0.2);
+    }
+
+    .status-badge:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Discount Badges */
+    .discount-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .discount-percent {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        color: white;
+    }
+
+    .discount-amount {
+        background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+        color: white;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(18, 89, 243, 0.2);
+        }
+
+    .btn-success {
+        background: var(--success);
+        color: white;
+    }
+
+        .btn-success:hover {
+            background: #0da271;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2);
+        }
+
+    .btn-warning {
+        background: var(--warning);
+        color: white;
+    }
+
+        .btn-warning:hover {
+            background: #e69507;
+            transform: translateY(-1px);
+        }
+
+    .btn-danger {
+        background: var(--danger);
+        color: white;
+    }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+    .btn-sm {
+        padding: 0.6rem 1.25rem;
+        font-size: 0.875rem;
+        border-radius: 10px;
+    }
+
+    /* Table View */
+    .promotions-table-container {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        margin-bottom: 2rem;
+        display: none;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+        .table th {
+            background: var(--gray-light);
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid var(--gray-border);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .table td {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-border);
+            color: var(--dark);
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+            .table tbody tr:hover {
+                background: var(--primary-light);
+                transform: translateX(4px);
+            }
+
+            .table tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--gray);
+        grid-column: 1 / -1;
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.5;
+        color: var(--primary);
+    }
+
+    .empty-state-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--dark);
+    }
+
+    .empty-state-text {
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border: none;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        border-bottom: none;
+        padding: 1.5rem 2rem;
+    }
+
+    .modal-title {
+        font-weight: 600;
+        font-size: 1.25rem;
+    }
+
+    .btn-close {
+        filter: invert(1);
+    }
+
+    .modal-body {
+        padding: 2rem;
+    }
+
+    .event-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .event-list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem;
+        background: var(--gray-light);
+        border-radius: var(--border-radius);
+        border: 1px solid var(--gray-border);
+        transition: all 0.3s ease;
+    }
+
+        .event-list-item:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+    .event-list-info {
+        flex: 1;
+    }
+
+    .event-list-title {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.25rem;
+    }
+
+    .event-list-date {
+        font-size: 0.875rem;
+        color: var(--gray);
+    }
+
+    .btn-outline-primary {
+        background: transparent;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+    }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 1024px) {
+        .promotions-grid {
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            min-width: 1000px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .promotions-container {
+            padding: 1rem;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1.5rem;
+        }
+
+        .filter-row {
+            grid-template-columns: 1fr;
+        }
+
+        .promotions-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .promotion-details {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-sm {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .stats-overview {
+            grid-template-columns: 1fr;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+        }
+    }
+</style>
+
+<div class="promotions-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-title-section">
+            <h1 class="page-title">Promotions Management</h1>
+            <p class="page-subtitle">Manage discounts and special offers across all your events</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPromotionModal">
+                <i class="fas fa-plus-circle"></i>
+                Add New Promotion
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <!--<div class="stats-overview">
+        <div class="stat-card">
+            <div class="stat-value">@Model.Count</div>
+            <div class="stat-label">Total Promotions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.Count(p => p.Promotion.IsActive)</div>
+            <div class="stat-label">Active Promotions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.Count(p => !p.Promotion.IsActive)</div>
+            <div class="stat-label">Inactive Promotions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.Sum(p => p.UsageCount)</div>
+            <div class="stat-label">Total Usage</div>
+        </div>
+    </div>-->
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">Search Promotions</label>
+                <input type="text" id="promotionSearch" class="form-control" placeholder="Search by event name, location, date, or promotion name..." />
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Filter by Event</label>
+                <select id="eventFilter" class="form-control">
+                    <option value="">All Events</option>
+                    @if (eventList != null)
+                    {
+                        foreach (var ev in eventList)
+                        {
+                            <option value="@ev.Title">@ev.Title</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Filter by Status</label>
+                <select id="statusFilter" class="form-control">
+                    <option value="">All Statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Toggle -->
+    <div class="view-toggle">
+        <button class="toggle-btn active" data-view="cards">
+            <i class="fas fa-th-large"></i> Cards View
+        </button>
+        <button class="toggle-btn" data-view="table">
+            <i class="fas fa-table"></i> Table View
+        </button>
+    </div>
+
+    <!-- Cards View -->
+    <div class="promotions-grid" id="cardsView">
+        @foreach (var item in Model)
+        {
+            var eventTitle = item.Event?.Title ?? "";
+            var eventLocation = item.Event?.Location ?? "";
+            var eventDate = item.Event?.EventDate.ToString("yyyy-MM-dd") ?? "";
+            var status = item.Promotion.IsActive ? "Active" : "Inactive";
+
+            <div class="promotion-card" data-event="@eventTitle" data-location="@eventLocation" data-date="@eventDate" data-status="@status">
+                <div class="promotion-header">
+                    <div class="promotion-title">@item.Promotion.DiscountName</div>
+                    <div class="promotion-type">@(item.Promotion.DiscountType?.ToUpperInvariant())</div>
+                </div>
+                <div class="promotion-body">
+                    <div class="promotion-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Discount</span>
+                            <span class="detail-value">
+                                @if (item.Promotion.DiscountType == "percent")
+                                {
+                                    <span class="discount-badge discount-percent">@item.Promotion.DiscountPercent% OFF</span>
+                                }
+                                else
+                                {
+                                    <span class="discount-badge discount-amount">Rs. @item.Promotion.DiscountAmount OFF</span>
+                                }
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Seat Category</span>
+                            <span class="detail-value">@item.Promotion.SeatCategory</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Usage</span>
+                            <span class="detail-value">@item.UsageCount</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Max Usage</span>
+                            <span class="detail-value">@(item.Promotion.MaxUsage?.ToString() ?? "Unlimited")</span>
+                        </div>
+                    </div>
+
+                    @if (item.Event != null)
+                    {
+                        <div class="event-info">
+                            <div class="event-title">@item.Event.Title</div>
+                            <div class="event-meta">
+                                <i class="fas fa-calendar-alt me-1"></i>@item.Event.EventDate.ToString("MMM dd, yyyy")
+                                <span class="ms-2">
+                                    <i class="fas fa-map-marker-alt me-1"></i>@item.Event.Location
+                                </span>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="promotion-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Valid From</span>
+                            <span class="detail-value">@item.Promotion.StartDate</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Valid To</span>
+                            <span class="detail-value">@item.Promotion.EndDate</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="promotion-footer">
+                    <button type="button"
+                            class="status-badge @(item.Promotion.IsActive ? "status-active" : "status-inactive") quick-toggle"
+                            data-id="@item.Promotion.DiscountId">
+                        @(item.Promotion.IsActive ? "Active" : "Inactive")
+                    </button>
+                    <div class="action-buttons">
+                        <a class="btn btn-warning btn-sm"
+                           href="@Url.Action("EditEventPromotion", "Organizer", new { id = item.Promotion.DiscountId })"
+                           title="Edit Promotion">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form action="@Url.Action("DeleteEventPromotion", "Organizer", new { id = item.Promotion.DiscountId })"
+                              method="post"
+                              style="display:inline"
+                              onsubmit="return confirm('Are you sure you want to delete this promotion? This action cannot be undone.');">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-danger btn-sm" type="submit" title="Delete Promotion">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-percent"></i>
+                </div>
+                <h3 class="empty-state-title">No Promotions Created</h3>
+                <p class="empty-state-text">Start creating promotions to attract more customers to your events.</p>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPromotionModal">
+                    <i class="fas fa-plus-circle"></i>
+                    Create Your First Promotion
+                </button>
+            </div>
+        }
+    </div>
+
+    <!-- Table View -->
+    <div class="promotions-table-container" id="tableView">
+        @if (Model.Any())
+        {
+            <div class="table-container">
+                <table class="table" id="promotionTable">
+                    <thead>
+                        <tr>
+                            <th>Promotion Details</th>
+                            <th>Discount</th>
+                            <th>Target</th>
+                            <th>Event</th>
+                            <th>Validity Period</th>
+                            <th>Usage</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var eventTitle = item.Event?.Title ?? "";
+                            var eventLocation = item.Event?.Location ?? "";
+                            var eventDate = item.Event?.EventDate.ToString("yyyy-MM-dd") ?? "";
+                            var status = item.Promotion.IsActive ? "Active" : "Inactive";
+
+                            <tr data-event="@eventTitle" data-location="@eventLocation" data-date="@eventDate" data-status="@status">
+                                <td>
+                                    <div class="fw-bold">@item.Promotion.DiscountName</div>
+                                    <small class="text-muted">@(item.Promotion.DiscountType?.ToUpperInvariant())</small>
+                                </td>
+                                <td>
+                                    @if (item.Promotion.DiscountType == "percent")
+                                    {
+                                        <span class="discount-badge discount-percent">@item.Promotion.DiscountPercent% OFF</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="discount-badge discount-amount">Rs. @item.Promotion.DiscountAmount OFF</span>
+                                    }
+                                </td>
+                                <td>
+                                    <strong>@item.Promotion.SeatCategory</strong>
+                                </td>
+                                <td>
+                                    @if (item.Event != null)
+                                    {
+                                        <b>@item.Event.Title</b><br />
+                                        <small>@item.Event.EventDate</small><br />
+                                        <span class="text-muted">@item.Event.Location</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-danger">Event not found</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="small">
+                                        <div><strong>From:</strong> @item.Promotion.StartDate</div>
+                                        <div><strong>To:</strong> @item.Promotion.EndDate</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-bold">@item.UsageCount</span>
+                                    @if (item.Promotion.MaxUsage.HasValue)
+                                    {
+                                        <div class="small text-muted">of @item.Promotion.MaxUsage.Value max</div>
+                                    }
+                                </td>
+                                <td>
+                                    <button type="button"
+                                            class="status-badge @(item.Promotion.IsActive ? "status-active" : "status-inactive") quick-toggle"
+                                            data-id="@item.Promotion.DiscountId">
+                                        @(item.Promotion.IsActive ? "Active" : "Inactive")
+                                    </button>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a class="btn btn-warning btn-sm"
+                                           href="@Url.Action("EditEventPromotion", "Organizer", new { id = item.Promotion.DiscountId })">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="@Url.Action("DeleteEventPromotion", "Organizer", new { id = item.Promotion.DiscountId })"
+                                              method="post"
+                                              style="display:inline"
+                                              onsubmit="return confirm('Delete this promotion?');">
+                                            @Html.AntiForgeryToken()
+                                            <button class="btn btn-danger btn-sm" type="submit">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal for Add Promotion -->
+<div class="modal fade" id="addPromotionModal" tabindex="-1" aria-labelledby="addPromotionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addPromotionModalLabel">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    Select Event for New Promotion
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="event-list">
+                    @if (eventList != null && eventList.Count > 0)
+                    {
+                        foreach (var ev in eventList)
+                        {
+                            <div class="event-list-item">
+                                <div class="event-list-info">
+                                    <div class="event-list-title">@ev.Title</div>
+                                    <div class="event-list-date">
+                                        <i class="fas fa-calendar-alt me-1"></i>
+                                        @ev.EventDate.ToString("MMMM dd, yyyy 'at' h:mm tt")
+                                        <span class="ms-2">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            @ev.Location
+                                        </span>
+                                    </div>
+                                </div>
+                                <a href="@Url.Action("CreateEventPromotion", "Organizer", new { eventId = ev.EventId })"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-plus me-1"></i>
+                                    Add Promotion
+                                </a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-calendar-times"></i>
+                            </div>
+                            <h4 class="empty-state-title">No Events Available</h4>
+                            <p class="empty-state-text">Create an event first to add promotions.</p>
+                            <a href="@Url.Action("CreateEvent", "Organizer")" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Create Event
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // View Toggle Functionality
+        function setupViewToggle() {
+            const toggleButtons = document.querySelectorAll('.toggle-btn');
+            const cardsView = document.getElementById('cardsView');
+            const tableView = document.getElementById('tableView');
+
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const view = this.dataset.view;
+
+                    // Update active button
+                    toggleButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Show/hide views
+                    if (view === 'cards') {
+                        cardsView.style.display = 'grid';
+                        tableView.style.display = 'none';
+                    } else {
+                        cardsView.style.display = 'none';
+                        tableView.style.display = 'block';
+                    }
+                });
+            });
+
+            // Set initial view
+            document.querySelector('[data-view="cards"]').click();
+        }
+
+        // Search and Filter Functionality
+        function filterPromotions() {
+            const search = $('#promotionSearch').val().toLowerCase();
+            const selectedEvent = $('#eventFilter').val().toLowerCase();
+            const selectedStatus = $('#statusFilter').val();
+
+            // Filter cards view
+            $('.promotion-card').each(function() {
+                const card = $(this);
+                const eventTitle = card.data('event') ? card.data('event').toLowerCase() : "";
+                const eventLocation = card.data('location') ? card.data('location').toLowerCase() : "";
+                const eventDate = card.data('date') ? card.data('date') : "";
+                const status = card.data('status');
+
+                const matchesSearch =
+                    eventTitle.indexOf(search) !== -1 ||
+                    eventLocation.indexOf(search) !== -1 ||
+                    eventDate.indexOf(search) !== -1 ||
+                    card.text().toLowerCase().indexOf(search) !== -1;
+
+                const matchesEvent = !selectedEvent || eventTitle === selectedEvent;
+                const matchesStatus = !selectedStatus || status === selectedStatus;
+
+                if (matchesSearch && matchesEvent && matchesStatus)
+                    card.show();
+                else
+                    card.hide();
+            });
+
+            // Filter table view
+            $('#promotionTable tbody tr').each(function() {
+                const row = $(this);
+                const eventTitle = row.data('event') ? row.data('event').toLowerCase() : "";
+                const eventLocation = row.data('location') ? row.data('location').toLowerCase() : "";
+                const eventDate = row.data('date') ? row.data('date') : "";
+                const status = row.data('status');
+
+                const matchesSearch =
+                    eventTitle.indexOf(search) !== -1 ||
+                    eventLocation.indexOf(search) !== -1 ||
+                    eventDate.indexOf(search) !== -1 ||
+                    row.text().toLowerCase().indexOf(search) !== -1;
+
+                const matchesEvent = !selectedEvent || eventTitle === selectedEvent;
+                const matchesStatus = !selectedStatus || status === selectedStatus;
+
+                if (matchesSearch && matchesEvent && matchesStatus)
+                    row.show();
+                else
+                    row.hide();
+            });
+
+            // Show empty state if no results
+            const visibleCards = $('.promotion-card:visible').length;
+            const visibleRows = $('#promotionTable tbody tr:visible').length;
+
+            if (visibleCards === 0 && $('#cardsView').is(':visible')) {
+                $('#cardsView').html(`
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3 class="empty-state-title">No Promotions Found</h3>
+                        <p class="empty-state-text">Try adjusting your search criteria or filters.</p>
+                        <button class="btn btn-primary" onclick="resetFilters()">
+                            <i class="fas fa-refresh"></i>
+                            Reset Filters
+                        </button>
+                    </div>
+                `);
+            }
+        }
+
+        function resetFilters() {
+            $('#promotionSearch').val('');
+            $('#eventFilter').val('');
+            $('#statusFilter').val('');
+            filterPromotions();
+            location.reload();
+        }
+
+        // Quick Activate/Deactivate with enhanced UX
+        $(document).on('click', '.quick-toggle', function(e){
+            const btn = $(this);
+            const promoId = btn.data('id');
+            const originalText = btn.text();
+            const originalClass = btn.attr('class');
+
+            // Show loading state
+            btn.html('<i class="fas fa-spinner fa-spin"></i>');
+            btn.prop('disabled', true);
+
+            $.post('@Url.Action("TogglePromotionStatus", "Organizer")', { id: promoId }, function(resp){
+                if(resp && resp.success) {
+                    // Update button state
+                    btn.toggleClass("status-active status-inactive");
+                    btn.text(resp.newStatus ? "Active" : "Inactive");
+
+                    // Show success feedback
+                    btn.html('<i class="fas fa-check me-1"></i>' + btn.text());
+                    setTimeout(() => {
+                        btn.html(btn.text());
+                    }, 1000);
+                } else {
+                    // Show error state
+                    btn.html('<i class="fas fa-times me-1"></i>Error');
+                    setTimeout(() => {
+                        btn.attr('class', originalClass);
+                        btn.text(originalText);
+                    }, 1000);
+                }
+                btn.prop('disabled', false);
+            }).fail(function() {
+                // Show error state
+                btn.html('<i class="fas fa-times me-1"></i>Error');
+                setTimeout(() => {
+                    btn.attr('class', originalClass);
+                    btn.text(originalText);
+                }, 1000);
+                btn.prop('disabled', false);
+            });
+        });
+
+         $(document).on('submit', 'form', function(e) {
+            const form = $(this);
+            // Only apply to promotion delete forms
+            if (form.attr('action') && form.attr('action').includes('DeleteEventPromotion')) {
+                // Find the submit button
+                const btn = form.find('button[type="submit"]');
+                btn.prop('disabled', true);
+                // Add spinner
+                const originalHtml = btn.html();
+                btn.html('<i class="fas fa-spinner fa-spin"></i> Deleting...');
+                // Optionally, set a timeout in case the server is slow
+                setTimeout(function() {
+                    btn.html(originalHtml);
+                    btn.prop('disabled', false);
+                }, 10000); // Re-enable after 10s just in case
+            }
+        });
+
+        // Filter functionality events
+        $('#promotionSearch, #eventFilter, #statusFilter').on('input change', function () {
+            filterPromotions();
+        });
+
+        // On document ready
+        $(function () {
+            setupViewToggle();
+            filterPromotions();
+        });
+    </script>
+}

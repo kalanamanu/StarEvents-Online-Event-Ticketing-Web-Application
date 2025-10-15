@@ -1,0 +1,1090 @@
+﻿@model List<StarEvents.ViewModels.UserListViewModel>
+@{
+    ViewBag.Title = "User Management";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #f8fafc;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--dark);
+        line-height: 1.6;
+    }
+
+    .user-management-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header Section */
+    .dashboard-header {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .header-info {
+        flex: 1;
+    }
+
+    .dashboard-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dashboard-icon {
+        color: var(--primary);
+    }
+
+    .dashboard-subtitle {
+        color: var(--gray);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(18, 89, 243, 0.2);
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-success {
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(16, 185, 129, 0.2);
+    }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    /* Enhanced Filters Section */
+    .filters-section {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+    }
+
+    .filters-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .filters-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .filters-icon {
+        color: var(--primary);
+    }
+
+    .search-container {
+        position: relative;
+        flex: 1;
+        max-width: 400px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 12px 45px 12px 16px;
+        border: 2px solid var(--gray-border);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        background: white;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--gray);
+        }
+
+    .search-icon {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+        transition: color 0.3s ease;
+    }
+
+    .search-input:focus + .search-icon {
+        color: var(--primary);
+    }
+
+    .filters-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        align-items: end;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .filter-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .filter-select {
+        padding: 12px 16px;
+        border: 2px solid var(--gray-border);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        background: white;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+        }
+
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+        height: fit-content;
+    }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+    /* Users Table Section */
+    .users-section {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        margin-bottom: 40px;
+    }
+
+    .section-header {
+        background: var(--gray-light);
+        padding: 20px 25px;
+        border-bottom: 1px solid var(--gray-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-icon {
+        color: var(--primary);
+    }
+
+    .users-count {
+        background: var(--primary);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .users-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+        .users-table th {
+            background: var(--gray-light);
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--dark);
+            border-bottom: 1px solid var(--gray-border);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .users-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--gray-border);
+            color: var(--dark);
+            vertical-align: middle;
+        }
+
+        .users-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .users-table tr {
+            transition: all 0.2s ease;
+        }
+
+            .users-table tr:hover {
+                background: rgba(18, 89, 243, 0.03);
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-details {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .user-email {
+        font-size: 0.8rem;
+        color: var(--gray);
+    }
+
+    .role-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .role-admin {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .role-organizer {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+        border: 1px solid #fde68a;
+    }
+
+    .role-customer {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .status-active {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .status-inactive {
+        background: #f1f5f9;
+        color: var(--gray);
+        border: 1px solid var(--gray-border);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn-info {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+        box-shadow: 0 1px 3px rgba(14, 165, 233, 0.2);
+    }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-warning {
+        background: linear-gradient(135deg, var(--warning), #d97706);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+        box-shadow: 0 1px 3px rgba(245, 158, 11, 0.2);
+    }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-danger {
+        background: linear-gradient(135deg, var(--danger), #dc2626);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2);
+    }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            color: white;
+        }
+
+    .btn-dark {
+        background: linear-gradient(135deg, var(--dark), #374151);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 3px rgba(31, 41, 55, 0.2);
+    }
+
+        .btn-dark:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(31, 41, 55, 0.3);
+            color: white;
+        }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--gray);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: var(--dark);
+    }
+
+    .empty-description {
+        font-size: 1rem;
+        margin-bottom: 25px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.5;
+    }
+
+    /* Table enhancements */
+    .table-header-row {
+        position: relative;
+    }
+
+    .table-row-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gray-border), transparent);
+        margin: 0 20px;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 1024px) {
+        .filters-form {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .search-container {
+            max-width: 100%;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .user-management-container {
+            padding: 15px;
+        }
+
+        .dashboard-header {
+            padding: 25px 20px;
+        }
+
+        .header-content {
+            flex-direction: column;
+        }
+
+        .filters-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filters-form {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .filter-actions {
+            justify-content: center;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .users-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .search-container {
+            max-width: 100%;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .dashboard-title {
+            font-size: 1.6rem;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 12px 15px;
+        }
+
+        .filter-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="user-management-container">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-users-cog dashboard-icon"></i>
+                    User Management
+                </h1>
+                <div class="dashboard-subtitle">
+                    Manage user accounts, roles, and permissions across the platform
+                </div>
+            </div>
+            @*<div class="header-actions">
+                <a href="@Url.Action("CreateUser", "Admin")" class="btn-success">
+                    <i class="fas fa-user-plus"></i>
+                    Create New User
+                </a>
+            </div>*@
+        </div>
+    </div>
+
+    <!-- Enhanced Filters Section -->
+    <div class="filters-section">
+        <div class="filters-header">
+            <h3 class="filters-title">
+                <i class="fas fa-filter filters-icon"></i>
+                Filter & Search Users
+            </h3>
+            <div class="search-container">
+                <input type="text"
+                       name="search"
+                       class="search-input"
+                       placeholder="Search by username or email..."
+                       value="@(ViewBag.FilterSearch ?? "")" />
+                <i class="fas fa-search search-icon"></i>
+            </div>
+        </div>
+
+        @using (Html.BeginForm("Users", "Admin", FormMethod.Get))
+        {
+            <input type="hidden" name="search" value="@(ViewBag.FilterSearch ?? "")" />
+
+            <div class="filters-form">
+                <div class="filter-group">
+                    <label class="filter-label">User Role</label>
+                    <select name="role" class="filter-select">
+                        <option value="">All Roles</option>
+                        <option value="Admin" @(ViewBag.FilterRole as string == "Admin" ? "selected" : "")>Admin</option>
+                        <option value="Organizer" @(ViewBag.FilterRole as string == "Organizer" ? "selected" : "")>Organizer</option>
+                        <option value="Customer" @(ViewBag.FilterRole as string == "Customer" ? "selected" : "")>Customer</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Account Status</label>
+                    <select name="status" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="Active" @(ViewBag.FilterStatus as string == "Active" ? "selected" : "")>Active</option>
+                        <option value="Inactive" @(ViewBag.FilterStatus as string == "Inactive" ? "selected" : "")>Inactive</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Sort By</label>
+                    <select name="sort" class="filter-select">
+                        <option value="">Default</option>
+                        <option value="newest" @(ViewBag.FilterSort as string == "newest" ? "selected" : "")>Newest First</option>
+                        <option value="oldest" @(ViewBag.FilterSort as string == "oldest" ? "selected" : "")>Oldest First</option>
+                        <option value="name" @(ViewBag.FilterSort as string == "name" ? "selected" : "")>Name (A-Z)</option>
+                    </select>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-filter"></i>
+                        Apply Filters
+                    </button>
+                    <a href="@Url.Action("Users", "Admin")" class="btn-secondary">
+                        <i class="fas fa-redo"></i>
+                        Clear All
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Users Table Section -->
+    <div class="users-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-list section-icon"></i>
+                User Accounts
+                <span class="users-count">@Model.Count Users</span>
+            </h2>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-container">
+                <table class="users-table">
+                    <thead>
+                        <tr class="table-header-row">
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            var user = Model[i];
+                            string roleClass;
+                            string roleIcon;
+                            var role = (user.Role ?? "").ToLower();
+                            if (role == "admin")
+                            {
+                                roleClass = "role-admin";
+                                roleIcon = "fas fa-shield-alt";
+                            }
+                            else if (role == "organizer")
+                            {
+                                roleClass = "role-organizer";
+                                roleIcon = "fas fa-calendar-alt";
+                            }
+                            else 
+                            {
+                                roleClass = "role-customer";
+                                roleIcon = "fas fa-user";
+                            }
+
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar" style="padding:0;">
+                                            @if (!string.IsNullOrEmpty(user.ProfilePhoto))
+                                            {
+                                                <img src="@Url.Content("~/" + user.ProfilePhoto)" alt="Profile Photo" style="width:40px;height:40px;object-fit:cover;border-radius:50%;" />
+                                            }
+                                            else
+                                            {
+                                                @user.Username.Substring(0, 1).ToUpper()
+                                            }
+                                        </div>
+                                        <div class="user-details">
+                                            <div class="user-name">@user.Username</div>
+                                            <div class="user-email">@user.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="role-badge @roleClass">
+                                        <i class="@roleIcon"></i>
+                                        @user.Role
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (user.IsActive)
+                                    {
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-check-circle"></i>
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-inactive">
+                                            <i class="fas fa-times-circle"></i>
+                                            Inactive
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <strong>@user.CreatedAt.ToString("MMM dd, yyyy")</strong>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="@Url.Action("UserDetails", "Admin", new { id = user.UserId })" class="btn-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                            View
+                                        </a>
+                                        <a href="@Url.Action("EditUser", "Admin", new { id = user.UserId })" class="btn-warning" title="Edit User">
+                                            <i class="fas fa-edit"></i>
+                                            Edit
+                                        </a>
+                                        <button type="button" class="@(user.IsActive ? "btn-danger" : "btn-success")"
+                                                onclick="toggleUserActive(@user.UserId, this);" title="@(user.IsActive ? "Deactivate User" : "Activate User")">
+                                            <i class="fas @(user.IsActive ? "fa-user-slash" : "fa-user-check")"></i>
+                                            @(user.IsActive ? "Deactivate" : "Activate")
+                                        </button>
+                                        <button type="button" class="btn-dark" onclick="deleteUser(@user.UserId, this);" title="Delete User">
+                                            <i class="fas fa-trash"></i>
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            if (i < Model.Count - 1)
+                            {
+                                <tr>
+                                    <td colspan="5" style="padding: 0;">
+                                        <div class="table-row-divider"></div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="empty-title">No Users Found</h3>
+                <p class="empty-description">
+                    @if (ViewBag.FilterRole != null || ViewBag.FilterStatus != null || !string.IsNullOrEmpty(ViewBag.FilterSearch as string))
+                    {
+                        <text>No users match your current search and filter criteria. Try adjusting your filters.</text>
+                    }
+                    else
+                    {
+                        <text>No users are currently registered in the system.</text>
+                    }
+                </p>
+                @if (ViewBag.FilterRole != null || ViewBag.FilterStatus != null || !string.IsNullOrEmpty(ViewBag.FilterSearch as string))
+                {
+                    <a href="@Url.Action("Users", "Admin")" class="btn-primary">
+                        <i class="fas fa-redo"></i>
+                        Clear All Filters
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("CreateUser", "Admin")" class="btn-success">
+                        <i class="fas fa-user-plus"></i>
+                        Create First User
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function getAntiForgeryToken() {
+            return $('input[name="__RequestVerificationToken"]').val();
+        }
+
+        // Enhanced search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-input');
+            const searchForm = document.querySelector('.filters-section form');
+
+            // Auto-submit search on enter
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        updateSearchValue();
+                        searchForm.submit();
+                    }
+                });
+
+                // Auto-submit when search input loses focus (if value changed)
+                searchInput.addEventListener('blur', function() {
+                    updateSearchValue();
+                });
+            }
+
+            function updateSearchValue() {
+                const hiddenSearchInput = document.querySelector('input[name="search"][type="hidden"]');
+                if (hiddenSearchInput && searchInput) {
+                    hiddenSearchInput.value = searchInput.value;
+                }
+            }
+
+            // Add smooth animations
+            const sections = document.querySelectorAll('.dashboard-header, .filters-section, .users-section');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    section.style.transition = 'all 0.5s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Add loading states to action buttons
+            document.querySelectorAll('.btn-primary, .btn-success, .btn-secondary').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (this.tagName === 'A' && this.href !== '#') {
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                        this.style.pointerEvents = 'none';
+
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.style.pointerEvents = '';
+                        }, 3000);
+                    }
+                });
+            });
+        });
+
+        function toggleUserActive(userId, btn) {
+            var action = btn.textContent.includes("Deactivate") ? "deactivate" : "activate";
+            var actionTitle = action === "deactivate" ? "Deactivate User" : "Activate User";
+            var actionText = action === "deactivate"
+                ? "This user will no longer be able to access the system."
+                : "This user will regain access to the system.";
+
+            Swal.fire({
+                title: actionTitle,
+                text: actionText,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: `Yes, ${action}!`,
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: action === "deactivate" ? '#ef4444' : '#10b981'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading state
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    btn.disabled = true;
+
+                    $.post('@Url.Action("ToggleUserActive", "Admin")', {
+                        id: userId,
+                        __RequestVerificationToken: getAntiForgeryToken()
+                    }, function (res) {
+                        if (res.success) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: `User has been ${action}d successfully.`,
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Error', 'Could not update user status.', 'error');
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        }
+                    }).fail(function() {
+                        Swal.fire('Error', 'An error occurred while processing your request.', 'error');
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    });
+                }
+            });
+        }
+
+        function deleteUser(userId, btn) {
+            Swal.fire({
+                title: 'Delete User?',
+                text: 'This action cannot be undone. All user data and related records will be permanently deleted.',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete permanently!',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#ef4444',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading state
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                    btn.disabled = true;
+
+                    $.post('@Url.Action("DeleteUser", "Admin")', {
+                        id: userId,
+                        __RequestVerificationToken: getAntiForgeryToken()
+                    }, function (res) {
+                        if (res.success) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'User has been permanently deleted.',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Error', res.message || 'Could not delete user.', 'error');
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        }
+                    }).fail(function() {
+                        Swal.fire('Error', 'An error occurred while deleting the user.', 'error');
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    });
+                }
+            });
+        }
+    </script>
+}

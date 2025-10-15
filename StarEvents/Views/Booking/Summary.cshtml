@@ -1,0 +1,927 @@
+﻿@model StarEvents.ViewModels.BookingSummaryViewModel
+
+@{
+    ViewBag.Title = "Booking Summary";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --border-radius: 16px;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        line-height: 1.6;
+        color: var(--dark);
+        min-height: 100vh;
+        padding: 20px 0;
+    }
+
+    .summary-container {
+        max-width: 900px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+        position: relative;
+        border: 1px solid var(--gray-border);
+    }
+
+        .summary-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            z-index: 2;
+        }
+
+    /* Premium Header */
+    .summary-header {
+        text-align: center;
+        padding: 50px 40px 40px 40px;
+        background: linear-gradient(135deg, var(--primary-light) 0%, #f0f7ff 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .summary-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="rgba(18,89,243,0.03)"><path d="M50,0 L60,40 L100,50 L60,60 L50,100 L40,60 L0,50 L40,40 Z"/></svg>');
+            background-size: 80px 80px;
+            animation: float 20s infinite linear;
+        }
+
+    @@keyframes float {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: 80px 80px;
+        }
+    }
+
+    .summary-header h2 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 1;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .summary-subtitle {
+        font-size: 1.2rem;
+        color: var(--gray);
+        position: relative;
+        z-index: 1;
+        font-weight: 500;
+        max-width: 500px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+
+    .summary-content {
+        padding: 50px;
+    }
+
+    /* Premium Event Section */
+    .event-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 35px;
+        overflow: hidden;
+        border: 1px solid var(--gray-border);
+        transition: all 0.3s ease;
+    }
+
+        .event-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+    .event-header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 25px 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .event-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="rgba(255,255,255,0.1)"><circle cx="50" cy="50" r="2"/></svg>');
+            background-size: 30px 30px;
+        }
+
+    .event-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .event-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+
+    .event-body {
+        padding: 30px;
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 25px;
+        align-items: start;
+    }
+
+    .event-image {
+        width: 140px;
+        height: 140px;
+        border-radius: 12px;
+        object-fit: cover;
+        box-shadow: var(--shadow);
+        border: 2px solid var(--gray-border);
+    }
+
+    .event-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .detail-icon {
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.8rem;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    .detail-content h4 {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--gray);
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-content p {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+    }
+
+    /* Premium Ticket Section */
+    .ticket-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 35px;
+        overflow: hidden;
+        border: 1px solid var(--gray-border);
+        position: relative;
+    }
+
+        .ticket-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 2px 0 0 2px;
+        }
+
+    .ticket-header {
+        background: var(--gray-light);
+        padding: 25px 30px;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+    .ticket-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .ticket-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+    }
+
+    .ticket-body {
+        padding: 30px;
+    }
+
+    .ticket-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+        .ticket-row:last-child {
+            border-bottom: none;
+        }
+
+    .ticket-label {
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .ticket-value {
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 1.05rem;
+        text-align: right;
+    }
+
+    .old-price {
+        color: var(--gray);
+        text-decoration: line-through;
+        font-size: 0.95rem;
+        margin-right: 8px;
+        font-weight: 500;
+    }
+
+    .discount-badge {
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+        margin-top: 15px;
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    /* Premium Total Section */
+    .total-card {
+        background: linear-gradient(135deg, var(--primary-light), #f0f7ff);
+        border-radius: var(--border-radius);
+        padding: 35px;
+        margin-bottom: 35px;
+        border: 2px solid var(--primary-light);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .total-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="rgba(18,89,243,0.05)"><circle cx="50" cy="50" r="2"/></svg>');
+            background-size: 30px 30px;
+        }
+
+    .total-label {
+        font-size: 1.1rem;
+        color: var(--gray);
+        margin-bottom: 12px;
+        font-weight: 600;
+        position: relative;
+        z-index: 1;
+    }
+
+    .total-amount {
+        font-size: 3.2rem;
+        font-weight: 800;
+        color: var(--primary);
+        line-height: 1;
+        margin-bottom: 6px;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 2px 4px rgba(18, 89, 243, 0.1);
+    }
+
+    .total-currency {
+        font-size: 1.3rem;
+        color: var(--gray);
+        font-weight: 600;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Premium Customer Section */
+    .customer-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 35px;
+        overflow: hidden;
+        border: 1px solid var(--gray-border);
+        position: relative;
+    }
+
+        .customer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 2px 0 0 2px;
+        }
+
+    .customer-header {
+        background: var(--gray-light);
+        padding: 25px 30px;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+    .customer-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .customer-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+    }
+
+    .customer-body {
+        padding: 30px;
+    }
+
+    .customer-profile {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .customer-avatar {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        box-shadow: 0 4px 12px rgba(18, 89, 243, 0.3);
+        flex-shrink: 0;
+    }
+
+    .customer-info {
+        flex: 1;
+    }
+
+    .customer-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 4px;
+    }
+
+    .customer-role {
+        font-size: 1rem;
+        color: var(--gray);
+        font-weight: 500;
+    }
+
+    .customer-contact {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        background: var(--gray-light);
+        border-radius: 10px;
+        border: 1px solid var(--gray-border);
+        transition: all 0.3s ease;
+    }
+
+        .contact-item:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+    .contact-icon {
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
+
+    .contact-details h4 {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--gray);
+        margin-bottom: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .contact-details p {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+    }
+
+    /* Premium Checkout Section */
+    .checkout-section {
+        text-align: center;
+        padding: 35px;
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 20px;
+    }
+
+    .security-note {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 1rem;
+        color: var(--gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 15px;
+        background: var(--gray-light);
+        border-radius: 12px;
+        font-weight: 500;
+    }
+
+    .btn-checkout {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 14px;
+        padding: 20px 50px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 8px 30px rgba(18, 89, 243, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-checkout::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(18, 89, 243, 0.4);
+        }
+
+            .btn-checkout:hover::before {
+                left: 100%;
+            }
+
+    /* Back Button */
+    .back-section {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 28px;
+        background: white;
+        color: var(--dark);
+        border: 2px solid var(--gray-border);
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+
+        .btn-back:hover {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .summary-container {
+            margin: 20px auto;
+        }
+
+        .summary-header {
+            padding: 40px 25px 30px 25px;
+        }
+
+            .summary-header h2 {
+                font-size: 2.2rem;
+            }
+
+        .summary-content {
+            padding: 30px 25px;
+        }
+
+        .event-body {
+            grid-template-columns: 1fr;
+            text-align: center;
+            gap: 20px;
+        }
+
+        .event-image {
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+
+        .customer-profile {
+            flex-direction: column;
+            text-align: center;
+            gap: 15px;
+        }
+
+        .customer-contact {
+            grid-template-columns: 1fr;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .total-amount {
+            font-size: 2.5rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        body {
+            padding: 10px 0;
+        }
+
+        .summary-header h2 {
+            font-size: 2rem;
+        }
+
+        .summary-content {
+            padding: 25px 20px;
+        }
+
+        .event-header,
+        .ticket-header,
+        .customer-header {
+            padding: 20px 25px;
+        }
+
+        .event-body,
+        .ticket-body,
+        .customer-body {
+            padding: 25px;
+        }
+
+        .total-amount {
+            font-size: 2.2rem;
+        }
+    }
+</style>
+
+<div class="summary-container">
+    <!-- Premium Header -->
+    <div class="summary-header">
+        <h2>Booking Confirmation</h2>
+        <div class="summary-subtitle">Review your booking details and proceed to secure checkout</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="summary-content">
+        <!-- Premium Event Section -->
+        <div class="event-card">
+            <div class="event-header">
+                <h3 class="event-title">@Model.EventTitle</h3>
+                <div class="event-subtitle">@Model.VenueName • @Model.Location</div>
+            </div>
+            <div class="event-body">
+                <img src="@Model.ImageUrl" class="event-image" alt="@Model.EventTitle" />
+                <div class="event-details">
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h4>Date</h4>
+                            <p>@Model.EventDate.ToString("dddd, MMMM dd, yyyy")</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h4>Time</h4>
+                            <p>@Model.EventDate.ToString("h:mm tt")</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h4>Venue</h4>
+                            <p>@Model.VenueName</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h4>Category</h4>
+                            <p>@Model.Category</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Ticket Section -->
+        <div class="ticket-card">
+            <div class="ticket-header">
+                <h3 class="ticket-title">
+                    <div class="ticket-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    Ticket Details
+                </h3>
+            </div>
+            <div class="ticket-body">
+                <div class="ticket-row">
+                    <div class="ticket-label">
+                        <i class="fas fa-ticket-alt"></i>
+                        Ticket Type
+                    </div>
+                    <div class="ticket-value">@Model.SeatCategoryName</div>
+                </div>
+                <div class="ticket-row">
+                    <div class="ticket-label">
+                        <i class="fas fa-users"></i>
+                        Quantity
+                    </div>
+                    <div class="ticket-value">@Model.Quantity tickets</div>
+                </div>
+                <div class="ticket-row">
+                    <div class="ticket-label">
+                        <i class="fas fa-tag"></i>
+                        Price per ticket
+                    </div>
+                    <div class="ticket-value">
+                        @if (Model.OriginalPricePerTicket.HasValue && Model.OriginalPricePerTicket.Value > Model.PricePerTicket)
+                        {
+                            <span class="old-price">@Model.OriginalPricePerTicket.Value.ToString("N0") LKR</span>
+                        }
+                        @Model.PricePerTicket.ToString("N0") LKR
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.PromotionLabel))
+                {
+                    <div class="discount-badge">
+                        <i class="fas fa-gift"></i>
+                        @Model.PromotionLabel
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Premium Total Section -->
+        <div class="total-card">
+            <div class="total-label">Total Amount to Pay</div>
+            <div class="total-amount">@Model.TotalPrice.ToString("N0")</div>
+            <div class="total-currency">LKR</div>
+        </div>
+
+        <!-- Premium Customer Section -->
+        <div class="customer-card">
+            <div class="customer-header">
+                <h3 class="customer-title">
+                    <div class="customer-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    Booking Information
+                </h3>
+            </div>
+            <div class="customer-body">
+                <div class="customer-profile">
+                    <div class="customer-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="customer-info">
+                        <div class="customer-name">@Model.CustomerName</div>
+                    </div>
+                </div>
+                <div class="customer-contact" style="display: flex; gap: 18px; flex-wrap: wrap;">
+                    @if (!string.IsNullOrEmpty(Model.CustomerEmail))
+                    {
+                        <div class="contact-item" style="flex:1 1 200px; background: #f8fafc;">
+                            <div class="contact-icon" style="background: #1259f3;">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4 style="color:#64748b; font-size:.95rem; margin-bottom:2px; letter-spacing:1px;">EMAIL</h4>
+                                <p style="font-size:1.08rem; color:#1f2937;">@Model.CustomerEmail</p>
+                            </div>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.CustomerPhone))
+                    {
+                        <div class="contact-item" style="flex:1 1 200px; background: #f8fafc;">
+                            <div class="contact-icon" style="background: #1259f3;">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4 style="color:#64748b; font-size:.95rem; margin-bottom:2px; letter-spacing:1px;">PHONE</h4>
+                                <p style="font-size:1.08rem; color:#1f2937;">@Model.CustomerPhone</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @if (Model.PointsEarnedThisBooking > 0)
+                {
+                    <div style="margin-top:28px; padding:15px 22px; background:#f0fdf4; border:1.5px solid #22c55e; border-radius:12px; display:flex; align-items:center; gap:16px;">
+                        <div style="font-size:1.4rem; color:#22c55e;"><i class="fas fa-gift"></i></div>
+                        <div>
+                            <div style="font-size:.98rem; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:1px;">EARN ON THIS BOOKING</div>
+                            <div style="font-size:1.12rem; color:#166534; font-weight:500;">
+                                You'll earn <strong>@Model.PointsEarnedThisBooking</strong> points for this booking
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div style="margin-top:15px; color:#1259f3; font-weight:600; font-size:1.01rem; text-align:center;">
+                    You can redeem your points for a discount on the next page!
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Checkout Section -->
+        <div class="checkout-section">
+            @* Loyalty points redemption note *@
+            @if (Model.AvailableLoyaltyPoints > 0)
+            {
+                <div style="margin-bottom:18px; color:var(--success); font-weight:600; text-align:center;">
+                    You can redeem your points for a discount on the next page!
+                </div>
+            }
+            <div class="security-note">
+                <i class="fas fa-shield-alt"></i>
+                <span>256-bit SSL Encrypted • Secure Payment Processing</span>
+            </div>
+
+            <!-- Use GET so the next page receives all parameters as query string -->
+            <form method="get" action="@Url.Action("Checkout", "Checkout")">
+                <input type="hidden" name="EventId" value="@Model.EventId" />
+                <input type="hidden" name="SeatCategoryId" value="@Model.SeatCategoryId" />
+                <input type="hidden" name="Quantity" value="@Model.Quantity" />
+                <button type="submit" class="btn-checkout">
+                    <i class="fas fa-credit-card"></i>
+                    Proceed to Secure Checkout
+                </button>
+            </form>
+        </div>
+
+        <!-- Back Navigation -->
+        <div class="back-section">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                Back to Event Details
+            </a>
+        </div>
+    </div>
+</div>

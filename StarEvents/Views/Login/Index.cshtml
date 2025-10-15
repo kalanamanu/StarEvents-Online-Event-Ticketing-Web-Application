@@ -1,0 +1,224 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    :root {
+        --primary-color: #1259f3;
+        --primary-hover: #0d47c1;
+        --secondary-color: #1a237e;
+        --light-bg: #f5f7fa;
+        --dark-text-color: #181c32;
+        --danger-color: #d32f2f;
+    }
+
+    body {
+        background: var(--light-bg);
+        color: var(--dark-text-color);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .login-page-wrapper {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: 56px;
+    }
+
+    .login-section {
+        width: 100%;
+        max-width: 410px;
+        margin: 0 auto 48px auto;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 8px 40px rgba(18,89,243,0.10);
+        padding: 38px 32px 32px 32px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .login-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        font-size: 1.9rem;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+        text-align: center;
+        color: var(--primary-color);
+    }
+
+    .login-lead {
+        font-size: 1.07rem;
+        font-weight: 500;
+        color: #4e5d78;
+        margin-bottom: 26px;
+        text-align: center;
+        max-width: 360px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-control {
+        border-radius: 12px !important;
+        border: 1.5px solid #e0e4f5;
+        font-size: 1.03rem;
+        padding: 13px 16px;
+        color: var(--dark-text-color);
+        background: #f8faff;
+        margin-bottom: 2px;
+        transition: border 0.19s, box-shadow 0.19s;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(18,89,243,0.09);
+            background: #fff;
+        }
+
+    .form-group {
+        margin-bottom: 17px;
+    }
+
+    .btn-primary {
+        font-size: 1.13rem;
+        font-weight: 700;
+        border-radius: 12px;
+        background: var(--primary-color);
+        border: none;
+        box-shadow: 0 4px 14px rgba(18,89,243,0.09);
+        padding: 13px 0;
+        transition: background 0.18s, box-shadow 0.18s;
+        letter-spacing: 0.01em;
+        width: 100%;
+        cursor: pointer;
+        color: white;
+    }
+
+        .btn-primary:hover, .btn-primary:focus {
+            background: var(--primary-hover);
+            color: #fff;
+            box-shadow: 0 8px 32px rgba(18,89,243,0.14);
+            text-decoration: none;
+        }
+
+    .alert-danger {
+        border-radius: 10px;
+        font-size: 1.04rem;
+        margin-bottom: 18px;
+        padding: 12px 16px;
+        background: #ffd5d5;
+        color: var(--danger-color);
+        border: 1.5px solid var(--danger-color);
+        text-align: center;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    /* For the "Show password" eye */
+    .password-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        color: #9aa5b8;
+        font-size: 1.15em;
+        padding: 0 4px;
+    }
+
+    .mt-3 {
+        margin-top: 1rem !important;
+    }
+</style>
+
+<div class="login-page-wrapper">
+    <div class="login-section shadow-lg">
+
+        <div class="login-title">Login</div>
+        <div class="login-lead">Welcome back! Please login to your StarEvents account.</div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert-danger">@ViewBag.Error</div>
+        }
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success">@TempData["Message"]</div>
+        }
+
+        @using (Html.BeginForm("Index", "Login", FormMethod.Post, new { autocomplete = "off" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label class="form-label" for="Email">Email</label>
+                <input type="email" name="Email" id="Email" class="form-control" required placeholder="your@email.com" autocomplete="username" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="Password">Password</label>
+                <div class="password-wrapper">
+                    <input type="password" name="Password" id="Password" class="form-control" required placeholder="Enter your password" autocomplete="current-password" />
+                    <button type="button" class="password-toggle" tabindex="-1" data-target="Password" aria-label="Show/hide password">
+                        <i class="far fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3"><i class="fas fa-sign-in-alt mr-2"></i>Login</button>
+
+            <div class="text-center mt-3">
+                Don't have an account?
+                <a href="/Register" style="color: var(--primary-color); font-weight:600;">Register</a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Password show/hide toggle
+            document.querySelectorAll('.password-toggle').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = btn.getAttribute('data-target');
+                    const pwInput = document.getElementById(targetId);
+                    const icon = btn.querySelector('i');
+                    if (pwInput.type === 'password') {
+                        pwInput.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        pwInput.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            });
+        });
+    </script>
+}

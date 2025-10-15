@@ -1,0 +1,834 @@
+﻿@model StarEvents.ViewModels.UserDetailsViewModel
+@{
+    ViewBag.Title = "User Details";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #f8fafc;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--dark);
+        line-height: 1.6;
+    }
+
+    .user-details-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header Section */
+    .dashboard-header {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .header-info {
+        flex: 1;
+    }
+
+    .dashboard-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dashboard-icon {
+        color: var(--primary);
+    }
+
+    .dashboard-subtitle {
+        color: var(--gray);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    /* User Profile Section */
+    .user-profile-section {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .section-header {
+        background: var(--gray-light);
+        padding: 20px 25px;
+        border-bottom: 1px solid var(--gray-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-icon {
+        color: var(--primary);
+    }
+
+    .section-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .profile-content {
+        padding: 30px;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+
+    .profile-card {
+        background: var(--gray-light);
+        border-radius: 12px;
+        padding: 25px;
+        border: 1px solid var(--gray-border);
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+    .card-icon {
+        color: var(--primary);
+    }
+
+    .details-list {
+        list-style: none;
+    }
+
+        .details-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+        }
+
+            .details-list li:last-child {
+                border-bottom: none;
+            }
+
+    .details-label {
+        color: var(--gray);
+        font-weight: 500;
+        font-size: 0.9rem;
+        flex: 0 0 140px;
+    }
+
+    .details-value {
+        color: var(--dark);
+        font-weight: 600;
+        flex: 1;
+        text-align: right;
+    }
+
+    /* Status Badges */
+    .user-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-status-active {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .user-status-inactive {
+        background: linear-gradient(135deg, #f1f5f9, #e5e7eb);
+        color: var(--gray);
+        border: 1px solid var(--gray-border);
+    }
+
+    .role-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .role-admin {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .role-organizer {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+        border: 1px solid #fde68a;
+    }
+
+    .role-customer {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    /* Booking History Section */
+    .booking-history-section {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .booking-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+        .booking-table th {
+            background: var(--gray-light);
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--dark);
+            border-bottom: 1px solid var(--gray-border);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .booking-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--gray-border);
+            color: var(--dark);
+            vertical-align: middle;
+        }
+
+        .booking-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .booking-table tr {
+            transition: all 0.2s ease;
+        }
+
+            .booking-table tr:hover {
+                background: rgba(18, 89, 243, 0.03);
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+    .badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .badge-confirmed {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .badge-cancelled {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .badge-pending {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+        border: 1px solid #fde68a;
+    }
+
+    .badge-other {
+        background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+        color: #3730a3;
+        border: 1px solid #c7d2fe;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-warning {
+        background: linear-gradient(135deg, var(--warning), #d97706);
+        color: white;
+    }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+    }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--gray);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: var(--dark);
+    }
+
+    .empty-description {
+        font-size: 1rem;
+        margin-bottom: 25px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.5;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--gray);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .user-details-container {
+            padding: 15px;
+        }
+
+        .dashboard-header {
+            padding: 25px 20px;
+        }
+
+        .header-content {
+            flex-direction: column;
+        }
+
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .booking-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .details-list li {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .details-value {
+            text-align: left;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .dashboard-title {
+            font-size: 1.6rem;
+        }
+
+        .booking-table th,
+        .booking-table td {
+            padding: 12px 15px;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="user-details-container">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-user-circle dashboard-icon"></i>
+                    User Details
+                </h1>
+                <div class="dashboard-subtitle">
+                    Comprehensive view of user profile, activity, and account information
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="@Url.Action("EditUser", "Admin", new { id = Model.UserId })" class="btn btn-warning">
+                    <i class="fas fa-edit"></i>
+                    Edit User
+                </a>
+                <a href="@Url.Action("Users", "Admin")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Users
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">@Model.UserId</div>
+            <div class="stat-label">User ID</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">
+                @if (Model.IsActive)
+                {
+                    <span class="user-status-badge user-status-active">
+                        <i class="fas fa-check-circle"></i>
+                        Active
+                    </span>
+                }
+                else
+                {
+                    <span class="user-status-badge user-status-inactive">
+                        <i class="fas fa-times-circle"></i>
+                        Inactive
+                    </span>
+                }
+            </div>
+            <div class="stat-label">Account Status</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">
+                <span class="role-badge @("role-" + (Model.Role?.ToLower() ?? "customer"))">
+                    <i class="fas @(Model.Role?.ToLower() == "admin" ? "fa-shield-alt" : Model.Role?.ToLower() == "organizer" ? "fa-calendar-alt" : "fa-user")"></i>
+                    @Model.Role
+                </span>
+            </div>
+            <div class="stat-label">User Role</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.CreatedAt.ToString("MMM dd, yyyy")</div>
+            <div class="stat-label">Member Since</div>
+        </div>
+    </div>
+
+    <!-- User Profile Section -->
+    <div class="user-profile-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-id-card section-icon"></i>
+                User Profile
+            </h2>
+        </div>
+        <div class="profile-content">
+            @{
+                string profilePhoto = null;
+                if (string.Equals(Model.Role, "Customer", StringComparison.OrdinalIgnoreCase))
+                {
+                    profilePhoto = Model.CustomerProfilePhoto;
+                }
+                else if (string.Equals(Model.Role, "Organizer", StringComparison.OrdinalIgnoreCase))
+                {
+                    profilePhoto = Model.OrganizerProfilePhoto;
+                }
+            }
+            <div class="form-group text-center mb-4">
+                @if (!string.IsNullOrEmpty(profilePhoto))
+                {
+                    <img src="@Url.Content("~/" + profilePhoto)" alt="Profile Photo" style="width:120px;height:120px;object-fit:cover;border-radius:50%;border:2px solid #eee;" />
+                }
+                else
+                {
+                    <img src="~/Content/img/default-user.png" alt="No Photo" style="width:120px;height:120px;object-fit:cover;border-radius:50%;border:2px solid #eee;" />
+                }
+            </div>
+            <div class="profile-content">
+                <div class="profile-grid">
+                    <!-- Basic Information Card -->
+                    <div class="profile-card">
+                        <h3 class="card-title">
+                            <i class="fas fa-info-circle card-icon"></i>
+                            Basic Information
+                        </h3>
+                        <ul class="details-list">
+                            <li>
+                                <span class="details-label">Username:</span>
+                                <span class="details-value">@Model.Username</span>
+                            </li>
+                            <li>
+                                <span class="details-label">Email:</span>
+                                <span class="details-value">@Model.Email</span>
+                            </li>
+                            <li>
+                                <span class="details-label">Role:</span>
+                                <span class="details-value">
+                                    <span class="role-badge @("role-" + (Model.Role?.ToLower() ?? "customer"))">
+                                        <i class="fas @(Model.Role?.ToLower() == "admin" ? "fa-shield-alt" : Model.Role?.ToLower() == "organizer" ? "fa-calendar-alt" : "fa-user")"></i>
+                                        @Model.Role
+                                    </span>
+                                </span>
+                            </li>
+                            <li>
+                                <span class="details-label">Status:</span>
+                                <span class="details-value">
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="user-status-badge user-status-active">
+                                            <i class="fas fa-check-circle"></i>
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="user-status-badge user-status-inactive">
+                                            <i class="fas fa-times-circle"></i>
+                                            Inactive
+                                        </span>
+                                    }
+                                </span>
+                            </li>
+                            <li>
+                                <span class="details-label">Registered:</span>
+                                <span class="details-value">@Model.CreatedAt.ToString("MMMM dd, yyyy 'at' h:mm tt")</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Role-specific Information Card -->
+                    <div class="profile-card">
+                        @if (Model.Role != null && Model.Role.ToLower() == "admin")
+                        {
+                            <h3 class="card-title">
+                                <i class="fas fa-shield-alt card-icon"></i>
+                                Admin Profile
+                            </h3>
+                            <ul class="details-list">
+                                <li>
+                                    <span class="details-label">Notes:</span>
+                                    <span class="details-value">@(string.IsNullOrEmpty(Model.AdminNotes) ? "No notes available" : Model.AdminNotes)</span>
+                                </li>
+                            </ul>
+                        }
+                        else if (Model.Role != null && Model.Role.ToLower() == "customer")
+                        {
+                            <h3 class="card-title">
+                                <i class="fas fa-user card-icon"></i>
+                                Customer Profile
+                            </h3>
+                            <ul class="details-list">
+                                <li>
+                                    <span class="details-label">Full Name:</span>
+                                    <span class="details-value">@(string.IsNullOrEmpty(Model.CustomerFullName) ? "Not provided" : Model.CustomerFullName)</span>
+                                </li>
+                                <li>
+                                    <span class="details-label">Phone:</span>
+                                    <span class="details-value">@(string.IsNullOrEmpty(Model.CustomerPhoneNumber) ? "Not provided" : Model.CustomerPhoneNumber)</span>
+                                </li>
+                                <li>
+                                    <span class="details-label">Address:</span>
+                                    <span class="details-value">@(string.IsNullOrEmpty(Model.CustomerAddress) ? "Not provided" : Model.CustomerAddress)</span>
+                                </li>
+                                <li>
+                                    <span class="details-label">Loyalty Points:</span>
+                                    <span class="details-value">@Model.CustomerLoyaltyPoints</span>
+                                </li>
+                                <li>
+                                    <span class="details-label">Date of Birth:</span>
+                                    <span class="details-value">@(Model.CustomerDateOfBirth?.ToString("MMMM dd, yyyy") ?? "Not provided")</span>
+                                </li>
+                                <li>
+                                    <span class="details-label">Gender:</span>
+                                    <span class="details-value">@(string.IsNullOrEmpty(Model.CustomerGender) ? "Not specified" : Model.CustomerGender)</span>
+                                </li>
+                            </ul>
+                        }
+                        else if (Model.Role != null && Model.Role.ToLower() == "organizer")
+                        {
+                            <h3 class="card-title">
+                                <i class="fas fa-calendar-alt card-icon"></i>
+                                Organizer Profile
+                            </h3>
+                            <ul class="details-list">
+                                <li>
+                                    <span class="details-label">Organization:</span>
+                                    <span class="details-value">@(string.IsNullOrEmpty(Model.OrganizerOrganizationName) ? "Not provided" : Model.OrganizerOrganizationName)</span>
+                                </li>
+                                <li>
+                                    <span class="details-label">Contact Person:</span>
+                                    <span class="details-value">@(string.IsNullOrEmpty(Model.OrganizerContactPerson) ? "Not provided" : Model.OrganizerContactPerson)</span>
+                                </li>
+                                <li>
+                                    <span class="details-label">Phone:</span>
+                                    <span class="details-value">@(string.IsNullOrEmpty(Model.OrganizerPhoneNumber) ? "Not provided" : Model.OrganizerPhoneNumber)</span>
+                                </li>
+                                <li>
+                                    <span class="details-label">Address:</span>
+                                    <span class="details-value">@(string.IsNullOrEmpty(Model.OrganizerAddress) ? "Not provided" : Model.OrganizerAddress)</span>
+                                </li>
+                                <li>
+                                    <span class="details-label">Description:</span>
+                                    <span class="details-value">@(string.IsNullOrEmpty(Model.OrganizerDescription) ? "No description provided" : Model.OrganizerDescription)</span>
+                                </li>
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking History Section: Only for customers -->
+        @if (Model.Role != null && Model.Role.ToLower() == "customer")
+        {
+            <div class="booking-history-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-history section-icon"></i>
+                        Booking History
+                        <span class="users-count">@((Model.BookingHistory?.Count ?? 0)) Bookings</span>
+                    </h2>
+                </div>
+                @if (Model.BookingHistory != null && Model.BookingHistory.Any())
+                {
+                    <div class="table-container">
+                        <table class="booking-table">
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Event</th>
+                                    <th>Booking Date</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var bk in Model.BookingHistory)
+                                {
+                                    var badgeClass = "badge-other";
+                                    var status = (bk.Status ?? "").ToLower();
+
+                                    if (status == "confirmed" || status == "paid") { badgeClass = "badge-confirmed"; }
+                                    else if (status == "cancelled" || status == "canceled") { badgeClass = "badge-cancelled"; }
+                                    else if (status == "pending") { badgeClass = "badge-pending"; }
+
+                                    <tr>
+                                        <td><strong>#@bk.BookingId</strong></td>
+                                        <td>@bk.EventTitle</td>
+                                        <td>@bk.BookingDate.ToString("MMM dd, yyyy 'at' h:mm tt")</td>
+                                        <td>@bk.Quantity</td>
+                                        <td>
+                                            <span class="badge-status @badgeClass">
+                                                <i class="fas @(badgeClass == "badge-confirmed" ? "fa-check-circle" : badgeClass == "badge-cancelled" ? "fa-times-circle" : badgeClass == "badge-pending" ? "fa-clock" : "fa-info-circle")"></i>
+                                                @bk.Status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h3 class="empty-title">No Booking History</h3>
+                        <p class="empty-description">
+                            This customer has not made any bookings yet.
+                        </p>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+@section Scripts {
+    <script>
+        // Add smooth animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.dashboard-header, .user-profile-section, .booking-history-section');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    section.style.transition = 'all 0.5s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+}

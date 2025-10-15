@@ -1,0 +1,449 @@
+﻿:root {
+    --primary-color: #1259f3;
+    --secondary-color: #1a237e;
+    --accent-color: #ffc107;
+    --light-text-color: #f8f9fa;
+    --dark-text-color: #444444;
+    --footer-bg: #031230;
+    --footer-bottom-bg: #031230;
+    --footer-link: #b8c4d7;
+    --footer-link-hover: #ffc107;
+    --footer-social-bg: #10204a;
+    --footer-border: #1c3661;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #f4f7f6;
+    /* Dark text for body content */
+    color: #343a40;
+}
+
+/* Typography Enhancements */
+h1, h2, h3, h4, h5, h6, .brand-text {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+}
+
+/* ---------------------------------- */
+/* NAVBAR STYLING  */
+/* ---------------------------------- */
+
+.navbar {
+    /* UPDATED: Navbar background set to white */
+    background-color: var(--light-text-color) !important;
+    /* CHANGED: Border color is dark/muted color for definition on white */
+    border-bottom: 3px solid var(--muted-text-color);
+}
+
+/* OVERRIDE Bootstrap's .navbar-dark setting on the container */
+.navbar-dark .navbar-collapse {
+    background-color: var(--light-text-color);
+}
+
+.navbar-brand .logo-img {
+    height: 38px;
+    margin-right: 10px;
+}
+
+.navbar-brand .brand-text {
+    font-size: 1.6rem;
+    /* CHANGED: Brand text must be dark against white background */
+    color: var(--dark-text-color);
+}
+
+.navbar .nav-link {
+    /* CHANGED: Links are now dark/primary color for contrast on white background */
+    color: var(--dark-text-color) !important;
+    font-weight: 600;
+    margin: 0 8px;
+    transition: color 0.3s ease-in-out;
+}
+
+    .navbar .nav-link:hover {
+        /* CHANGED: Hover color is the secondary dark blue for accent */
+        color: var(--secondary-color) !important;
+    }
+
+/* Active link styles */
+.navbar-nav .nav-item.active .nav-link {
+    /* KEPT: Active link color is #025beb */
+    color: #025beb !important;
+    font-weight: 700 !important;
+}
+
+/* Search Bar Styling (No changes needed, as this is for the old dark navbar search) */
+.search-bar-custom .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--light-text-color);
+}
+
+    .search-bar-custom .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+.search-bar-custom .btn-outline-warning {
+    color: var(--muted-text-color);
+    border-color: var(--muted-text-color);
+    background-color: transparent;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+    .search-bar-custom .btn-outline-warning:hover {
+        background-color: var(--muted-text-color);
+        color: var(--primary-color);
+    }
+
+
+/* Login/Register Buttons */
+.navbar .btn-outline-light {
+    /* CHANGED: Button outline on white navbar uses the primary blue */
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transition: all 0.3s ease-in-out;
+}
+
+    .navbar .btn-outline-light:hover {
+        background-color: var(--primary-color);
+        color: var(--light-text-color);
+    }
+
+/* The Sign In Button */
+.btn-login {
+    background: #1259f3;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0 28px;
+    height: 40px;
+    margin-right: 10px;
+    margin-left: 8px;
+    cursor: pointer;
+    transition: background 0.18s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(18,89,243,0.08);
+}
+
+.btn-login:hover {
+     filter: brightness(1);
+     color: var(--light-text-color);
+ }
+
+
+/* ---------------------------------- */
+/* MAIN CONTENT & UTILITIES */
+/* ---------------------------------- */
+
+/* Main Content Padding */
+main {
+    min-height: calc(100vh - 120px);
+}
+
+/* Custom Utility Classes */
+.bg-primary-dark {
+    /* Maps the utility class used in HTML to the primary color */
+    background-color: var(--primary-color) !important;
+}
+
+.text-warning {
+    /* KEPT: Utility class is for explicit yellow accent text when needed */
+    color: var(--accent-color) !important;
+}
+
+
+/* ---------------------------------- */
+/* PROFESSIONAL FOOTER STYLING */
+/* ---------------------------------- */
+.footer {
+    background: var(--footer-bg);
+    color: #e3e8ef;
+    border-top: none;
+    font-family: 'Montserrat', 'Open Sans', sans-serif;
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+}
+
+.footer-main-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 64px 32px 0 32px;
+}
+
+.footer-main.row {
+    margin-right: 0;
+    margin-left: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 64px;
+    border: none;
+}
+
+.footer-col {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.brand-col .footer-brand {
+    margin-bottom: 14px;
+}
+
+.footer-logo {
+    height: 38px;
+}
+
+.footer-brand h5 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.62rem;
+    margin: 0;
+    color: #fff;
+    letter-spacing: 0.01em;
+}
+
+.footer-desc {
+    color: #b0b7c3;
+    font-size: .85rem;
+    line-height: 1.5;
+    margin: 0 0 0 0;
+    max-width: 350px;
+}
+
+.footer h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .footer-links li {
+        margin-bottom: 9px;
+    }
+
+    .footer-links a {
+        color: var(--footer-link);
+        text-decoration: none;
+        font-size: .85rem;
+        font-weight: 500;
+        transition: color 0.22s;
+    }
+
+        .footer-links a:hover {
+            color: var(--footer-link-hover);
+            text-decoration: underline;
+        }
+
+.social-links {
+    display: flex;
+    gap: 17px;
+    margin: 18px 0 0 0;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: var(--footer-social-bg);
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.2rem;
+    transition: background 0.19s, color 0.18s, transform 0.14s;
+    box-shadow: 0 2px 7px rgba(20,34,74,0.07);
+}
+
+    .social-link:hover {
+        background: var(--footer-link-hover);
+        color: #222;
+        transform: translateY(-2px) scale(1.08);
+    }
+
+.footer-payments-row {
+    border-top: 1px solid #1c3661;
+    margin-top: 54px;
+    padding: 22px 0 14px 0;
+    background: var(--footer-bottom-bg);
+}
+
+    .footer-payments-row p {
+        color: #b0b7c3;
+        font-size: .75rem;
+        margin: 0;
+        font-weight: 500;
+    }
+
+.payment-methods {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+    .payment-methods i {
+        font-size: 1.2rem;
+        color: #b0b7c3;
+        border-radius: 7px;
+        padding: 2px 5px;
+        box-shadow: 0 1px 6px rgba(20,34,74,0.08);
+        transition: color 0.18s, background 0.18s;
+    }
+
+        .payment-methods i:hover {
+            color: var(--footer-link-hover);
+            background: #f8f9fa;
+        }
+
+@media (max-width: 1200px) {
+    .footer-main-container {
+        max-width: 100%;
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .footer-main.row {
+        gap: 28px;
+    }
+}
+
+@media (max-width: 991px) {
+    .footer-main.row {
+        flex-direction: column;
+        gap: 28px;
+    }
+
+    .footer-payments-row {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+        .footer-payments-row .payment-methods {
+            justify-content: center;
+            margin-top: 10px;
+        }
+}
+
+@media (max-width: 700px) {
+    .footer-main-container {
+        padding: 34px 5vw 0 5vw;
+    }
+
+    .footer-main .row > [class*='col-'] {
+        margin-bottom: 18px;
+    }
+
+    .footer-payments-row {
+        margin-top: 22px;
+        padding: 11px 0 7px 0;
+    }
+}
+
+/* ---------------------------------- */
+/* HOME PAGE HERO SECTION (Blue Banner) */
+/* ---------------------------------- */
+
+/* The hero section we added to the HTML layout */
+.hero-banner {
+    background-color: var(--secondary-color) !important; /* Use a slight variation of the primary blue */
+    color: var(--light-text-color);
+    padding: 80px 0;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+    .hero-banner h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 5px;
+    }
+
+    .hero-banner p {
+        font-size: 1.2rem;
+        margin-bottom: 25px;
+    }
+
+.hero-search-container {
+    display: flex;
+    align-items: center;
+}
+
+.hero-search-input {
+    width: 350px;
+    max-width: 100%;
+    padding: 10px 15px;
+    border-radius: 0; /* Handled by input group */
+    border: none;
+    height: 50px;
+}
+
+.hero-search-btn {
+    /* Search button is secondary blue */
+    background-color: var(--secondary-color);
+    /* Text is light color for contrast */
+    color: var(--light-text-color);
+    font-weight: 700;
+    border-radius: 0 5px 5px 0;
+    height: 50px;
+    padding: 0 30px;
+    border: none;
+}
+
+/* ---------------------------------- */
+/* Placeholder Styles for Site Content */
+/* ---------------------------------- */
+
+.event-card .card-title {
+    color: var(--primary-color);
+}
+
+.event-card .card-body {
+    padding: 1.5rem;
+}
+
+.category-link {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+    .category-link:hover {
+        /* Category hover background is secondary blue */
+        background-color: var(--secondary-color) !important;
+        transform: translateY(-5px);
+        /* Text color is light/white on hover for contrast */
+        color: var(--light-text-color) !important;
+    }
+
+    .category-link i {
+        transition: color 0.3s ease;
+    }
+
+    .category-link:hover i {
+        /* Icon color is light/white on hover for contrast */
+        color: var(--light-text-color) !important;
+    }
+

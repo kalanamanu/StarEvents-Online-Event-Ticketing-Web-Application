@@ -1,0 +1,914 @@
+﻿@model StarEvents.ViewModels.EventDiscountViewModel
+@{
+    ViewBag.Title = "Add Promotion";
+    var seatCategories = ViewBag.SeatCategories as List<StarEvents.ViewModels.SeatCategoryViewModel>;
+    Layout = "~/Views/Shared/_LayoutOrganizer.cshtml";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1a1d28;
+        --gray: #64748b;
+        --gray-light: #f8fafc;
+        --gray-border: #e2e8f0;
+        --border-radius: 12px;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .promotion-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .page-header {
+        margin-bottom: 2.5rem;
+        text-align: center;
+    }
+
+    .page-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: var(--gray);
+        font-size: 1.1rem;
+    }
+
+    .promotion-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .card-subtitle {
+        opacity: 0.9;
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 2.5rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary-light);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 2px solid var(--gray-border);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+    }
+
+    .form-control:hover {
+        border-color: #cbd5e1;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    select.form-control[multiple] {
+        min-height: 120px;
+        padding: 0.75rem;
+    }
+
+    .input-with-icon {
+        position: relative;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+    }
+
+    .input-with-icon .form-control {
+        padding-left: 2.5rem;
+    }
+
+    .validation-message {
+        display: block;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        color: var(--danger);
+    }
+
+    /* Discount Type Toggle */
+    .discount-type-toggle {
+        display: flex;
+        background: var(--gray-light);
+        border-radius: 8px;
+        padding: 0.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .discount-option {
+        flex: 1;
+        text-align: center;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        color: var(--gray);
+    }
+
+    .discount-option.active {
+        background: white;
+        color: var(--primary);
+        box-shadow: var(--shadow);
+    }
+
+    /* Seat Categories Styling */
+    .seat-categories-container {
+        background: var(--gray-light);
+        border-radius: 8px;
+        padding: 1.5rem;
+        border: 2px solid var(--gray-border);
+    }
+
+    .seat-category-option {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        background: white;
+        border: 2px solid var(--gray-border);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .seat-category-option:hover {
+        border-color: var(--primary);
+        transform: translateX(4px);
+    }
+
+    .seat-category-option.selected {
+        background: var(--primary-light);
+        border-color: var(--primary);
+    }
+
+    .seat-checkbox {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--gray-border);
+        border-radius: 4px;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .seat-category-option.selected .seat-checkbox {
+        background: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .seat-category-option.selected .seat-checkbox::before {
+        content: '✓';
+        position: absolute;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .seat-category-info {
+        flex: 1;
+    }
+
+    .seat-category-name {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.25rem;
+    }
+
+    .seat-category-details {
+        font-size: 0.875rem;
+        color: var(--gray);
+    }
+
+    /* Price Comparison Table */
+    .price-table-container {
+        background: #f0f9ff;
+        border: 2px dashed var(--primary);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: none;
+    }
+
+    .price-table-title {
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .price-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+    }
+
+    .price-table th {
+        background: var(--primary-light);
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .price-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--gray-border);
+        color: var(--dark);
+    }
+
+    .price-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .discounted-price {
+        font-weight: 600;
+        color: var(--success);
+    }
+
+    /* Checkbox Styling */
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--gray-light);
+        border-radius: 8px;
+        border: 2px solid var(--gray-border);
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--gray-border);
+        border-radius: 4px;
+        cursor: pointer;
+        position: relative;
+        appearance: none;
+        background: white;
+    }
+
+    .form-check-input:checked {
+        background: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .form-check-input:checked::before {
+        content: '✓';
+        position: absolute;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .form-check-label {
+        font-weight: 500;
+        color: var(--dark);
+        cursor: pointer;
+    }
+
+    /* Date Range Styling */
+    .date-range {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .date-input {
+        position: relative;
+    }
+
+    .date-input .form-control {
+        padding-right: 2.5rem;
+    }
+
+    .date-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--gray-border);
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 2px 4px rgba(18, 89, 243, 0.2);
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(18, 89, 243, 0.3);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--dark);
+        border: 2px solid var(--gray-border);
+    }
+
+    .btn-secondary:hover {
+        background: var(--gray-light);
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Input Hints */
+    .input-hint {
+        font-size: 0.875rem;
+        color: var(--gray);
+        margin-top: 0.25rem;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .promotion-container {
+            padding: 1rem;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .date-range {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .seat-category-option {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+    }
+</style>
+
+<div class="promotion-container">
+    <div class="page-header">
+        <h1 class="page-title">Create New Promotion</h1>
+        <p class="page-subtitle">Set up special discounts and offers for your event</p>
+    </div>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.EventId)
+        @Html.HiddenFor(m => m.DiscountType, new { id = "DiscountType" })
+
+        <div class="promotion-card">
+            <div class="card-header">
+                <h2 class="card-title">Promotion Details</h2>
+                <p class="card-subtitle">Configure your discount settings and target audience</p>
+            </div>
+
+            <div class="card-body">
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-tag"></i>
+                        Promotion Information
+                    </h3>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.DiscountName, new { @class = "form-label" })
+                            <div class="input-with-icon">
+                                <i class="fas fa-tag input-icon"></i>
+                                @Html.TextBoxFor(m => m.DiscountName, new
+                                {
+                                    @class = "form-control",
+                                    placeholder = "Early Bird Discount, Group Offer, etc."
+                                })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.DiscountName, "", new { @class = "validation-message" })
+                            <div class="input-hint">Give your promotion a recognizable name</div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.MaxUsage, new { @class = "form-label" })
+                            <div class="input-with-icon">
+                                <i class="fas fa-users input-icon"></i>
+                                @Html.TextBoxFor(m => m.MaxUsage, new
+                                {
+                                    @class = "form-control",
+                                    type = "number",
+                                    min = "1",
+                                    placeholder = "100"
+                                })
+                            </div>
+                            <div class="input-hint">Maximum number of times this discount can be used</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Description, new { @class = "form-label" })
+                        @Html.TextAreaFor(m => m.Description, new
+                        {
+                            @class = "form-control",
+                            rows = 3,
+                            placeholder = "Describe this promotion for your customers..."
+                        })
+                        <div class="input-hint">This description will be shown to customers</div>
+                    </div>
+                </div>
+
+                <!-- Target Seat Categories -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-chair"></i>
+                        Target Seat Categories
+                    </h3>
+
+                    <div class="seat-categories-container">
+                        <div class="form-label">Select categories to apply this promotion:</div>
+                        <div id="seatCategoriesList">
+                            @foreach (var sc in seatCategories)
+                            {
+                                <div class="seat-category-option" data-category="@sc.CategoryName">
+                                    <div class="seat-checkbox"></div>
+                                    <div class="seat-category-info">
+                                        <div class="seat-category-name">@sc.CategoryName</div>
+                                        <div class="seat-category-details">
+                                            Rs. @sc.Price.ToString("N2") • @sc.AvailableSeats of @sc.TotalSeats available
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        @Html.Hidden("SeatCategory", "", new { id = "selectedSeatCategories" })
+                        <div class="input-hint">Click to select/deselect categories. Promotion will apply only to selected categories.</div>
+                    </div>
+                </div>
+
+                <!-- Discount Settings -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-percent"></i>
+                        Discount Configuration
+                    </h3>
+
+                    <div class="discount-type-toggle" id="discountTypeToggle">
+                        <div class="discount-option active" data-type="percent">
+                            Percentage Discount
+                        </div>
+                        <div class="discount-option" data-type="amount">
+                            Fixed Amount Discount
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group" id="percentGroup">
+                            @Html.LabelFor(m => m.DiscountPercent, new { @class = "form-label" })
+                            <div class="input-with-icon">
+                                <i class="fas fa-percent input-icon"></i>
+                                @Html.TextBoxFor(m => m.DiscountPercent, new
+                                {
+                                    @class = "form-control",
+                                    type = "number",
+                                    step = "0.01",
+                                    min = "0",
+                                    max = "100",
+                                    placeholder = "0.00",
+                                    id = "DiscountPercent"
+                                })
+                            </div>
+                            <div class="input-hint">Enter discount percentage (0-100%)</div>
+                        </div>
+
+                        <div class="form-group" id="amountGroup" style="display: none;">
+                            @Html.LabelFor(m => m.DiscountAmount, new { @class = "form-label" })
+                            <div class="input-with-icon">
+                                <i class="fas fa-rupee-sign input-icon"></i>
+                                @Html.TextBoxFor(m => m.DiscountAmount, new
+                                {
+                                    @class = "form-control",
+                                    type = "number",
+                                    step = "0.01",
+                                    min = "0",
+                                    placeholder = "0.00",
+                                    id = "DiscountAmount"
+                                })
+                            </div>
+                            <div class="input-hint">Enter fixed discount amount in rupees</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price Comparison -->
+                <div class="price-table-container" id="price-table-container">
+                    <div class="price-table-title">
+                        <i class="fas fa-chart-line"></i>
+                        Price Comparison
+                    </div>
+                    <table class="price-table">
+                        <thead>
+                            <tr>
+                                <th>Seat Category</th>
+                                <th>Original Price</th>
+                                <th>Discounted Price</th>
+                                <th>Total Seats</th>
+                                <th>Available</th>
+                            </tr>
+                        </thead>
+                        <tbody id="price-table-body">
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Validity Period -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        Validity Period
+                    </h3>
+
+                    <div class="date-range">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.StartDate, new { @class = "form-label" })
+                            <div class="date-input">
+                                @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-dd}", new
+                                {
+                                    @class = "form-control",
+                                    type = "date"
+                                })
+                                <i class="fas fa-calendar-day date-icon"></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "validation-message" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.EndDate, new { @class = "form-label" })
+                            <div class="date-input">
+                                @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-dd}", new
+                                {
+                                    @class = "form-control",
+                                    type = "date"
+                                })
+                                <i class="fas fa-calendar-day date-icon"></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.EndDate, "", new { @class = "validation-message" })
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-toggle-on"></i>
+                        Promotion Status
+                    </h3>
+
+                    <div class="checkbox-group">
+                        <div class="form-check">
+                            @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-check-input", id = "IsActive" })
+                            <label class="form-check-label" for="IsActive">
+                                Activate this promotion immediately
+                            </label>
+                        </div>
+                    </div>
+                    <div class="input-hint">When active, customers can see and use this promotion</div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i>
+                        Create Promotion
+                    </button>
+                    <a href="@Url.Action("EventPromotions", "Organizer", new { id = Model.EventId })" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Cache seat category data for fast lookup
+        var seatData = {};
+        @foreach (var sc in seatCategories)
+        {
+            <text>
+                seatData["@sc.CategoryName"] = {
+                    price: @sc.Price,
+                    totalSeats: @sc.TotalSeats,
+                    available: @sc.AvailableSeats
+                };
+            </text>
+        }
+
+        // Discount type toggle functionality
+        function setupDiscountTypeToggle() {
+            const discountTypeToggle = document.getElementById('discountTypeToggle');
+            const percentGroup = document.getElementById('percentGroup');
+            const amountGroup = document.getElementById('amountGroup');
+            const discountTypeInput = document.getElementById('DiscountType'); // <-- CRITICAL
+
+            function updateDiscountType(type) {
+                const options = discountTypeToggle.querySelectorAll('.discount-option');
+                options.forEach(opt => opt.classList.remove('active'));
+                discountTypeToggle.querySelector(`[data-type="${type}"]`).classList.add('active');
+                discountTypeInput.value = type; 
+
+                if (type === 'percent') {
+                    percentGroup.style.display = 'block';
+                    amountGroup.style.display = 'none';
+                    document.getElementById('DiscountAmount').value = '';
+                } else {
+                    percentGroup.style.display = 'none';
+                    amountGroup.style.display = 'block';
+                    document.getElementById('DiscountPercent').value = '';
+                }
+                updatePriceTable();
+            }
+
+            discountTypeToggle.addEventListener('click', function (e) {
+                if (e.target.classList.contains('discount-option')) {
+                    updateDiscountType(e.target.dataset.type);
+                }
+            });
+
+            // Set initial state
+            updateDiscountType('percent');
+        }
+
+        // Seat category selection
+        function setupSeatCategorySelection() {
+            const seatCategoriesList = document.getElementById('seatCategoriesList');
+            const selectedSeatCategories = document.getElementById('selectedSeatCategories');
+            let selectedCategories = [];
+
+            seatCategoriesList.addEventListener('click', function(e) {
+                const option = e.target.closest('.seat-category-option');
+                if (option) {
+                    const category = option.dataset.category;
+                    const index = selectedCategories.indexOf(category);
+                    
+                    if (index > -1) {
+                        // Deselect
+                        selectedCategories.splice(index, 1);
+                        option.classList.remove('selected');
+                    } else {
+                        // Select
+                        selectedCategories.push(category);
+                        option.classList.add('selected');
+                    }
+                    
+                    // Update hidden field
+                    selectedSeatCategories.value = selectedCategories.join(',');
+                    updatePriceTable();
+                }
+            });
+        }
+
+        function getSelectedSeatCategories() {
+            const selectedField = document.getElementById('selectedSeatCategories');
+            return selectedField.value ? selectedField.value.split(',') : [];
+        }
+
+        function updatePriceTable() {
+            const selectedCategories = getSelectedSeatCategories();
+            const percent = parseFloat(document.getElementById('DiscountPercent').value) || 0;
+            const amount = parseFloat(document.getElementById('DiscountAmount').value) || 0;
+            const focusField = document.activeElement ? document.activeElement.id : '';
+            const tableBody = document.getElementById('price-table-body');
+            const container = document.getElementById('price-table-container');
+
+            if (selectedCategories.length === 0) {
+                container.style.display = 'none';
+                tableBody.innerHTML = '';
+                return;
+            }
+
+            let tableContent = '';
+            selectedCategories.forEach(function(cat) {
+                const seat = seatData[cat];
+                const basePrice = seat.price;
+                let discPrice = basePrice;
+                
+                if (focusField === "DiscountPercent" && percent > 0) {
+                    discPrice = basePrice - (basePrice * percent / 100.0);
+                } else if (focusField === "DiscountAmount" && amount > 0) {
+                    discPrice = basePrice - amount;
+                } else if (percent > 0) {
+                    discPrice = basePrice - (basePrice * percent / 100.0);
+                } else if (amount > 0) {
+                    discPrice = basePrice - amount;
+                }
+
+                // Ensure discounted price doesn't go below 0
+                discPrice = Math.max(0, discPrice);
+
+                tableContent += `<tr>
+                    <td><strong>${cat}</strong></td>
+                    <td>Rs. ${basePrice.toFixed(2)}</td>
+                    <td class="discounted-price">Rs. ${discPrice.toFixed(2)}</td>
+                    <td>${seat.totalSeats}</td>
+                    <td>${seat.available}</td>
+                </tr>`;
+            });
+            
+            tableBody.innerHTML = tableContent;
+            container.style.display = 'block';
+        }
+
+        // Form validation
+        function setupFormValidation() {
+            const form = document.querySelector('form');
+            
+            form.addEventListener('submit', function(e) {
+                const selectedCategories = getSelectedSeatCategories();
+                const percent = parseFloat(document.getElementById('DiscountPercent').value) || 0;
+                const amount = parseFloat(document.getElementById('DiscountAmount').value) || 0;
+
+                // Validate seat categories selection
+                if (selectedCategories.length === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one seat category for this promotion.');
+                    return;
+                }
+
+                // Validate discount amount
+                if (percent === 0 && amount === 0) {
+                    e.preventDefault();
+                    alert('Please enter either a percentage discount or a fixed amount discount.');
+                    return;
+                }
+
+                if (percent > 0 && amount > 0) {
+                    e.preventDefault();
+                    alert('Please enter only one type of discount (percentage OR fixed amount).');
+                    return;
+                }
+
+                // Validate discount values
+                if (percent > 100) {
+                    e.preventDefault();
+                    alert('Discount percentage cannot exceed 100%.');
+                    return;
+                }
+
+                // Show loading state
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Promotion...';
+                submitBtn.disabled = true;
+
+                // Re-enable after 5 seconds (fallback)
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }, 5000);
+            });
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDiscountTypeToggle();
+            setupSeatCategorySelection();
+            setupFormValidation();
+
+            // Set up event listeners for real-time updates
+            document.getElementById('DiscountPercent').addEventListener('input', updatePriceTable);
+            document.getElementById('DiscountAmount').addEventListener('input', updatePriceTable);
+            
+            // Initial call to set up any existing values
+            updatePriceTable();
+        });
+    </script>
+}

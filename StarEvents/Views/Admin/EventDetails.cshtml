@@ -1,0 +1,716 @@
+﻿@model StarEvents.ViewModels.AdminEventDetailsViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Event Details";
+}
+
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1a1d28;
+        --gray: #64748b;
+        --gray-light: #f8fafc;
+        --gray-border: #e2e8f0;
+        --border-radius: 8px;
+    }
+
+    .event-details-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    /* Header Section */
+    .event-header {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 3rem;
+        margin-bottom: 3rem;
+        align-items: start;
+    }
+
+    .event-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .event-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--dark);
+        line-height: 1.2;
+        margin: 0;
+    }
+
+    .event-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-published {
+        background: var(--success);
+        color: white;
+    }
+
+    .status-draft {
+        background: var(--gray);
+        color: white;
+    }
+
+    .category-tag {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    /* Image Container with 1:1 Ratio */
+    .event-image-container {
+        width: 400px;
+        height: 400px;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .event-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--gray-border);
+        transition: opacity 0.3s ease;
+    }
+
+    .image-placeholder {
+        width: 100%;
+        height: 100%;
+        background: var(--gray-light);
+        border: 2px dashed var(--gray-border);
+        border-radius: var(--border-radius);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray);
+        gap: 1rem;
+    }
+
+    .placeholder-icon {
+        font-size: 3rem;
+    }
+
+    .placeholder-text {
+        font-size: 0.875rem;
+        text-align: center;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--gray-border);
+        text-align: center;
+        transition: transform 0.2s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--gray);
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Content Sections */
+    .content-section {
+        background: white;
+        border: 1px solid var(--gray-border);
+        border-radius: var(--border-radius);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+
+    .section-header {
+        background: var(--gray-light);
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-body {
+        padding: 1.5rem;
+    }
+
+    /* Event Details */
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .detail-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-light);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        flex-shrink: 0;
+    }
+
+    .detail-content h4 {
+        margin: 0 0 0.25rem 0;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-content p {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--dark);
+    }
+
+    /* Description */
+    .description-content {
+        color: var(--dark);
+        line-height: 1.6;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    /* Seat Categories Table */
+    .seats-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+    }
+
+        .seats-table th {
+            background: var(--gray-light);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 1px solid var(--gray-border);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .seats-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-border);
+            color: var(--dark);
+        }
+
+        .seats-table tr:last-child td {
+            border-bottom: none;
+        }
+
+    .price {
+        font-weight: 600;
+        color: var(--success);
+    }
+
+    .availability {
+        font-weight: 500;
+    }
+
+    .availability-high {
+        color: var(--success);
+    }
+
+    .availability-medium {
+        color: var(--warning);
+    }
+
+    .availability-low {
+        color: var(--danger);
+    }
+
+    /* Bookings */
+    .bookings-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .booking-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        background: var(--gray-light);
+        border-radius: var(--border-radius);
+        border: 1px solid var(--gray-border);
+        transition: transform 0.2s ease;
+    }
+
+        .booking-item:hover {
+            transform: translateX(4px);
+        }
+
+    .booking-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .booking-avatar {
+        width: 40px;
+        height: 40px;
+        background: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+    }
+
+    .booking-details h4 {
+        margin: 0 0 0.25rem 0;
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .booking-details p {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--gray);
+    }
+
+    .booking-meta {
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .booking-status {
+        padding: 0.25rem 0.75rem;
+        background: var(--success);
+        color: white;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+
+    .booking-date {
+        font-size: 0.875rem;
+        color: var(--gray);
+        margin-top: 0.25rem;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--gray-border);
+    }
+
+    .btn {
+        padding: 0.875rem 1.5rem;
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(18, 89, 243, 0.2);
+        }
+
+    .btn-secondary {
+        background: white;
+        color: var(--dark);
+        border: 1px solid var(--gray-border);
+    }
+
+        .btn-secondary:hover {
+            background: var(--gray-light);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+    .btn-warning {
+        background: var(--warning);
+        color: white;
+    }
+
+        .btn-warning:hover {
+            background: #e69507;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(245, 158, 11, 0.2);
+        }
+
+    /* Responsive */
+    @@media (max-width: 1024px) {
+        .event-header {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .event-image-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .event-details-container {
+            padding: 1rem;
+        }
+
+        .event-title {
+            font-size: 2rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .booking-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .booking-meta {
+            text-align: left;
+            width: 100%;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .event-image-container {
+            height: 300px;
+        }
+
+        .event-title {
+            font-size: 1.75rem;
+        }
+    }
+</style>
+
+
+<div class="event-details-container">
+    <!-- Header Section -->
+    <div class="event-header">
+        <div class="event-info">
+            <h1 class="event-title">@Model.Title</h1>
+            <div class="event-meta">
+                <span class="status-badge @(Model.IsPublished ? "status-published" : "status-draft")">
+                    @(Model.IsPublished ? "Published" : "Draft")
+                </span>
+                <span class="category-tag">@Model.Category</span>
+            </div>
+            <p class="description-content">@Model.Description</p>
+        </div>
+        <div class="event-image-container">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Url.Content(Model.ImageUrl)" class="event-image" alt="@Model.Title" />
+            }
+            else
+            {
+                <div class="image-placeholder">
+                    <i class="fas fa-calendar-alt placeholder-icon"></i>
+                    <div class="placeholder-text">No event image available</div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">@Model.TotalSeats</div>
+            <div class="stat-label">Total Seats</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.AvailableSeats</div>
+            <div class="stat-label">Available Seats</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@(Model.TotalSeats - Model.AvailableSeats)</div>
+            <div class="stat-label">Booked Seats</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@(Model.Bookings?.Count ?? 0)</div>
+            <div class="stat-label">Total Bookings</div>
+        </div>
+    </div>
+
+    <!-- Event Details -->
+    <div class="content-section">
+        <div class="section-header">
+            <h3 class="section-title">
+                <i class="fas fa-info-circle"></i>
+                Event Details
+            </h3>
+        </div>
+        <div class="section-body">
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="detail-content">
+                        <h4>Organizer</h4>
+                        <p>@Model.OrganizerName (@Model.OrganizerEmail)</p>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="detail-content">
+                        <h4>Date & Time</h4>
+                        <p>@Model.EventDate.ToString("MMMM dd, yyyy 'at' h:mm tt")</p>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="detail-content">
+                        <h4>Location</h4>
+                        <p>@Model.Location</p>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="detail-content">
+                        <h4>Venue</h4>
+                        <p>@Model.VenueName</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seat Categories -->
+    <div class="content-section">
+        <div class="section-header">
+            <h3 class="section-title">
+                <i class="fas fa-chair"></i>
+                Seat Categories & Pricing
+            </h3>
+        </div>
+        <div class="section-body">
+            <table class="seats-table">
+                <thead>
+                    <tr>
+                        <th>Seat Type</th>
+                        <th>Price</th>
+                        <th>Total Seats</th>
+                        <th>Available</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sc in Model.SeatCategories)
+                    {
+                        var availabilityClass = sc.AvailableSeats >= sc.TotalSeats * 0.5 ? "availability-high" :
+                                              sc.AvailableSeats >= sc.TotalSeats * 0.2 ? "availability-medium" : "availability-low";
+                        <tr>
+                            <td><strong>@sc.CategoryName</strong></td>
+                            <td class="price">Rs. @sc.Price.ToString("N2")</td>
+                            <td>@sc.TotalSeats</td>
+                            <td class="availability @availabilityClass">@sc.AvailableSeats</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Promotional Discounts -->
+    @if (Model.Promotions != null && Model.Promotions.Any())
+    {
+        <div class="content-section">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <i class="fas fa-percent"></i>
+                    Promotional Discounts
+                </h3>
+            </div>
+            <div class="section-body">
+                <table class="seats-table">
+                    <thead>
+                        <tr>
+                            <th>Discount Name</th>
+                            <th>Seat Category</th>
+                            <th>Type</th>
+                            <th>Discount</th>
+                            <th>Actual Price</th>
+                            <th>Discounted Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.Promotions)
+                        {
+                            <tr>
+                                <td>@p.DiscountName</td>
+                                <td>@p.SeatCategory</td>
+                                <td>@(p.DiscountType == "percent" ? "Percent" : "Fixed")</td>
+                                <td>
+                                    @if (p.DiscountType == "percent" && p.DiscountPercent.HasValue)
+                                    {
+                                        <span>@p.DiscountPercent.Value.ToString("0.##")%</span>
+                                    }
+                                    else if (p.DiscountType == "amount" && p.DiscountAmount.HasValue)
+                                    {
+                                        <span>Rs. @p.DiscountAmount.Value.ToString("N2")</span>
+                                    }
+                                </td>
+                                <td>Rs. @p.BasePrice.ToString("N2")</td>
+                                <td>
+                                    @if (p.BasePrice != p.DiscountedPrice)
+                                    {
+                                        <span class="price" style="color:#ef4444;">
+                                            Rs. @p.DiscountedPrice.ToString("N2")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    <!-- Recent Bookings -->
+    @if (Model.Bookings != null && Model.Bookings.Count > 0)
+    {
+        <div class="content-section">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <i class="fas fa-ticket-alt"></i>
+                    Recent Bookings
+                </h3>
+            </div>
+            <div class="section-body">
+                <div class="bookings-list">
+                    @foreach (var b in Model.Bookings.Take(5))
+                    {
+                        <div class="booking-item">
+                            <div class="booking-info">
+                                <div class="booking-avatar">
+                                    @b.CustomerName.Substring(0, 1).ToUpper()
+                                </div>
+                                <div class="booking-details">
+                                    <h4>@b.CustomerName</h4>
+                                    <p>@b.Email • @b.Quantity ticket@(b.Quantity > 1 ? "s" : "")</p>
+                                </div>
+                            </div>
+                            <div class="booking-meta">
+                                <span class="booking-status">@b.Status</span>
+                                <div class="booking-date">@b.BookedAt.ToString("MMM dd, yyyy")</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,319 @@
+﻿@model IEnumerable<StarEvents.Models.EventCardViewModel>
+
+@{
+    ViewBag.Title = "Search Results";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --primary-color: #1259f3;
+        --primary-hover: #0d47c1;
+        --secondary-color: #1a237e;
+        --accent-color: #ffc107;
+        --light-text-color: #f8f9fa;
+        --dark-text-color: #181c32;
+        --section-bg: #f5f7fa;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--section-bg);
+        color: var(--dark-text-color);
+        overflow-x: hidden;
+    }
+
+    .page-header-full {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        background: linear-gradient(135deg, #1259f3 0%, #1a237e 100%);
+        color: #fff;
+        text-align: center;
+        padding: 64px 0 48px 0;
+        box-sizing: border-box;
+        z-index: 2;
+    }
+
+    .page-header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    .page-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        margin: 0;
+    }
+
+    .events-filters-float {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: -35px;
+        margin-bottom: 36px;
+    }
+
+    .container {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding-left: 20px;
+        padding-right: 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .events-controls {
+        background: white;
+        padding: 25px;
+        border-radius: 18px;
+        box-shadow: 0 6px 32px rgba(37,99,235,0.10);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .row.align-items-center {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 20px 0;
+    }
+
+    .col-md-6 {
+        flex: 1 1 300px;
+        min-width: 0;
+        padding: 0 10px;
+    }
+
+    .search-box {
+        position: relative;
+        max-width: 400px;
+    }
+
+        .search-box .fas {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+    .search-input {
+        width: 100%;
+        padding: 12px 15px 12px 45px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+        }
+
+    .filter-controls {
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+    }
+
+    .filter-select {
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background: white;
+        font-size: 0.9rem;
+        min-width: 150px;
+        cursor: pointer;
+    }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+    .event-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 28px;
+        align-items: stretch;
+        justify-items: center;
+        margin-bottom: 60px;
+        margin-top: 20px;
+    }
+
+    .no-events {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+
+    .no-events-icon {
+        font-size: 4rem;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    .no-events h3 {
+        font-family: 'Montserrat', sans-serif;
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+
+    .no-events p {
+        color: #6c757d;
+        margin-bottom: 25px;
+        font-size: 1.1rem;
+    }
+</style>
+
+<div class="events-page">
+    <!-- Page Header Full Width -->
+    <div class="page-header-full">
+        <div class="page-header-content">
+            <h1 class="page-title">Search Results</h1>
+            <p class="page-subtitle">Events matching your search criteria</p>
+        </div>
+    </div>
+
+    <!-- Floating Search/Filters -->
+    <div class="events-filters-float">
+        <div class="container">
+            <div class="events-controls">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="eventSearch" placeholder="Search events..." class="search-input">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="filter-controls">
+                            <select class="filter-select" id="categoryFilter">
+                                <option value="">All Categories</option>
+                                <option value="Concert">Concerts</option>
+                                <option value="Theatre">Theatre</option>
+                                <option value="Cultural">Cultural</option>
+                                <option value="Sports">Sports</option>
+                            </select>
+                            <select class="filter-select" id="dateFilter">
+                                <option value="">Any Date</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Cards List -->
+    <div class="container">
+        @if (Model != null && Model.Any())
+        {
+            <div class="event-cards-grid">
+                @Html.DisplayFor(m => m)
+            </div>
+        }
+        else
+        {
+            <div class="no-events">
+                <div class="no-events-icon">
+                    <i class="far fa-calendar-times"></i>
+                </div>
+                <h3>No Events Found</h3>
+                <p>We couldn't find any events matching your search. Try different keywords or filters!</p>
+                <a href="/Events" class="btn btn-primary">Browse All Events</a>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('eventSearch');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const eventCards = document.querySelectorAll('.event-card-modern');
+
+        function filterEvents() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const categoryValue = categoryFilter.value;
+            const dateValue = dateFilter.value;
+
+            eventCards.forEach(card => {
+                const title = card.querySelector('.event-card-title-modern').textContent.toLowerCase();
+                const category = card.getAttribute('data-category');
+                const eventDate = new Date(card.getAttribute('data-date'));
+                const today = new Date();
+
+                let matchesSearch = title.includes(searchTerm);
+                let matchesCategory = !categoryValue || category === categoryValue;
+                let matchesDate = true;
+
+                if (dateValue) {
+                    const diffTime = eventDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    switch (dateValue) {
+                        case 'today':
+                            matchesDate = diffDays === 0;
+                            break;
+                        case 'week':
+                            matchesDate = diffDays >= 0 && diffDays <= 7;
+                            break;
+                        case 'month':
+                            matchesDate = diffDays >= 0 && diffDays <= 30;
+                            break;
+                    }
+                }
+
+                if (matchesSearch && matchesCategory && matchesDate) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', filterEvents);
+        categoryFilter.addEventListener('change', filterEvents);
+        dateFilter.addEventListener('change', filterEvents);
+
+        // Add click event to entire event card
+        eventCards.forEach(card => {
+            card.addEventListener('click', function (e) {
+                if (!e.target.classList.contains('event-card-btn-modern')) {
+                    const link = this.querySelector('.event-card-btn-modern');
+                    if (link) {
+                        window.location.href = link.href;
+                    }
+                }
+            });
+        });
+    });
+</script>

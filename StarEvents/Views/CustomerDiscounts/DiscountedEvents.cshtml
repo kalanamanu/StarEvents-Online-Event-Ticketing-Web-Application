@@ -1,0 +1,497 @@
+﻿@model List<StarEvents.Models.EventCardViewModel>
+
+@{
+    ViewBag.Title = "Discounted Events";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--dark);
+        min-height: 100vh;
+        padding: 20px 0;
+    }
+
+    .discounted-events-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* Header Section */
+    .page-header {
+        text-align: center;
+        padding: 40px 20px 30px 20px;
+        background: linear-gradient(135deg, var(--primary-light) 0%, #f0f7ff 100%);
+        border-radius: 20px;
+        margin: 0 0 30px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="rgba(18,89,243,0.03)"><path d="M50,0 L60,40 L100,50 L60,60 L50,100 L40,60 L0,50 L40,40 Z"/></svg>');
+            background-size: 60px 60px;
+            animation: float 20s infinite linear;
+        }
+
+    @@keyframes float {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: 60px 60px;
+        }
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .page-subtitle {
+        font-size: 1.1rem;
+        color: var(--gray);
+        position: relative;
+        z-index: 1;
+        font-weight: 500;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+
+    /* Search Section */
+    .search-section {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .search-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .search-icon {
+        color: var(--primary);
+    }
+
+    .events-count {
+        background: var(--primary);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .search-input-group {
+        position: relative;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 14px 45px 14px 16px;
+        border: 2px solid var(--gray-border);
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: var(--gray-light);
+    }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+            background: white;
+        }
+
+    .search-clear {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--gray);
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+        .search-clear:hover {
+            color: var(--danger);
+            background: var(--gray-light);
+        }
+
+    /* Events Grid */
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 2px dashed var(--gray-border);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: var(--gray);
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 10px;
+    }
+
+    .empty-description {
+        color: var(--gray);
+        font-size: 1rem;
+        margin-bottom: 25px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.5;
+    }
+
+    .btn-explore {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+        .btn-explore:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    /* No Results State */
+    .no-results {
+        text-align: center;
+        padding: 40px 20px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+    }
+
+    .no-results-icon {
+        font-size: 3rem;
+        color: var(--gray);
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+
+    .no-results-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 8px;
+    }
+
+    .no-results-description {
+        color: var(--gray);
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .page-header {
+            padding: 30px 20px 25px 20px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .events-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .search-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .search-input-group {
+            max-width: 100%;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .discounted-events-container {
+            padding: 0 15px;
+        }
+
+        .page-header {
+            padding: 25px 15px 20px 15px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+        }
+
+        .search-section {
+            padding: 20px;
+        }
+
+        .events-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="discounted-events-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <h1 class="page-title">Discounted Events</h1>
+        <p class="page-subtitle">Discover amazing events with special discounts and exclusive offers</p>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+        <div class="search-header">
+            <h2 class="search-title">
+                <i class="fas fa-percent search-icon"></i>
+                Special Offers
+                <span class="events-count">@Model.Count Events</span>
+            </h2>
+        </div>
+
+        <div class="search-input-group">
+            <input type="text"
+                   id="eventSearchInput"
+                   class="search-input"
+                   placeholder="Search events by title, venue, or category..."
+                   onkeyup="filterEventCards()" />
+            <button type="button" class="search-clear" onclick="clearSearch()" style="display: none;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Events Grid -->
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-percent"></i>
+            </div>
+            <h3 class="empty-title">No Discounted Events Available</h3>
+            <p class="empty-description">
+                There are no discounted events available at the moment.
+                Check back later for special offers and promotions!
+            </p>
+            <a href="/Events" class="btn-explore">
+                <i class="fas fa-calendar-alt"></i>
+                Explore All Events
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="events-grid" id="eventCardList">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var evt = Model[i];
+                <div class="event-card-search"
+                     data-title="@evt.Title.ToLower()"
+                     data-venue="@evt.VenueName.ToLower()"
+                     data-category="@evt.Category.ToLower()">
+                    @Html.DisplayFor(x => x[i], "EventCardViewModel")
+                </div>
+            }
+        </div>
+
+        <!-- No Results Message (Hidden by default) -->
+        <div id="noResultsMessage" class="no-results" style="display: none;">
+            <div class="no-results-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h3 class="no-results-title">No Events Found</h3>
+            <p class="no-results-description">
+                No events match your search criteria. Try adjusting your search terms.
+            </p>
+            <button type="button" class="btn-explore" onclick="clearSearch()">
+                <i class="fas fa-redo"></i>
+                Clear Search
+            </button>
+        </div>
+    }
+</div>
+
+<script>
+    function filterEventCards() {
+        var input = document.getElementById('eventSearchInput');
+        var filter = input.value.toLowerCase();
+        var cards = document.getElementsByClassName('event-card-search');
+        var noResultsMessage = document.getElementById('noResultsMessage');
+        var clearButton = document.querySelector('.search-clear');
+
+        var visibleCount = 0;
+
+        for (var i = 0; i < cards.length; i++) {
+            var title = cards[i].getAttribute('data-title');
+            var venue = cards[i].getAttribute('data-venue');
+            var category = cards[i].getAttribute('data-category');
+
+            if (title.includes(filter) || venue.includes(filter) || category.includes(filter)) {
+                cards[i].style.display = 'block';
+                visibleCount++;
+            } else {
+                cards[i].style.display = 'none';
+            }
+        }
+
+        // Show/hide clear button
+        if (filter.length > 0) {
+            clearButton.style.display = 'block';
+        } else {
+            clearButton.style.display = 'none';
+        }
+
+        // Show/hide no results message
+        if (noResultsMessage) {
+            if (visibleCount === 0 && filter.length > 0) {
+                noResultsMessage.style.display = 'block';
+            } else {
+                noResultsMessage.style.display = 'none';
+            }
+        }
+
+        // Add smooth animation to visible cards
+        setTimeout(() => {
+            const visibleCards = document.querySelectorAll('.event-card-search[style="display: block"]');
+            visibleCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }, 10);
+    }
+
+    function clearSearch() {
+        var input = document.getElementById('eventSearchInput');
+        input.value = '';
+        filterEventCards();
+        input.focus();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add smooth animations to initial cards
+        const cards = document.querySelectorAll('.event-card-search');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Auto-focus search input
+        const searchInput = document.getElementById('eventSearchInput');
+        if (searchInput) {
+            setTimeout(() => {
+                searchInput.focus();
+            }, 300);
+        }
+
+        // Add enter key support for search
+        searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                filterEventCards();
+            }
+        });
+    });
+</script>

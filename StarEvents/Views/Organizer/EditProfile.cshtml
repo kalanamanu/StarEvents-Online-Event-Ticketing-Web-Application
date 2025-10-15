@@ -1,0 +1,591 @@
+﻿@model StarEvents.Models.OrganizerProfile
+@{
+    Layout = "~/Views/Shared/_LayoutOrganizer.cshtml";
+    ViewBag.Title = "Edit Profile";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .edit-profile-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+        font-size: 2rem;
+    }
+
+    .page-subtitle {
+        color: var(--gray);
+        font-size: 1.1rem;
+    }
+
+    .edit-profile-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+    }
+
+    .form-section {
+        padding: 2rem;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--gray-light);
+    }
+
+    .section-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 1.25rem;
+    }
+
+    .section-title {
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 1.3rem;
+        margin: 0;
+    }
+
+    .avatar-section {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        padding: 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .avatar-container {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 20px;
+        border: 4px solid white;
+        box-shadow: var(--shadow-lg);
+        object-fit: cover;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: var(--primary);
+    }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 16px;
+        }
+
+    .avatar-upload {
+        position: absolute;
+        bottom: -10px;
+        right: -10px;
+    }
+
+    .upload-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        border: 3px solid white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow);
+    }
+
+        .upload-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+    .file-input {
+        display: none;
+    }
+
+    .avatar-info {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.9rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 2px solid var(--gray-border);
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+        }
+
+        .form-control:hover {
+            border-color: #cbd5e1;
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+        line-height: 1.5;
+    }
+
+    .validation-message {
+        display: block;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        color: var(--danger);
+    }
+
+    .field-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid var(--gray-light);
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        color: var(--dark);
+        border: 2px solid var(--gray-border);
+    }
+
+        .btn-secondary:hover {
+            background: var(--gray-light);
+            transform: translateY(-2px);
+            color: var(--dark);
+            text-decoration: none;
+        }
+
+    .alert-success {
+        background: var(--success);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow);
+    }
+
+        .alert-success:before {
+            content: '✓';
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+    .character-count {
+        text-align: right;
+        font-size: 0.875rem;
+        color: var(--gray);
+        margin-top: 0.25rem;
+    }
+
+        .character-count.warning {
+            color: var(--warning);
+        }
+
+        .character-count.danger {
+            color: var(--danger);
+        }
+
+    .input-with-icon {
+        position: relative;
+    }
+
+        .input-with-icon .form-control {
+            padding-right: 3rem;
+        }
+
+    @@media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .avatar-section {
+            padding: 1.5rem;
+        }
+    }
+
+    .preview-image {
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+        .preview-image img {
+            max-width: 200px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+</style>
+
+<div class="edit-profile-container">
+    <!-- Header -->
+    <div class="page-header">
+        <h1 class="page-title">Edit Organization Profile</h1>
+        <p class="page-subtitle">Update your organization details and profile information</p>
+    </div>
+
+    <!-- Success Message -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["Success"]
+        </div>
+    }
+
+    @using (Html.BeginForm("EditProfile", "Organizer", FormMethod.Post, new { enctype = "multipart/form-data", @class = "edit-profile-form" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="edit-profile-card">
+            <!-- Avatar Section -->
+            <div class="avatar-section">
+                <div class="avatar-container">
+                    <div class="profile-avatar" id="avatarPreview">
+                        @if (!string.IsNullOrEmpty(Model.ProfilePhoto))
+                        {
+                            <img src="@Model.ProfilePhoto" alt="@Model.OrganizationName" id="currentAvatar" />
+                        }
+                        else
+                        {
+                            <i class="fas fa-building" id="defaultAvatar"></i>
+                        }
+                    </div>
+                    <div class="avatar-upload">
+                        <div class="upload-btn" onclick="document.getElementById('ProfilePhotoUpload').click()">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <input type="file" id="ProfilePhotoUpload" name="ProfilePhotoUpload" class="file-input" accept="image/*" onchange="previewImage(this)" />
+                    </div>
+                </div>
+                <div class="avatar-info">
+                    <p>Click the camera icon to upload a new profile photo</p>
+                    <p>Recommended: Square image, 400x400px or larger</p>
+                </div>
+            </div>
+
+            <!-- Form Section -->
+            <div class="form-section">
+                <!-- Organization Information -->
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h2 class="section-title">Organization Information</h2>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="OrganizationName">
+                            Organization Name *
+                        </label>
+                        <div class="input-with-icon">
+                            @Html.TextBoxFor(m => m.OrganizationName, new
+                            {
+                                @class = "form-control",
+                                required = "required",
+                                placeholder = "Enter your organization name"
+                            })
+                            <i class="fas fa-building field-icon"></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.OrganizationName, "", new { @class = "validation-message" })
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="ContactPerson">
+                            Contact Person *
+                        </label>
+                        <div class="input-with-icon">
+                            @Html.TextBoxFor(m => m.ContactPerson, new
+                            {
+                                @class = "form-control",
+                                required = "required",
+                                placeholder = "Full name of contact person"
+                            })
+                            <i class="fas fa-user field-icon"></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.ContactPerson, "", new { @class = "validation-message" })
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="PhoneNumber">
+                            Phone Number *
+                        </label>
+                        <div class="input-with-icon">
+                            @Html.TextBoxFor(m => m.PhoneNumber, new
+                            {
+                                @class = "form-control",
+                                required = "required",
+                                placeholder = "+91 1234567890"
+                            })
+                            <i class="fas fa-phone field-icon"></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "validation-message" })
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Address">
+                            Address *
+                        </label>
+                        <div class="input-with-icon">
+                            @Html.TextBoxFor(m => m.Address, new
+                            {
+                                @class = "form-control",
+                                required = "required",
+                                placeholder = "Full organization address"
+                            })
+                            <i class="fas fa-map-marker-alt field-icon"></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Address, "", new { @class = "validation-message" })
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label class="form-label" for="Description">
+                        Organization Description
+                    </label>
+                    @Html.TextAreaFor(m => m.Description, new
+                    {
+                        @class = "form-control",
+                        rows = 4,
+                        placeholder = "Describe your organization, the types of events you host, and your mission...",
+                        maxlength = "500"
+                    })
+                    <div class="character-count" id="descriptionCount">
+                        <span id="currentCount">@(Model.Description?.Length ?? 0)</span>/500 characters
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "validation-message" })
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Changes
+                    </button>
+                    <a href="@Url.Action("Profile", "Organizer")" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Character count for description
+        const descriptionTextarea = document.getElementById('Description');
+        const descriptionCount = document.getElementById('descriptionCount');
+        const currentCount = document.getElementById('currentCount');
+
+        if (descriptionTextarea) {
+            descriptionTextarea.addEventListener('input', function() {
+                const length = this.value.length;
+                currentCount.textContent = length;
+
+                // Update color based on character count
+                if (length > 450) {
+                    descriptionCount.classList.add('danger');
+                    descriptionCount.classList.remove('warning');
+                } else if (length > 400) {
+                    descriptionCount.classList.add('warning');
+                    descriptionCount.classList.remove('danger');
+                } else {
+                    descriptionCount.classList.remove('warning', 'danger');
+                }
+            });
+
+            // Trigger input event to set initial state
+            descriptionTextarea.dispatchEvent(new Event('input'));
+        }
+
+        // Add focus effects to form controls
+        const formControls = document.querySelectorAll('.form-control');
+        formControls.forEach(control => {
+            control.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+
+            control.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+    });
+
+    // Image preview functionality
+    function previewImage(input) {
+        const preview = document.getElementById('avatarPreview');
+        const defaultAvatar = document.getElementById('defaultAvatar');
+        const currentAvatar = document.getElementById('currentAvatar');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                // Remove default avatar icon
+                if (defaultAvatar) {
+                    defaultAvatar.style.display = 'none';
+                }
+
+                // Create or update image element
+                let img = currentAvatar;
+                if (!img) {
+                    img = document.createElement('img');
+                    img.id = 'currentAvatar';
+                    img.alt = 'Profile preview';
+                    preview.appendChild(img);
+                }
+
+                img.src = e.target.result;
+                img.style.display = 'block';
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Form submission enhancement
+    document.querySelector('.edit-profile-form')?.addEventListener('submit', function(e) {
+        const requiredFields = this.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.style.borderColor = 'var(--danger)';
+            } else {
+                field.style.borderColor = '';
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+            // Scroll to first error
+            const firstError = this.querySelector('[required]:invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
+        }
+    });
+</script>

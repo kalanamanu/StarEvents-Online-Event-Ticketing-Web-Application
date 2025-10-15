@@ -1,0 +1,1006 @@
+﻿@model StarEvents.ViewModels.CheckoutViewModel
+
+@{
+    ViewBag.Title = "Checkout";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --border-radius: 16px;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--dark);
+        min-height: 100vh;
+        padding: 20px 0;
+        line-height: 1.6;
+    }
+
+    .checkout-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        position: relative;
+    }
+
+        .checkout-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            z-index: 2;
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+        }
+
+    .checkout-header {
+        text-align: center;
+        padding: 50px 40px 40px 40px;
+        background: linear-gradient(135deg, var(--primary-light) 0%, #f0f7ff 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .checkout-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="rgba(18,89,243,0.03)"><path d="M50,0 L60,40 L100,50 L60,60 L50,100 L40,60 L0,50 L40,40 Z"/></svg>');
+            background-size: 80px 80px;
+            animation: float 20s infinite linear;
+        }
+
+    @@keyframes float {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: 80px 80px;
+        }
+    }
+
+    .checkout-header h2 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 1;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .checkout-subtitle {
+        font-size: 1.2rem;
+        color: var(--gray);
+        position: relative;
+        z-index: 1;
+        font-weight: 500;
+        max-width: 500px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+
+    .checkout-content {
+        padding: 40px;
+    }
+
+    .checkout-layout {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 40px;
+        align-items: start;
+    }
+
+    /* Section Cards - Enhanced Design */
+    .section-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .section-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+    .section-header {
+        background: var(--gray-light);
+        padding: 24px 30px;
+        border-bottom: 1px solid var(--gray-border);
+        position: relative;
+    }
+
+        .section-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 2px 0 0 2px;
+        }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .section-icon {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+    }
+
+    .section-body {
+        padding: 30px;
+    }
+
+    /* Order Summary Section */
+    .event-info {
+        margin-bottom: 25px;
+    }
+
+    .event-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 12px;
+        line-height: 1.3;
+    }
+
+    .event-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--gray);
+        font-size: 0.95rem;
+    }
+
+    .meta-icon {
+        width: 18px;
+        text-align: center;
+        color: var(--primary);
+    }
+
+    .ticket-details {
+        background: var(--gray-light);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+        border: 1px solid var(--gray-border);
+    }
+
+    .ticket-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+        .ticket-row:last-child {
+            border-bottom: none;
+        }
+
+    .ticket-label {
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .ticket-value {
+        font-weight: 600;
+        color: var(--dark);
+        text-align: right;
+    }
+
+    .old-price {
+        color: var(--gray);
+        text-decoration: line-through;
+        font-size: 0.9rem;
+        margin-right: 8px;
+    }
+
+    .discount-badge {
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        margin-top: 10px;
+    }
+
+    /* Payment Summary Section */
+    .price-breakdown {
+        background: var(--gray-light);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 25px;
+        border: 1px solid var(--gray-border);
+    }
+
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+        .price-row:last-child {
+            border-bottom: none;
+        }
+
+    .price-label {
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .price-value {
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .loyalty-section {
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        border: 2px solid #22c55e;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+
+    .loyalty-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .loyalty-icon {
+        color: #22c55e;
+        font-size: 1.2rem;
+    }
+
+    .loyalty-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #166534;
+        margin: 0;
+    }
+
+    .loyalty-points {
+        font-size: 1rem;
+        color: #166534;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .redeem-form {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .redeem-input {
+        padding: 12px 14px;
+        border: 1px solid var(--gray-border);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        width: 120px;
+        text-align: center;
+        background: white;
+    }
+
+    .redeem-btn {
+        background: var(--success);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .redeem-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+    .points-discount {
+        color: var(--success);
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .payable-amount {
+        background: linear-gradient(135deg, var(--primary-light), #f0f7ff);
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+        border: 2px solid var(--primary-light);
+        margin-top: 20px;
+    }
+
+    .payable-label {
+        font-size: 1rem;
+        color: var(--gray);
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .payable-value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--primary);
+        line-height: 1;
+    }
+
+    .payable-currency {
+        font-size: 1.2rem;
+        color: var(--gray);
+        font-weight: 600;
+    }
+
+    /* Payment Method Section */
+    .saved-cards-section {
+        margin-bottom: 30px;
+    }
+
+    .subsection-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .subsection-icon {
+        color: var(--primary);
+    }
+
+    .saved-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .saved-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 18px;
+        background: var(--gray-light);
+        border-radius: 10px;
+        border: 1px solid var(--gray-border);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .saved-card:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .saved-card.selected {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(18, 89, 243, 0.15);
+        }
+
+    .card-radio {
+        margin: 0;
+    }
+
+    .card-info {
+        flex: 1;
+    }
+
+    .card-brand {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 4px;
+    }
+
+    .card-number {
+        color: var(--gray);
+        font-size: 0.9rem;
+    }
+
+    .card-expiry {
+        color: var(--gray);
+        font-size: 0.9rem;
+    }
+
+    .no-cards {
+        text-align: center;
+        color: var(--gray);
+        padding: 30px 20px;
+        background: var(--gray-light);
+        border-radius: 10px;
+        border: 1px solid var(--gray-border);
+    }
+
+    .new-card-section {
+        margin-bottom: 30px;
+    }
+
+    .card-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 0.9rem;
+    }
+
+    .form-input {
+        padding: 14px 16px;
+        border: 1px solid var(--gray-border);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+        }
+
+    .btn-checkout {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 14px;
+        padding: 18px 45px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 8px 30px rgba(18, 89, 243, 0.3);
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        justify-content: center;
+    }
+
+        .btn-checkout::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(18, 89, 243, 0.4);
+        }
+
+            .btn-checkout:hover::before {
+                left: 100%;
+            }
+
+    .security-note {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.9rem;
+        color: var(--gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    /* Progress Steps */
+    .checkout-progress {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 40px;
+        position: relative;
+    }
+
+    .progress-steps {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+    }
+
+    .step-indicator {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--gray-light);
+        border: 2px solid var(--gray-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: var(--gray);
+        transition: all 0.3s ease;
+    }
+
+    .step-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--gray);
+        transition: all 0.3s ease;
+    }
+
+    .progress-step.active .step-indicator {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    .progress-step.active .step-label {
+        color: var(--primary);
+    }
+
+    .progress-step.completed .step-indicator {
+        background: var(--success);
+        border-color: var(--success);
+        color: white;
+    }
+
+    .progress-step.completed .step-label {
+        color: var(--success);
+    }
+
+    .progress-connector {
+        width: 80px;
+        height: 2px;
+        background: var(--gray-border);
+        position: relative;
+    }
+
+        .progress-connector.active {
+            background: var(--primary);
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 1024px) {
+        .checkout-layout {
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .checkout-container {
+            margin: 20px auto;
+        }
+
+        .checkout-header {
+            padding: 40px 25px 30px 25px;
+        }
+
+            .checkout-header h2 {
+                font-size: 2.2rem;
+            }
+
+        .checkout-content {
+            padding: 30px 25px;
+        }
+
+        .card-form {
+            grid-template-columns: 1fr;
+        }
+
+        .payable-value {
+            font-size: 1.8rem;
+        }
+
+        .progress-steps {
+            gap: 10px;
+        }
+
+        .progress-connector {
+            width: 40px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        body {
+            padding: 10px 0;
+        }
+
+        .checkout-header h2 {
+            font-size: 2rem;
+        }
+
+        .checkout-content {
+            padding: 25px 20px;
+        }
+
+        .section-body {
+            padding: 20px;
+        }
+
+        .payable-value {
+            font-size: 1.6rem;
+        }
+
+        .progress-steps {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="checkout-container">
+    @if (TempData["ErrorMessage"] != null || ViewBag.Error != null)
+    {
+        <div class="alert alert-danger" style="color: #fff; background: #ef4444; padding: 16px; border-radius: 10px; margin: 28px auto 18px auto; text-align:center; max-width: 600px;">
+            @(TempData["ErrorMessage"] ?? ViewBag.Error)
+        </div>
+    }
+    <!-- Premium Header -->
+    <div class="checkout-header">
+        <h2>Secure Checkout</h2>
+        <div class="checkout-subtitle">Complete your booking with secure payment</div>
+    </div>
+
+    <div class="checkout-content">
+
+        <div class="checkout-layout">
+            <!-- Left Column: Order & Payment Details -->
+            <div class="checkout-left">
+                <!-- Order Summary -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-receipt"></i>
+                            </div>
+                            Order Summary
+                        </h3>
+                    </div>
+                    <div class="section-body">
+                        <div class="event-info">
+                            <div class="event-title">@Model.EventTitle</div>
+                            <div class="event-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar-alt meta-icon"></i>
+                                    <span>@Model.EventDate.ToString("dddd, MMMM dd, yyyy")</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-clock meta-icon"></i>
+                                    <span>@Model.EventDate.ToString("h:mm tt")</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-map-marker-alt meta-icon"></i>
+                                    <span>@Model.VenueName</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-details">
+                            <div class="ticket-row">
+                                <div class="ticket-label">Ticket Type</div>
+                                <div class="ticket-value">@Model.SeatCategoryName</div>
+                            </div>
+                            <div class="ticket-row">
+                                <div class="ticket-label">Quantity</div>
+                                <div class="ticket-value">@Model.Quantity tickets</div>
+                            </div>
+                            <div class="ticket-row">
+                                <div class="ticket-label">Price per ticket</div>
+                                <div class="ticket-value">
+                                    @if (Model.OriginalPricePerTicket.HasValue && Model.OriginalPricePerTicket.Value > Model.PricePerTicket)
+                                    {
+                                        <span class="old-price">@Model.OriginalPricePerTicket.Value.ToString("N0") LKR</span>
+                                    }
+                                    @Model.PricePerTicket.ToString("N0") LKR
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.PromotionLabel))
+                            {
+                                <div class="discount-badge">
+                                    <i class="fas fa-percent"></i>
+                                    @Model.PromotionLabel
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            Payment Method
+                        </h3>
+                    </div>
+                    <div class="section-body">
+                        <form id="paymentForm" method="post" action="@Url.Action("Checkout", "Checkout")">
+                            <!-- Saved Cards -->
+                            <div class="saved-cards-section">
+                                <h4 class="subsection-title">
+                                    <i class="fas fa-wallet subsection-icon"></i>
+                                    Saved Cards
+                                </h4>
+                                @if (Model.SavedCards != null && Model.SavedCards.Count > 0)
+                                {
+                                    <div class="saved-cards">
+                                        @foreach (var card in Model.SavedCards)
+                                        {
+                                            <label class="saved-card @(card.IsDefault ? "selected" : "")">
+                                                <input type="radio" name="selectedCardId" value="@card.CardId" @(card.IsDefault ? "checked" : "") class="card-radio" />
+                                                <div class="card-info">
+                                                    <div class="card-brand">@card.CardHolderName</div>
+                                                    <div class="card-number">**** **** **** @card.CardNumber.Substring(card.CardNumber.Length - 4)</div>
+                                                    <div class="card-expiry">Expires: @card.Expiry</div>
+                                                </div>
+                                            </label>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="no-cards">
+                                        <i class="fas fa-credit-card" style="font-size: 2rem; margin-bottom: 10px; color: var(--gray);"></i>
+                                        <div>No saved cards found</div>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- New Card -->
+                            <div class="new-card-section">
+                                <h4 class="subsection-title">
+                                    <i class="fas fa-plus-circle subsection-icon"></i>
+                                    Add New Card
+                                </h4>
+                                <div class="card-form">
+                                    <div class="form-group full-width">
+                                        <label class="form-label">Card Number</label>
+                                        <input type="text" name="newCardNumber" placeholder="1234 5678 9012 3456" maxlength="19" class="form-input" autocomplete="off" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Cardholder Name</label>
+                                        <input type="text" name="newCardHolder" placeholder="John Doe" class="form-input" autocomplete="off" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Expiry Date</label>
+                                        <input type="text" name="newCardExpiry" placeholder="MM/YY" maxlength="5" class="form-input" autocomplete="off" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">CVV</label>
+                                        <input type="text" name="newCardCVV" placeholder="123" maxlength="4" class="form-input" autocomplete="off" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="EventId" value="@Model.EventId" />
+                            <input type="hidden" name="SeatCategoryId" value="@Model.SeatCategoryId" />
+                            <input type="hidden" name="Quantity" value="@Model.Quantity" />
+                            <input type="hidden" name="PointsToRedeem" value="@Model.PointsToRedeem" />
+
+                            <button type="submit" class="btn-checkout">
+                                <i class="fas fa-lock"></i>
+                                Pay & Complete Booking
+                            </button>
+
+                            <div class="security-note">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>256-bit SSL Encrypted • Your payment is secure</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Payment Summary -->
+            <div class="checkout-right">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </div>
+                            Payment Summary
+                        </h3>
+                    </div>
+                    <div class="section-body">
+                        <div class="price-breakdown">
+                            <div class="price-row">
+                                <div class="price-label">Order Total</div>
+                                <div class="price-value">@Model.TotalPrice.ToString("N0") LKR</div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.PromotionLabel))
+                            {
+                                <div class="price-row">
+                                    <div class="price-label">Promotion Applied</div>
+                                    <div class="price-value" style="color: var(--success);">@Model.PromotionLabel</div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Loyalty Points -->
+                        <div class="loyalty-section">
+                            <div class="loyalty-header">
+                                <i class="fas fa-gift loyalty-icon"></i>
+                                <h4 class="loyalty-title">Loyalty Points</h4>
+                            </div>
+                            <div class="loyalty-points">
+                                Available Points: <strong>@Model.AvailableLoyaltyPoints</strong> (1 point = 1 LKR)
+                            </div>
+                            <form id="redeemForm" method="get" action="@Url.Action("Checkout", "Checkout")" class="redeem-form">
+                                <input type="hidden" name="EventId" value="@Model.EventId" />
+                                <input type="hidden" name="SeatCategoryId" value="@Model.SeatCategoryId" />
+                                <input type="hidden" name="Quantity" value="@Model.Quantity" />
+                                <input type="number" id="PointsToRedeem" name="PointsToRedeem" min="0" max="@Model.AvailableLoyaltyPoints" value="@Model.PointsToRedeem" class="redeem-input" />
+                                <button type="submit" class="redeem-btn">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    Apply
+                                </button>
+                            </form>
+                            <div class="points-discount">
+                                Discount from Points: <strong>@Model.PointsToRedeem LKR</strong>
+                            </div>
+                        </div>
+
+                        <!-- Final Payable Amount -->
+                        <div class="payable-amount">
+                            <div class="payable-label">Total Payable Amount</div>
+                            <div class="payable-value">@((Model.TotalPrice - Model.PointsToRedeem).ToString("N0"))</div>
+                            <div class="payable-currency">LKR</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Format card number input
+        const cardNumberInput = document.querySelector('input[name="newCardNumber"]');
+        if (cardNumberInput) {
+            cardNumberInput.addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                let formattedValue = value.match(/.{1,4}/g)?.join(' ');
+                e.target.value = formattedValue || value;
+            });
+        }
+
+        // Format expiry date input
+        const expiryInput = document.querySelector('input[name="newCardExpiry"]');
+        if (expiryInput) {
+            expiryInput.addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                e.target.value = value;
+            });
+        }
+
+        // Saved card selection
+        const savedCards = document.querySelectorAll('.saved-card');
+        savedCards.forEach(card => {
+            card.addEventListener('click', function () {
+                savedCards.forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) radio.checked = true;
+            });
+        });
+
+        // Form validation
+        const paymentForm = document.getElementById('paymentForm');
+        if (paymentForm) {
+            paymentForm.addEventListener('submit', function (e) {
+                const selectedCard = document.querySelector('input[name="selectedCardId"]:checked');
+                const newCardNumber = document.querySelector('input[name="newCardNumber"]').value;
+
+                // If no saved card is selected and new card is not fully filled
+                if (!selectedCard && (!newCardNumber || newCardNumber.replace(/\s/g, '').length < 16)) {
+                    e.preventDefault();
+                    alert('Please select a saved card or enter complete new card details.');
+                }
+            });
+        }
+    });
+</script>

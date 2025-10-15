@@ -1,0 +1,788 @@
+﻿@model List<StarEvents.Models.MyEventListItemViewModel>
+@{
+    Layout = "~/Views/Shared/_LayoutOrganizer.cshtml";
+    ViewBag.Title = "My Events";
+    string search = ViewBag.Search as string ?? "";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --border-radius: 12px;
+    }
+
+    .events-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+    .page-title-section {
+        flex: 1;
+    }
+
+    .page-title {
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+        font-size: 2.25rem;
+        letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+        color: var(--gray);
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        background: white;
+        border: 1px solid var(--gray-border);
+        border-radius: var(--border-radius);
+        padding: 0.5rem;
+        box-shadow: var(--shadow);
+    }
+
+    .search-input {
+        padding: 0.75rem 1rem;
+        border: none;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        width: 280px;
+        background: transparent;
+    }
+
+        .search-input:focus {
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: var(--gray);
+        }
+
+    .btn {
+        padding: 0.75rem 1.75rem;
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+        letter-spacing: 0.01em;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 2px 4px rgba(18, 89, 243, 0.2);
+    }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(18, 89, 243, 0.3);
+            color: white;
+        }
+
+    .btn-success {
+        background: var(--success);
+        color: white;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+    }
+
+        .btn-success:hover {
+            background: #0da271;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+    .btn-outline {
+        background: transparent;
+        color: var(--primary);
+        border: 1.5px solid var(--primary);
+    }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+    .btn-sm {
+        padding: 0.6rem 1.25rem;
+        font-size: 0.875rem;
+        border-radius: 10px;
+    }
+
+    /* Stats Overview */
+    .stats-overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem 1.5rem;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--dark);
+        line-height: 1;
+        margin-bottom: 0.5rem;
+        font-feature-settings: "tnum";
+    }
+
+    .stat-label {
+        color: var(--gray);
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* Events Grid */
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .event-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+
+        .event-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+    .event-header {
+        padding: 2rem;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        position: relative;
+        min-height: 140px;
+    }
+
+    .event-status {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        backdrop-filter: blur(10px);
+    }
+
+    .status-published {
+        background: rgba(255, 255, 255, 0.25);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .status-unpublished {
+        background: rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .event-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+    }
+
+    .event-category {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .event-body {
+        padding: 2rem;
+    }
+
+    .event-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        color: var(--gray);
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+        .meta-item i {
+            width: 16px;
+            text-align: center;
+            color: var(--primary);
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+    .seats-progress {
+        margin-top: 0.5rem;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: var(--gray-light);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 0.25rem;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--success), #22c55e);
+        border-radius: 3px;
+        transition: width 0.3s ease;
+    }
+
+    .event-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .action-row {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: space-between;
+    }
+
+    .action-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        padding: 0.75rem;
+        border-radius: 10px;
+        border: 1.5px solid var(--gray-border);
+        background: white;
+        color: var(--dark);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        min-width: 44px;
+    }
+
+        .action-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(18, 89, 243, 0.15);
+        }
+
+        .action-btn.danger:hover {
+            background: #fef2f2;
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+    }
+
+    .empty-state-icon {
+        font-size: 5rem;
+        margin-bottom: 2rem;
+        opacity: 0.7;
+        color: var(--primary);
+    }
+
+    .empty-state-title {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+        color: var(--dark);
+        font-weight: 600;
+    }
+
+    .empty-state-text {
+        margin-bottom: 2.5rem;
+        font-size: 1.1rem;
+        color: var(--gray);
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 1024px) {
+        .events-grid {
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1.5rem;
+        }
+
+        .header-actions {
+            justify-content: space-between;
+        }
+
+        .search-input {
+            width: 100%;
+        }
+
+        .events-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-row {
+            flex-direction: column;
+        }
+
+        .action-group {
+            justify-content: center;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .events-container {
+            padding: 0 1rem;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+        }
+
+        .stats-overview {
+            grid-template-columns: 1fr;
+        }
+
+        .event-header {
+            padding: 1.5rem;
+        }
+    }
+
+    /* Professional Enhancements */
+    .card-hover {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .professional-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .badge-promo {
+        background: #fde68a;
+        color: #b45309;
+        font-size: 0.85rem;
+        padding: 0.3em 0.7em;
+        border-radius: 999px;
+        margin-left: 0.75em;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25em;
+        font-weight: bold;
+    }
+</style>
+
+<div class="events-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="page-title-section">
+            <h1 class="page-title">Event Management</h1>
+            <p class="page-subtitle">Monitor and manage your event portfolio</p>
+        </div>
+        <div class="header-actions">
+            <form method="get" class="search-form">
+                <input type="text"
+                       name="search"
+                       value="@search"
+                       placeholder="Search events..."
+                       class="search-input" />
+                <button type="submit" class="btn btn-outline btn-sm">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
+            </form>
+            <a href="@Url.Action("CreateEvent", "Organizer")" class="btn btn-success">
+                <i class="fas fa-plus"></i>
+                New Event
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-overview">
+        <div class="stat-card">
+            <div class="stat-value">@Model.Count</div>
+            <div class="stat-label">Total Events</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.Count(e => e.IsPublished)</div>
+            <div class="stat-label">Published Events</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.Count(e => !e.IsPublished)</div>
+            <div class="stat-label">Draft Events</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.Count(e => e.EventDate > DateTime.Now)</div>
+            <div class="stat-label">Upcoming Events</div>
+        </div>
+    </div>
+
+    <!-- Events Grid -->
+    @if (Model.Any())
+    {
+        <div class="events-grid">
+            @foreach (var e in Model)
+            {
+                var seatsPercentage = e.TotalSeats > 0 ? (e.AvailableSeats / (double)e.TotalSeats) * 100 : 0;
+
+                <div class="event-card card-hover">
+                    <div class="event-header">
+                        <div class="event-status @(e.IsPublished ? "status-published" : "status-unpublished")">
+                            @(e.IsPublished ? "LIVE" : "DRAFT")
+                        </div>
+                        <h3 class="event-title">@e.Title</h3>
+                        <div class="event-category">
+                            <i class="fas fa-tag me-2"></i>@e.Category
+                            @if (e.Discounts != null && e.Discounts.Any())
+                            {
+                                foreach (var d in e.Discounts)
+                                {
+                                    <span class="badge badge-promo" title="@d.Name">
+                                        <i class="fas fa-percent"></i>
+                                        @d.Name
+                                        @if (d.Type == "percent" && d.Percent.HasValue)
+                                        {
+                                            @($" ({d.Percent:0.##}%)")
+                                        }
+                                        else if (d.Type == "amount" && d.Amount.HasValue)
+                                        {
+                                            @($" (Rs. {d.Amount:0.##})")
+                                        }
+                                    </span>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="event-body">
+                        <div class="event-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <div>
+                                    <strong>@e.EventDate.ToString("MMM dd, yyyy")</strong><br />
+                                    <span>@e.EventDate.ToString("h:mm tt")</span>
+                                </div>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <strong>@e.Location</strong><br />
+                                    <span>@e.VenueName</span>
+                                </div>
+                            </div>
+                            @if (e.TotalSeats > 0)
+                            {
+                                <div class="meta-item">
+                                    <i class="fas fa-chair"></i>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between">
+                                            <strong>Seat Availability</strong>
+                                            <span>@e.AvailableSeats/@e.TotalSeats</span>
+                                        </div>
+                                        <div class="seats-progress">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: @(100 - seatsPercentage)%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="event-actions">
+                            <div class="action-row">
+                                <div class="action-group">
+                                    <a href="@Url.Action("EditEvent", "Organizer", new { id = e.EventId })"
+                                       class="action-btn"
+                                       title="Edit Event">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="@Url.Action("EventDetails", "Organizer", new { id = e.EventId })"
+                                       class="action-btn"
+                                       title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("EventBookings", "Organizer", new { id = e.EventId })"
+                                       class="action-btn"
+                                       title="View Bookings">
+                                        <i class="fas fa-ticket-alt"></i>
+                                    </a>
+                                </div>
+                                <div class="action-group">
+                                    <form method="post"
+                                          action="@Url.Action(e.IsPublished ? "UnpublishEvent" : "PublishEvent", "Organizer")"
+                                          class="publish-form">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@e.EventId" />
+                                        <button type="submit"
+                                                class="action-btn @(e.IsPublished ? "" : "btn-success")"
+                                                title="@(e.IsPublished ? "Unpublish Event" : "Publish Event")">
+                                            <i class="fas @(e.IsPublished ? "fa-eye-slash" : "fa-eye")"></i>
+                                        </button>
+                                    </form>
+                                    <a href="@Url.Action("EventAnalytics", "Organizer", new { id = e.EventId })"
+                                       class="action-btn"
+                                       title="Analytics">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="action-row">
+                                <div class="action-group">
+                                    <a href="@Url.Action("EventPromotions", "Organizer", new { id = e.EventId })"
+                                       class="action-btn"
+                                       title="Promotions">
+                                        <i class="fas fa-percent"></i>
+                                    </a>
+                                    <a href="@Url.Action("EventSettings", "Organizer", new { id = e.EventId })"
+                                       class="action-btn"
+                                       title="Settings">
+                                        <i class="fas fa-cog"></i>
+                                    </a>
+                                </div>
+                                <form method="post"
+                                      action="@Url.Action("DeleteEvent", "Organizer")"
+                                      class="delete-form"
+                                      onsubmit="return confirm('Are you sure you want to delete \" @e.Title \"? This action cannot be undone.');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@e.EventId" />
+                                    <button type="submit"
+                                            class="action-btn danger"
+                                            title="Delete Event">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-calendar-plus"></i>
+            </div>
+            <h3 class="empty-state-title">No Events Found</h3>
+            <p class="empty-state-text">
+                @if (!string.IsNullOrEmpty(search))
+                {
+                    <text>No events match your search criteria "<strong>@search</strong>". Try adjusting your search terms or clear the search to see all events.</text>
+                }
+                else
+                {
+                    <text>You haven't created any events yet. Start building your event portfolio by creating your first professional event.</text>
+                }
+            </p>
+            <a href="@Url.Action("CreateEvent", "Organizer")" class="btn btn-success btn-lg">
+                <i class="fas fa-plus-circle"></i>
+                Create Your First Event
+            </a>
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Enhanced loading states
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function (e) {
+                const submitBtn = this.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    const originalHTML = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    submitBtn.disabled = true;
+
+                    // Revert after 3 seconds if still loading (fallback)
+                    setTimeout(() => {
+                        if (submitBtn.disabled) {
+                            submitBtn.innerHTML = originalHTML;
+                            submitBtn.disabled = false;
+                        }
+                    }, 3000);
+                }
+            });
+        });
+
+        // Professional hover effects
+        const cards = document.querySelectorAll('.event-card, .stat-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-4px)';
+            });
+
+            card.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Enhanced search with debouncing
+        let searchTimeout;
+        const searchInput = document.querySelector('.search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    const eventCards = document.querySelectorAll('.event-card');
+                    let visibleCount = 0;
+
+                    eventCards.forEach(card => {
+                        const title = card.querySelector('.event-title').textContent.toLowerCase();
+                        const category = card.querySelector('.event-category').textContent.toLowerCase();
+
+                        if (title.includes(searchTerm) || category.includes(searchTerm)) {
+                            card.style.display = 'block';
+                            visibleCount++;
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+
+                    // Show/hide stats based on search
+                    const statsOverview = document.querySelector('.stats-overview');
+                    if (statsOverview) {
+                        statsOverview.style.display = searchTerm ? 'none' : 'grid';
+                    }
+                }, 300);
+            });
+        }
+
+        // Professional confirmation dialogs
+        const publishForms = document.querySelectorAll('.publish-form');
+        publishForms.forEach(form => {
+            form.addEventListener('submit', function (e) {
+                const isPublishing = this.action.includes('PublishEvent');
+                const eventTitle = this.closest('.event-card').querySelector('.event-title').textContent;
+                const action = isPublishing ? 'publish' : 'unpublish';
+
+                if (!confirm(`This will ${action} "${eventTitle}". ${isPublishing ? 'The event will become visible to customers.' : 'The event will be hidden from customers.'} Continue?`)) {
+                    e.preventDefault();
+                }
+            });
+        });
+    });
+</script>

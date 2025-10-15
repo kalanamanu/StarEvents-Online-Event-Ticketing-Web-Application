@@ -1,0 +1,1182 @@
+﻿@model List<StarEvents.ViewModels.AdminEventListViewModel>
+@{
+    ViewBag.Title = "Events";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    int totalEvents = Model?.Count ?? 0;
+    int totalTicketsSold = Model?.Sum(e => e.TicketsSold) ?? 0;
+    int totalTickets = Model?.Sum(e => e.TotalTickets) ?? 0;
+    decimal totalRevenue = Model?.Sum(e => e.Revenue) ?? 0m;
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #f8fafc;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--dark);
+        line-height: 1.6;
+    }
+
+    .events-management-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header Section */
+    .dashboard-header {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .header-info {
+        flex: 1;
+    }
+
+    .dashboard-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dashboard-icon {
+        color: var(--primary);
+    }
+
+    .dashboard-subtitle {
+        color: var(--gray);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(18, 89, 243, 0.2);
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-success {
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(16, 185, 129, 0.2);
+    }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    /* Stats Section */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 1.5rem;
+    }
+
+    .stat-events {
+        background: linear-gradient(135deg, #e8efff, #d4e1ff);
+        color: var(--primary);
+    }
+
+    .stat-tickets {
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        color: var(--success);
+    }
+
+    .stat-revenue {
+        background: linear-gradient(135deg, #fef7cd, #fef3c7);
+        color: var(--warning);
+    }
+
+    .stat-value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 5px;
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--gray);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-subtext {
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-top: 5px;
+    }
+
+    /* Enhanced Filters Section */
+    .filters-section {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+    }
+
+    .filters-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .filters-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .filters-icon {
+        color: var(--primary);
+    }
+
+    .search-container {
+        position: relative;
+        flex: 1;
+        max-width: 400px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 12px 45px 12px 16px;
+        border: 2px solid var(--gray-border);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        background: white;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--gray);
+        }
+
+    .search-icon {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+        transition: color 0.3s ease;
+    }
+
+    .search-input:focus + .search-icon {
+        color: var(--primary);
+    }
+
+    .filters-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        align-items: end;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .filter-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .filter-select {
+        padding: 12px 16px;
+        border: 2px solid var(--gray-border);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        background: white;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+        }
+
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+        height: fit-content;
+    }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+    /* Events Cards Section */
+    .events-section {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        margin-bottom: 40px;
+    }
+
+    .section-header {
+        background: var(--gray-light);
+        padding: 20px 25px;
+        border-bottom: 1px solid var(--gray-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-icon {
+        color: var(--primary);
+    }
+
+    .events-count {
+        background: var(--primary);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 25px;
+        padding: 30px;
+    }
+
+    .event-card {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid var(--gray-border);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+    .event-header {
+        padding: 20px 25px 15px;
+        border-bottom: 1px solid var(--gray-border);
+        background: var(--gray-light);
+    }
+
+    .event-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 5px;
+        line-height: 1.3;
+    }
+
+    .event-organizer {
+        font-size: 0.9rem;
+        color: var(--gray);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .event-body {
+        padding: 20px 25px;
+    }
+
+    .event-details {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .event-detail {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .detail-icon {
+        color: var(--primary);
+        width: 16px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .detail-content {
+        flex: 1;
+    }
+
+    .detail-label {
+        font-size: 0.8rem;
+        color: var(--gray);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .detail-value {
+        font-size: 0.95rem;
+        color: var(--dark);
+        font-weight: 500;
+    }
+
+    .event-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 12px;
+        border-radius: 8px;
+        background: var(--gray-light);
+    }
+
+    .stat-number {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        line-height: 1;
+    }
+
+    .stat-text {
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-top: 4px;
+    }
+
+    .event-footer {
+        padding: 15px 25px 20px;
+        border-top: 1px solid var(--gray-border);
+        background: var(--gray-light);
+    }
+
+    .event-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        margin-bottom: 15px;
+    }
+
+    .status-active {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .status-inactive {
+        background: linear-gradient(135deg, #f1f5f9, #e5e7eb);
+        color: var(--gray);
+        border: 1px solid var(--gray-border);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn-info {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+        box-shadow: 0 1px 3px rgba(14, 165, 233, 0.2);
+        flex: 1;
+        justify-content: center;
+    }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-warning {
+        background: linear-gradient(135deg, var(--warning), #d97706);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+        box-shadow: 0 1px 3px rgba(245, 158, 11, 0.2);
+        flex: 1;
+        justify-content: center;
+    }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-danger {
+        background: linear-gradient(135deg, var(--danger), #dc2626);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2);
+        flex: 1;
+        justify-content: center;
+    }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            color: white;
+        }
+
+    .btn-dark {
+        background: linear-gradient(135deg, var(--dark), #374151);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 3px rgba(31, 41, 55, 0.2);
+        flex: 1;
+        justify-content: center;
+    }
+
+        .btn-dark:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(31, 41, 55, 0.3);
+            color: white;
+        }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--gray);
+        grid-column: 1 / -1;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: var(--dark);
+    }
+
+    .empty-description {
+        font-size: 1rem;
+        margin-bottom: 25px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.5;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+        width: 100%;
+        background: var(--gray-border);
+        border-radius: 10px;
+        overflow: hidden;
+        height: 8px;
+        margin-top: 5px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(135deg, var(--success), #059669);
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 1024px) {
+        .filters-form {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .events-grid {
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        }
+
+        .search-container {
+            max-width: 100%;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .events-management-container {
+            padding: 15px;
+        }
+
+        .dashboard-header {
+            padding: 25px 20px;
+        }
+
+        .header-content {
+            flex-direction: column;
+        }
+
+        .filters-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filters-form {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .filter-actions {
+            justify-content: center;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .events-grid {
+            grid-template-columns: 1fr;
+            padding: 20px;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .search-container {
+            max-width: 100%;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .dashboard-title {
+            font-size: 1.6rem;
+        }
+
+        .filter-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="events-management-container">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-calendar-alt dashboard-icon"></i>
+                    Events Management
+                </h1>
+                <div class="dashboard-subtitle">
+                    Manage and monitor all events, tickets, and revenue across the platform
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon stat-events">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-value">@totalEvents</div>
+            <div class="stat-label">Total Events</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon stat-tickets">
+                <i class="fas fa-ticket-alt"></i>
+            </div>
+            <div class="stat-value">@totalTicketsSold</div>
+            <div class="stat-label">Tickets Sold</div>
+            <div class="stat-subtext">of @totalTickets total</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon stat-revenue">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-value">LKR @totalRevenue.ToString("N0")</div>
+            <div class="stat-label">Total Revenue</div>
+        </div>
+    </div>
+
+    <!-- Enhanced Filters Section -->
+    <div class="filters-section">
+        <div class="filters-header">
+            <h3 class="filters-title">
+                <i class="fas fa-filter filters-icon"></i>
+                Filter & Search Events
+            </h3>
+            <div class="search-container">
+                <input type="text"
+                       name="search"
+                       class="search-input"
+                       placeholder="Search by event, organizer, venue..."
+                       value="@(ViewBag.FilterSearch ?? "")" />
+                <i class="fas fa-search search-icon"></i>
+            </div>
+        </div>
+
+        @using (Html.BeginForm("Events", "Admin", FormMethod.Get))
+        {
+            <input type="hidden" name="search" value="@(ViewBag.FilterSearch ?? "")" />
+
+            <div class="filters-form">
+                <div class="filter-group">
+                    <label class="filter-label">Event Status</label>
+                    <select name="status" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="Active" @(ViewBag.FilterStatus as string == "Active" ? "selected" : "")>Active</option>
+                        <option value="Inactive" @(ViewBag.FilterStatus as string == "Inactive" ? "selected" : "")>Inactive</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Sort By</label>
+                    <select name="sort" class="filter-select">
+                        <option value="">Default</option>
+                        <option value="newest" @(ViewBag.FilterSort as string == "newest" ? "selected" : "")>Newest First</option>
+                        <option value="oldest" @(ViewBag.FilterSort as string == "oldest" ? "selected" : "")>Oldest First</option>
+                        <option value="revenue" @(ViewBag.FilterSort as string == "revenue" ? "selected" : "")>Highest Revenue</option>
+                    </select>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-filter"></i>
+                        Apply Filters
+                    </button>
+                    <a href="@Url.Action("Events", "Admin")" class="btn-secondary">
+                        <i class="fas fa-redo"></i>
+                        Clear All
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Events Cards Section -->
+    <div class="events-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-list section-icon"></i>
+                All Events
+                <span class="events-count">@Model.Count Events</span>
+            </h2>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="events-grid">
+                @foreach (var e in Model)
+                {
+                    var progressPercentage = e.TotalTickets > 0 ? (e.TicketsSold * 100.0 / e.TotalTickets) : 0;
+
+                    <div class="event-card">
+                        <div class="event-header">
+                            <h3 class="event-title">@e.Title</h3>
+                            <div class="event-organizer">
+                                <i class="fas fa-user-circle"></i>
+                                @e.OrganizerName
+                            </div>
+                        </div>
+
+                        <div class="event-body">
+                            <div class="event-details">
+                                <div class="event-detail">
+                                    <i class="fas fa-map-marker-alt detail-icon"></i>
+                                    <div class="detail-content">
+                                        <div class="detail-label">Venue</div>
+                                        <div class="detail-value">@e.VenueName</div>
+                                    </div>
+                                </div>
+
+                                <div class="event-detail">
+                                    <i class="fas fa-calendar-day detail-icon"></i>
+                                    <div class="detail-content">
+                                        <div class="detail-label">Event Date</div>
+                                        <div class="detail-value">@e.EventDate.ToString("MMM dd, yyyy 'at' h:mm tt")</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="event-stats">
+                                <div class="stat-item">
+                                    <div class="stat-number">@e.TicketsSold</div>
+                                    <div class="stat-text">Sold</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">LKR @e.Revenue.ToString("N0")</div>
+                                    <div class="stat-text">Revenue</div>
+                                </div>
+                            </div>
+
+                            <div class="detail-label">Ticket Progress</div>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: @progressPercentage%"></div>
+                            </div>
+                            <div class="detail-value">@e.TicketsSold / @e.TotalTickets tickets sold (@progressPercentage.ToString("0")%)</div>
+                        </div>
+
+                        <div class="event-footer">
+                            <div class="event-status @(e.Status == "Active" ? "status-active" : "status-inactive")">
+                                <i class="fas @(e.Status == "Active" ? "fa-check-circle" : "fa-times-circle")"></i>
+                                @e.Status
+                            </div>
+
+                            <div class="action-buttons">
+                                <a href="@Url.Action("EventDetails", "Admin", new { id = e.EventId })" class="btn-info" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </a>
+                               
+                                <button type="button" class="btn-danger" onclick="deleteEvent(@e.EventId, this)" title="Delete Event">
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="btn-dark"
+                                        onclick="toggleEventActive(@e.EventId, this)"
+                                        title="@(e.Status == "Active" ? "Deactivate Event" : "Activate Event")">
+                                    <i class="fas @(e.Status == "Active" ? "fa-pause" : "fa-play")"></i>
+                                    @(e.Status == "Active" ? "Deactivate" : "Activate")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-calendar-times"></i>
+                </div>
+                <h3 class="empty-title">No Events Found</h3>
+                <p class="empty-description">
+                    @if (ViewBag.FilterStatus != null || !string.IsNullOrEmpty(ViewBag.FilterSearch as string))
+                    {
+                        <text>No events match your current search and filter criteria. Try adjusting your filters.</text>
+                    }
+                    else
+                    {
+                        <text>No events are currently available in the system.</text>
+                    }
+                </p>
+                @if (ViewBag.FilterStatus != null || !string.IsNullOrEmpty(ViewBag.FilterSearch as string))
+                {
+                    <a href="@Url.Action("Events", "Admin")" class="btn-primary">
+                        <i class="fas fa-redo"></i>
+                        Clear All Filters
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("CreateEvent", "Admin")" class="btn-success">
+                        <i class="fas fa-plus-circle"></i>
+                        Create First Event
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function getAntiForgeryToken() {
+            return $('input[name="__RequestVerificationToken"]').val();
+        }
+
+        // Enhanced search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-input');
+            const searchForm = document.querySelector('.filters-section form');
+
+            // Auto-submit search on enter
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        updateSearchValue();
+                        searchForm.submit();
+                    }
+                });
+
+                // Auto-submit when search input loses focus (if value changed)
+                searchInput.addEventListener('blur', function() {
+                    updateSearchValue();
+                });
+            }
+
+            function updateSearchValue() {
+                const hiddenSearchInput = document.querySelector('input[name="search"][type="hidden"]');
+                if (hiddenSearchInput && searchInput) {
+                    hiddenSearchInput.value = searchInput.value;
+                }
+            }
+
+            // Add smooth animations
+            const sections = document.querySelectorAll('.dashboard-header, .stats-grid, .filters-section, .events-section');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    section.style.transition = 'all 0.5s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Add loading states to action buttons
+            document.querySelectorAll('.btn-primary, .btn-success, .btn-secondary').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (this.tagName === 'A' && this.href !== '#') {
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                        this.style.pointerEvents = 'none';
+
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.style.pointerEvents = '';
+                        }, 3000);
+                    }
+                });
+            });
+        });
+
+        function deleteEvent(eventId, btn) {
+            Swal.fire({
+                title: 'Delete Event?',
+                text: 'This will permanently delete the event and all associated data.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete permanently!',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#ef4444',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading state
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                    btn.disabled = true;
+
+                    $.post('@Url.Action("DeleteEvent", "Admin")', {
+                        id: eventId,
+                        __RequestVerificationToken: getAntiForgeryToken()
+                    }, function (res) {
+                        if (res.success) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'Event has been permanently deleted.',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Error', res.message || 'Could not delete event.', 'error');
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        }
+                    }).fail(function() {
+                        Swal.fire('Error', 'An error occurred while deleting the event.', 'error');
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    });
+                }
+            });
+        }
+
+        function toggleEventActive(eventId, btn) {
+    var isActive = $(btn).text().trim().toLowerCase().includes("deactivate");
+    var actionText = isActive ? "deactivate" : "activate";
+    var iconHtml = isActive
+        ? '<i class="fas fa-spinner fa-spin"></i> Deactivating...'
+        : '<i class="fas fa-spinner fa-spin"></i> Activating...';
+
+    Swal.fire({
+        title: (isActive ? 'Deactivate' : 'Activate') + ' Event?',
+        text: 'This will ' + actionText + ' the event.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, ' + actionText + '!',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: isActive ? '#f59e0b' : '#10b981'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Loading state
+            var originalText = btn.innerHTML;
+            btn.innerHTML = iconHtml;
+            btn.disabled = true;
+
+            $.post('@Url.Action("ToggleEventActive", "Admin")', {
+                id: eventId,
+                __RequestVerificationToken: getAntiForgeryToken()
+            }, function (res) {
+                if (res.success) {
+                    Swal.fire({
+                        title: isActive ? 'Deactivated!' : 'Activated!',
+                        text: 'Event has been ' + (isActive ? 'deactivated' : 'activated') + ' successfully.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', res.message || 'Could not change event status.', 'error');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }).fail(function() {
+                Swal.fire('Error', 'An error occurred while updating event status.', 'error');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+    });
+}
+    </script>
+}

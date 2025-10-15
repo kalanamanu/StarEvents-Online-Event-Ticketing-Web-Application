@@ -1,0 +1,758 @@
+﻿@model StarEvents.Models.CreateEventViewModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutOrganizer.cshtml";
+    ViewBag.Title = "Edit Event";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .create-event-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+        font-size: 2rem;
+    }
+
+    .page-subtitle {
+        color: var(--gray);
+        font-size: 1.1rem;
+    }
+
+    .create-event-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+    }
+
+    .form-section {
+        padding: 2rem;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--gray-light);
+    }
+
+    .section-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 1.25rem;
+    }
+
+    .section-title {
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 1.3rem;
+        margin: 0;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 2px solid var(--gray-border);
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+        }
+
+        .form-control:hover {
+            border-color: #cbd5e1;
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+        line-height: 1.5;
+    }
+
+    .validation-message {
+        display: block;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        color: var(--danger);
+    }
+
+    .input-with-icon {
+        position: relative;
+    }
+
+        .input-with-icon .form-control {
+            padding-right: 3rem;
+        }
+
+    .field-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+    }
+
+    /* Image Upload Styles */
+    .image-upload-container {
+        border: 2px dashed var(--gray-border);
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        background: var(--gray-light);
+        cursor: pointer;
+    }
+
+        .image-upload-container:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .image-upload-container.dragover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+    .upload-icon {
+        font-size: 3rem;
+        color: var(--gray);
+        margin-bottom: 1rem;
+    }
+
+    .image-upload-container:hover .upload-icon {
+        color: var(--primary);
+    }
+
+    .upload-text {
+        color: var(--gray);
+        margin-bottom: 1rem;
+    }
+
+    .upload-hint {
+        font-size: 0.875rem;
+        color: var(--gray);
+    }
+
+    .file-input {
+        display: none;
+    }
+
+    .image-preview {
+        margin-top: 1rem;
+        display: none;
+    }
+
+    .preview-image {
+        max-width: 200px;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+    }
+
+    /* Seat Categories Styles */
+    .seat-categories-section {
+        background: var(--gray-light);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .seat-category-row {
+        background: white;
+        border: 1px solid var(--gray-border);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr auto;
+        gap: 1rem;
+        align-items: start;
+        transition: all 0.3s ease;
+    }
+
+        .seat-category-row:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+    .seat-category-header {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr auto;
+        gap: 1rem;
+        padding: 0 1rem 0.5rem;
+        border-bottom: 2px solid var(--gray-border);
+        margin-bottom: 1rem;
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 0.9rem;
+    }
+
+    .remove-seat-category {
+        background: var(--danger);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+        .remove-seat-category:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
+    .add-seat-category {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        margin-top: 1rem;
+    }
+
+        .add-seat-category:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid var(--gray-light);
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        color: var(--dark);
+        border: 2px solid var(--gray-border);
+    }
+
+        .btn-secondary:hover {
+            background: var(--gray-light);
+            transform: translateY(-2px);
+            color: var(--dark);
+            text-decoration: none;
+        }
+
+    /* Alert Styles */
+    .alert-success {
+        background: var(--success);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .character-count {
+        text-align: right;
+        font-size: 0.875rem;
+        color: var(--gray);
+        margin-top: 0.25rem;
+    }
+
+        .character-count.warning {
+            color: var(--warning);
+        }
+
+        .character-count.danger {
+            color: var(--danger);
+        }
+
+    @@media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .seat-category-row {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .seat-category-header {
+            display: none;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="create-event-container">
+
+    <!-- Success Message -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert-success">
+            <i class="fas fa-check-circle"></i>
+            @TempData["Success"]
+        </div>
+    }
+
+    @using (Html.BeginForm("EditEvent", "Organizer", new { id = ViewBag.EventId }, FormMethod.Post, new { enctype = "multipart/form-data", id = "editEventForm" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("id", (int)ViewBag.EventId)
+
+        <div class="create-event-card">
+            <div class="form-section">
+                <!-- Basic Information -->
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <h2 class="section-title">Basic Information</h2>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="Title">
+                            Event Title *
+                        </label>
+                        <div class="input-with-icon">
+                            @Html.TextBoxFor(m => m.Title, new
+                            {
+                                @class = "form-control",
+                                required = "required",
+                                placeholder = "Enter event title"
+                            })
+                            <i class="fas fa-heading field-icon"></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Title, "", new { @class = "validation-message" })
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Category">
+                            Category *
+                        </label>
+                        <div class="input-with-icon">
+                            @Html.TextBoxFor(m => m.Category, new
+                            {
+                                @class = "form-control",
+                                required = "required",
+                                placeholder = "e.g., Music, Conference, Sports"
+                            })
+                            <i class="fas fa-tag field-icon"></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Category, "", new { @class = "validation-message" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="Description">
+                        Description *
+                    </label>
+                    @Html.TextAreaFor(m => m.Description, new
+                    {
+                        @class = "form-control",
+                        rows = 4,
+                        required = "required",
+                        placeholder = "Describe your event in detail...",
+                        maxlength = "1000"
+                    })
+                    <div class="character-count" id="descriptionCount">
+                        <span id="currentCount">@(Model.Description?.Length ?? 0)</span>/1000 characters
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "validation-message" })
+                </div>
+
+                <!-- Event Details -->
+                <div class="section-header" style="margin-top: 2rem;">
+                    <div class="section-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h2 class="section-title">Event Details</h2>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="EventDate">
+                            Event Date & Time *
+                        </label>
+                        <div class="input-with-icon">
+                            @Html.TextBoxFor(m => m.EventDate, "{0:yyyy-MM-ddTHH:mm}", new
+                            {
+                                @class = "form-control",
+                                type = "datetime-local",
+                                required = "required"
+                            })
+                            <i class="fas fa-clock field-icon"></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.EventDate, "", new { @class = "validation-message" })
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Location">
+                            Location *
+                        </label>
+                        <div class="input-with-icon">
+                            @Html.TextBoxFor(m => m.Location, new
+                            {
+                                @class = "form-control",
+                                required = "required",
+                                placeholder = "City, State"
+                            })
+                            <i class="fas fa-map-marker-alt field-icon"></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Location, "", new { @class = "validation-message" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="VenueName">
+                        Venue *
+                    </label>
+                    <div class="input-with-icon">
+                        @Html.TextBoxFor(m => m.VenueName, new
+                        {
+                            @class = "form-control",
+                            required = "required",
+                            placeholder = "Enter Venue Name"
+                        })
+                        <i class="fas fa-building field-icon"></i>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.VenueName, "", new { @class = "validation-message" })
+                </div>
+
+                <!-- Event Image -->
+                <div class="section-header" style="margin-top: 2rem;">
+                    <div class="section-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <h2 class="section-title">Event Image</h2>
+                </div>
+
+                <div class="form-group">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div class="mb-2">
+                            <strong>Current Image:</strong><br />
+                            <img src="@Url.Content(Model.ImageUrl)" style="max-width:200px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1);" />
+                        </div>
+                    }
+                    <div class="image-upload-container" id="imageUploadContainer">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-text">
+                            <strong>Click to upload event image</strong>
+                            <br>
+                            or drag and drop
+                        </div>
+                        <div class="upload-hint">
+                            PNG, JPG, JPEG up to 5MB
+                        </div>
+                        <input type="file" name="ImageFile" class="file-input" accept="image/*" id="imageFileInput" />
+                    </div>
+                    <div class="image-preview" id="imagePreview">
+                        <img class="preview-image" id="previewImage" />
+                    </div>
+                </div>
+
+                <!-- Seat Categories -->
+                <div class="section-header" style="margin-top: 2rem;">
+                    <div class="section-icon">
+                        <i class="fas fa-chair"></i>
+                    </div>
+                    <h2 class="section-title">Seat Categories & Pricing</h2>
+                </div>
+
+                <div class="seat-categories-section">
+                    <div class="seat-category-header">
+                        <div>Seat Type</div>
+                        <div>Price (Rs.)</div>
+                        <div>Total Seats</div>
+                        <div>Action</div>
+                    </div>
+
+                    <div id="seatCategories">
+                        @{
+                            var seatCategories = Model?.SeatCategories ?? new List<StarEvents.Models.SeatCategoryInputViewModel> { new StarEvents.Models.SeatCategoryInputViewModel() };
+                        }
+                        @for (int i = 0; i < seatCategories.Count; i++)
+                        {
+                            <div class="seat-category-row">
+                                <div>
+                                    <input type="text"
+                                           name="SeatCategories[@i].CategoryName"
+                                           value="@seatCategories[i].CategoryName"
+                                           placeholder="e.g., VIP, Standard, Balcony"
+                                           class="form-control"
+                                           required />
+                                </div>
+                                <div>
+                                    <input type="number"
+                                           step="0.01"
+                                           name="SeatCategories[@i].Price"
+                                           value="@(seatCategories[i].Price == 0 ? "" : seatCategories[i].Price.ToString())"
+                                           placeholder="0.00"
+                                           class="form-control"
+                                           required />
+                                </div>
+                                <div>
+                                    <input type="number"
+                                           name="SeatCategories[@i].TotalSeats"
+                                           value="@(seatCategories[i].TotalSeats == 0 ? "" : seatCategories[i].TotalSeats.ToString())"
+                                           placeholder="0"
+                                           class="form-control"
+                                           required />
+                                </div>
+                                <div>
+                                    <button type="button" class="remove-seat-category">
+                                        <i class="fas fa-trash"></i>
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <button type="button" class="add-seat-category" id="addSeatCategory">
+                        <i class="fas fa-plus"></i>
+                        Add Seat Category
+                    </button>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Update Event
+                    </button>
+                    <a href="@Url.Action("Dashboard", "Organizer")" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var seatIndex = $('#seatCategories .seat-category-row').length;
+
+            // Character count for description
+            $('#Description').on('input', function () {
+                const length = this.value.length;
+                $('#currentCount').text(length);
+
+                if (length > 900) {
+                    $('#descriptionCount').addClass('danger').removeClass('warning');
+                } else if (length > 800) {
+                    $('#descriptionCount').addClass('warning').removeClass('danger');
+                } else {
+                    $('#descriptionCount').removeClass('warning danger');
+                }
+            }).trigger('input');
+
+            // Image upload functionality
+            $('#imageUploadContainer').click(function () {
+                $('#imageFileInput').click();
+            });
+
+            $('#imageFileInput').change(function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#previewImage').attr('src', e.target.result);
+                        $('#imagePreview').show();
+                        $('#imageUploadContainer').hide();
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Drag and drop for image
+            $('#imageUploadContainer').on('dragover', function (e) {
+                e.preventDefault();
+                $(this).addClass('dragover');
+            });
+
+            $('#imageUploadContainer').on('dragleave', function () {
+                $(this).removeClass('dragover');
+            });
+
+            $('#imageUploadContainer').on('drop', function (e) {
+                e.preventDefault();
+                $(this).removeClass('dragover');
+                const files = e.originalEvent.dataTransfer.files;
+                $('#imageFileInput')[0].files = files;
+                $('#imageFileInput').trigger('change');
+            });
+
+            // Seat categories functionality
+            $('#addSeatCategory').click(function () {
+                const html = `
+                                <div class="seat-category-row">
+                                    <div>
+                                        <input type="text" name="SeatCategories[${seatIndex}].CategoryName" placeholder="e.g., VIP, Standard, Balcony" class="form-control" required />
+                                    </div>
+                                    <div>
+                                        <input type="number" step="0.01" name="SeatCategories[${seatIndex}].Price" placeholder="0.00" class="form-control" required />
+                                    </div>
+                                    <div>
+                                        <input type="number" name="SeatCategories[${seatIndex}].TotalSeats" placeholder="0" class="form-control" required />
+                                    </div>
+                                    <div>
+                                        <button type="button" class="remove-seat-category">
+                                            <i class="fas fa-trash"></i>
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>`;
+                $('#seatCategories').append(html);
+                seatIndex++;
+            });
+
+            $('#seatCategories').on('click', '.remove-seat-category', function () {
+                if ($('#seatCategories .seat-category-row').length > 1) {
+                    $(this).closest('.seat-category-row').remove();
+                    // Re-index names
+                    $('#seatCategories .seat-category-row').each(function (i, row) {
+                        $(row).find('input[name^="SeatCategories"]').each(function () {
+                            const name = $(this).attr('name');
+                            const field = name.split('.').pop();
+                            $(this).attr('name', `SeatCategories[${i}].${field}`);
+                        });
+                    });
+                    seatIndex = $('#seatCategories .seat-category-row').length;
+                }
+            });
+
+            // Form validation enhancement
+            $('.create-event-form, #editEventForm').on('submit', function (e) {
+                let isValid = true;
+                $('.form-control[required]').each(function () {
+                    if (!$(this).val().trim()) {
+                        isValid = false;
+                        $(this).addClass('error');
+                    } else {
+                        $(this).removeClass('error');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    $('.error').first().focus();
+                }
+            });
+        });
+    </script>
+}

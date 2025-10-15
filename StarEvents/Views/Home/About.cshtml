@@ -1,0 +1,267 @@
+﻿@{
+    ViewBag.Title = "About Us";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root {
+    --primary-color: #1259f3;
+    --primary-hover: #0d47c1;
+    --secondary-color: #1a237e;
+    --accent-color: #2563eb;
+    --success-color: #28a745;
+    --info-color: #17a2b8;
+    --danger-color: #e74c3c;
+    --light-bg: #f5f7fa;
+    --dark-text-color: #181c32;
+}
+
+body { background: var(--light-bg); color: var(--dark-text-color); }
+
+.about-header-bg {
+    width: 100vw;
+    position: relative;
+    left: 50%; right: 50%;
+    margin-left: -50vw; margin-right: -50vw;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #fff;
+    padding: 80px 0 56px 0;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.about-header-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 2;
+}
+
+.about-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.8rem;
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+}
+
+.about-lead {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #dbeafe;
+    margin-bottom: 0;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.about-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px rgba(18,89,243,0.07);
+    padding: 56px 30px 40px 30px;
+    margin-top: -40px;
+    margin-bottom: 60px;
+    position: relative;
+    z-index: 3;
+}
+
+.about-mission-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 48px;
+    gap: 32px 0;
+}
+
+.about-mission-text {
+    flex: 1 1 60%;
+    min-width: 280px;
+    padding-right: 24px;
+}
+
+.about-mission-title {
+    color: var(--primary-color);
+    font-weight: 800;
+    font-size: 2rem;
+    margin-bottom: 18px;
+}
+
+.about-mission-lead {
+    font-size: 1.13rem;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 14px;
+}
+
+.about-mission-desc {
+    font-size: 1.05rem;
+    color: #5c6476;
+}
+
+.about-mission-illus {
+    flex: 0 0 180px;
+    text-align: center;
+    font-size: 6rem;
+    color: var(--primary-color);
+    opacity: 0.97;
+}
+
+.about-values {
+    margin-bottom: 60px;
+}
+.about-values-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 38px;
+    letter-spacing: -0.01em;
+}
+.about-values-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: center;
+}
+.about-value-card {
+    background: var(--light-bg);
+    border-radius: 20px;
+    box-shadow: 0 4px 18px rgba(18,89,243,0.10);
+    padding: 38px 32px 32px 32px;
+    min-width: 260px;
+    max-width: 340px;
+    flex: 1 1 300px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow 0.22s;
+}
+.about-value-card:hover {
+    box-shadow: 0 8px 32px rgba(18,89,243,0.17);
+    background: #fff;
+}
+.about-value-icon {
+    font-size: 2.7rem;
+    margin-bottom: 18px;
+}
+.about-value-title {
+    font-size: 1.18rem;
+    font-weight: 700;
+    margin-bottom: 7px;
+    color: var(--primary-color);
+}
+.about-value-desc {
+    color: #637093;
+    font-size: 1rem;
+}
+.about-cta {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #fff;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: 0 8px 28px rgba(37,99,235,0.12);
+    padding: 48px 28px 42px 28px;
+    margin-top: 18px;
+}
+.about-cta-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    letter-spacing: -0.02em;
+}
+.about-cta-lead {
+    font-size: 1.13rem;
+    color: #e4eaf6;
+    margin-bottom: 32px;
+}
+.about-cta-btn {
+    background: #fff;
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 1.14rem;
+    border-radius: 14px;
+    padding: 15px 38px;
+    text-decoration: none;
+    box-shadow: 0 4px 18px rgba(18,89,243,0.13);
+    border: none;
+    display: inline-block;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.about-cta-btn:hover,
+.about-cta-btn:focus {
+    background: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(18,89,243,0.20);
+    text-decoration: none;
+}
+</style>
+
+<div class="about-header-bg page-header-full">
+    <div class="about-header-content page-header-content">
+        <h1 class="about-title page-title">Our Story at StarEvents</h1>
+        <p class="about-lead page-subtitle">Connecting you to unforgettable live experiences.</p>
+    </div>
+</div>
+
+<div class="about-section shadow-lg">
+    <div class="about-mission-row">
+        <div class="about-mission-text">
+            <h2 class="about-mission-title">Our Mission</h2>
+            <p class="about-mission-lead">
+                To be the ultimate gateway to the world of live events, making discovery and booking seamless, secure, and exciting for everyone.
+            </p>
+            <p class="about-mission-desc">
+                We believe in the power of shared experiences. Whether it's the roar of a concert, the hush of a theatrical performance, or the vibrancy of a cultural festival, StarEvents is dedicated to bringing those moments directly to you.
+            </p>
+        </div>
+        <div class="about-mission-illus">
+            <i class="fas fa-rocket"></i>
+        </div>
+    </div>
+
+    <div class="about-values">
+        <div class="about-values-title">Our Core Values</div>
+        <div class="about-values-row">
+            <div class="about-value-card">
+                <div class="about-value-icon" style="color:var(--success-color);">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <div class="about-value-title">Trust &amp; Integrity</div>
+                <div class="about-value-desc">
+                    We ensure every ticket is authentic and every transaction is transparent and secure.
+                </div>
+            </div>
+            <div class="about-value-card">
+                <div class="about-value-icon" style="color:var(--info-color);">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <div class="about-value-title">Innovation</div>
+                <div class="about-value-desc">
+                    Continuously enhancing our platform to offer the best user experience and event discovery tools.
+                </div>
+            </div>
+            <div class="about-value-card">
+                <div class="about-value-icon" style="color:var(--danger-color);">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="about-value-title">Customer Focus</div>
+                <div class="about-value-desc">
+                    Our users are at the heart of everything we do. We aim to exceed expectations at every step.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="about-cta mt-5">
+        <h2 class="about-cta-title">Ready to Discover Your Next Star Event?</h2>
+        <p class="about-cta-lead">
+            Browse our massive collection of concerts, shows, and festivals happening near you.
+        </p>
+        <a href="/Events" class="about-cta-btn shadow">Explore Events</a>
+    </div>
+</div>

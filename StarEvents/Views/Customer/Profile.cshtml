@@ -1,0 +1,512 @@
+﻿@model StarEvents.Models.CustomerProfileViewModel
+
+@{
+    ViewBag.Title = "My Profile";
+    var photoUrl = string.IsNullOrEmpty(Model.ProfilePhoto)
+        ? Url.Content("~/Content/images/avatar-default.png")
+        : Url.Content(Model.ProfilePhoto);
+}
+
+<style>
+:root {
+    --primary-color: #1259f3;
+    --primary-hover: #0d47c1;
+    --secondary-color: #1a237e;
+    --light-bg: #f5f7fa;
+    --dark-text-color: #181c32;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+}
+
+body {
+    background: var(--light-bg);
+    color: var(--dark-text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.profile-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(18, 89, 243, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(40%, -40%);
+}
+
+.profile-avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05);
+}
+
+.profile-name {
+    font-weight: 700;
+    margin-bottom: 5px;
+    font-size: 1.8rem;
+}
+
+.profile-email {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.profile-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 20px 25px;
+    font-weight: 600;
+    color: var(--secondary-color);
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-header i {
+    color: var(--primary-color);
+}
+
+.card-body {
+    padding: 25px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.info-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(18, 89, 243, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.info-content h6 {
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: var(--dark-text-color);
+}
+
+.info-content p {
+    margin-bottom: 0;
+    color: #6c757d;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(18, 89, 243, 0.3);
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Cards Section */
+.payment-card {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.payment-card::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.card-chip {
+    width: 40px;
+    height: 30px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.card-number {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.card-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.card-actions .btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.default-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--success-color);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.add-card-form {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 1.5px solid #e0e4f5;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.no-cards {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.no-cards i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #dee2e6;
+}
+
+
+.card {
+    animation: fadeIn 0.5s ease;
+}
+</style>
+
+<div class="profile-container py-4">
+
+    <!-- Profile Header -->
+    <div class="profile-header text-center">
+        <img src="@photoUrl" alt="Profile Photo" class="profile-avatar" />
+        <h1 class="profile-name">@Model.FullName</h1>
+        <p class="profile-email">@Model.Email</p>
+
+        <div class="profile-stats">
+            <div class="stat-item">
+                <span class="stat-value">@(Model.Cards?.Count ?? 0)</span>
+                <span class="stat-label">Payment Cards</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">@(Model.LoyaltyPoints.ToString() ?? "0")</span>
+                <span class="stat-label">Loyalty Points</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">@(Model.CreatedAt.ToString("MMM yyyy") ?? "N/A")</span>
+                <span class="stat-label">Member Since</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <!-- Personal Information Card -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Personal Information</span>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="info-content">
+                                <h6>Phone Number</h6>
+                                <p>@(string.IsNullOrEmpty(Model.Phone) ? "Not provided" : Model.Phone)</p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-venus-mars"></i>
+                            </div>
+                            <div class="info-content">
+                                <h6>Gender</h6>
+                                <p>@(string.IsNullOrEmpty(Model.Gender) ? "Not specified" : Model.Gender)</p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="info-content">
+                                <h6>Address</h6>
+                                <p>@(string.IsNullOrEmpty(Model.Address) ? "Not provided" : Model.Address)</p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="info-content">
+                                <h6>Member Since</h6>
+                                <p>@(Model.CreatedAt.ToString("MMMM dd, yyyy") ?? "N/A")</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <a href="@Url.Action("EditProfile", "Customer")" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </a>
+                        <form action="@Url.Action("DeleteAccount", "Customer")" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i> Delete Account
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <!-- Payment Methods Card -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Payment Methods</span>
+                </div>
+                <div class="card-body">
+                    @if (Model.Cards != null && Model.Cards.Count > 0)
+                    {
+                        foreach (var card in Model.Cards)
+                        {
+                            <div class="payment-card">
+                                @if (card.IsDefault)
+                                {
+                                    <span class="default-badge">DEFAULT</span>
+                                }
+                                <div class="card-chip"></div>
+                                <div class="card-number">
+                                    @("**** **** **** " + (card.CardNumber?.Length >= 4 ? card.CardNumber.Substring(card.CardNumber.Length - 4) : ""))
+                                </div>
+                                <div class="card-details">
+                                    <div>
+                                        <small>CARD HOLDER</small>
+                                        <div>@card.CardHolder</div>
+                                    </div>
+                                    <div>
+                                        <small>EXPIRES</small>
+                                        <div>@card.Expiry</div>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    @if (!card.IsDefault)
+                                    {
+                                        <form action="@Url.Action("SetDefaultCard", "Customer")" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="cardId" value="@card.CardId" />
+                                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-star"></i> Set Default
+                                            </button>
+                                        </form>
+                                    }
+                                    <form action="@Url.Action("DeleteCard", "Customer")" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to remove this card?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="cardId" value="@card.CardId" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="fas fa-trash"></i> Remove
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="no-cards">
+                            <i class="fas fa-credit-card"></i>
+                            <h5>No Payment Cards</h5>
+                            <p>You haven't added any payment cards yet.</p>
+                        </div>
+                    }
+
+                    <!-- Add New Card -->
+                    <div class="add-card-form">
+                        <h6><i class="fas fa-plus-circle"></i> Add New Card</h6>
+                        <form action="@Url.Action("AddCard", "Customer")" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-3">
+                                <input name="CardNumber" class="form-control" placeholder="Card Number" maxlength="20" required />
+                            </div>
+                            <div class="mb-3">
+                                <input name="CardHolder" class="form-control" placeholder="Card Holder Name" maxlength="100" required />
+                            </div>
+                            <div class="form-row">
+                                <div class="mb-3">
+                                    <input name="Expiry" class="form-control" placeholder="MM/YY" maxlength="7" required />
+                                </div>
+                                <div class="mb-3">
+                                    <input name="CVV" class="form-control" placeholder="CVV" maxlength="4" required />
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-plus"></i> Add Card
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

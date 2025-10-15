@@ -1,0 +1,751 @@
+﻿@model StarEvents.ViewModels.ActivityLogViewModel
+@{
+    ViewBag.Title = "Activity Log";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #f8fafc;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--dark);
+        line-height: 1.6;
+    }
+
+    .activity-log-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header */
+    .dashboard-header {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--dark), #374151);
+        }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .header-info {
+        flex: 1;
+    }
+
+    .dashboard-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dashboard-icon {
+        color: var(--dark);
+    }
+
+    .dashboard-subtitle {
+        color: var(--gray);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .header-stats {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .stat-badge {
+        background: var(--gray-light);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid var(--gray-border);
+    }
+
+    /* Filters Section */
+    .filters-section {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+    }
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        align-items: end;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .filter-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .filter-select, .filter-input {
+        padding: 12px 16px;
+        border: 2px solid var(--gray-border);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        background: white;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        width: 100%;
+    }
+
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(18, 89, 243, 0.1);
+        }
+
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+    }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+    .btn-success {
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: white;
+    }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-info {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        color: white;
+    }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-dark {
+        background: linear-gradient(135deg, var(--dark), #374151);
+        color: white;
+    }
+
+        .btn-dark:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(31, 41, 55, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    /* Activity Log Section */
+    .activity-section {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .section-header {
+        background: var(--gray-light);
+        padding: 20px 25px;
+        border-bottom: 1px solid var(--gray-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-icon {
+        color: var(--dark);
+    }
+
+    .section-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .activity-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+        .activity-table th {
+            background: var(--gray-light);
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--dark);
+            border-bottom: 1px solid var(--gray-border);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .activity-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--gray-border);
+            color: var(--dark);
+            vertical-align: top;
+        }
+
+        .activity-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .activity-table tr {
+            transition: all 0.2s ease;
+        }
+
+            .activity-table tr:hover {
+                background: rgba(18, 89, 243, 0.03);
+            }
+
+    /* Activity Type Badges */
+    .activity-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .activity-user {
+        background: linear-gradient(135deg, #e8efff, #d4e1ff);
+        color: var(--primary);
+        border: 1px solid #d4e1ff;
+    }
+
+    .activity-event {
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        color: var(--success);
+        border: 1px solid #dcfce7;
+    }
+
+    .activity-booking {
+        background: linear-gradient(135deg, #fef7cd, #fef3c7);
+        color: var(--warning);
+        border: 1px solid #fef3c7;
+    }
+
+    .activity-system {
+        background: linear-gradient(135deg, #f1f5f9, #e5e7eb);
+        color: var(--gray);
+        border: 1px solid var(--gray-border);
+    }
+
+    .activity-security {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: var(--danger);
+        border: 1px solid #fecaca;
+    }
+
+    /* User Avatar */
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.8rem;
+        margin-right: 12px;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .activity-description {
+        line-height: 1.4;
+        max-width: 400px;
+    }
+
+    .timestamp {
+        color: var(--gray);
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--gray);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: var(--dark);
+    }
+
+    .empty-description {
+        font-size: 1rem;
+        margin-bottom: 25px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.5;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .activity-log-container {
+            padding: 15px;
+        }
+
+        .dashboard-header {
+            padding: 25px 20px;
+        }
+
+        .header-content {
+            flex-direction: column;
+        }
+
+        .header-stats {
+            justify-content: center;
+            width: 100%;
+        }
+
+        .filters-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-actions {
+            justify-content: center;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .section-actions {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .activity-table th,
+        .activity-table td {
+            padding: 12px 15px;
+        }
+
+        .user-info {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .user-avatar {
+            margin-right: 0;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .dashboard-title {
+            font-size: 1.6rem;
+        }
+
+        .filter-actions {
+            flex-direction: column;
+        }
+
+        .section-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="activity-log-container">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-stream dashboard-icon"></i>
+                    System Activity Log
+                </h1>
+                <div class="dashboard-subtitle">
+                    Monitor all system activities, user actions, and administrative operations
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-badge">
+                    <i class="fas fa-history"></i>
+                    @Model.TotalLogs Total Activities
+                </div>
+                <div class="stat-badge">
+                    <i class="fas fa-clock"></i>
+                    Real-time Monitoring
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+        <form method="get">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Search Activities</label>
+                    <input type="text" name="search" class="filter-input" value="@Model.Search" placeholder="Username, activity, or description" />
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Activity Type</label>
+                    <select name="activityType" class="filter-select">
+                        <option value="">All Types</option>
+                        @foreach (var t in Model.ActivityTypeList ?? new List<string>())
+                        {
+                            <option value="@t" @(Model.SelectedActivityType == t ? "selected" : "")>@t</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Date From</label>
+                    <input type="date" name="from" class="filter-input" value="@(Model.From?.ToString("yyyy-MM-dd") ?? "")" />
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Date To</label>
+                    <input type="date" name="to" class="filter-input" value="@(Model.To?.ToString("yyyy-MM-dd") ?? "")" />
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-filter"></i>
+                        Apply Filters
+                    </button>
+                    <a href="@Url.Action("ActivityLog", "Admin")" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i>
+                        Clear Filters
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Activity Log Section -->
+    <div class="activity-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-list-alt section-icon"></i>
+                Activity Records
+            </h2>
+            <div class="section-actions">
+                <a href="@Url.Action("ExportActivityLog", new {
+                        exportType = "excel",
+                        search = Model.Search,
+                        activityType = Model.SelectedActivityType,
+                        from = Model.From?.ToString("yyyy-MM-dd"),
+                        to = Model.To?.ToString("yyyy-MM-dd")
+                    })" class="btn btn-success">
+                    <i class="fas fa-file-excel"></i>
+                    Export Excel
+                </a>
+                <a href="@Url.Action("ExportActivityLog", new {
+                        exportType = "csv",
+                        search = Model.Search,
+                        activityType = Model.SelectedActivityType,
+                        from = Model.From?.ToString("yyyy-MM-dd"),
+                        to = Model.To?.ToString("yyyy-MM-dd")
+                    })" class="btn btn-info">
+                    <i class="fas fa-file-csv"></i>
+                    Export CSV
+                </a>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="activity-table">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">User</th>
+                        <th style="width: 140px;">Activity Type</th>
+                        <th>Description</th>
+                        <th style="width: 160px;">Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Rows != null && Model.Rows.Any())
+                    {
+                        foreach (var row in Model.Rows)
+                        {
+                            var activityClass = GetActivityBadgeClass(row.ActivityType);
+
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">
+                                            @(string.IsNullOrEmpty(row.Username) ? "?" : row.Username.Substring(0, 1).ToUpper())
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 0.9rem;">@row.Username</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="activity-badge @activityClass">
+                                        <i class="fas @GetActivityIcon(row.ActivityType)"></i>
+                                        @row.ActivityType
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="activity-description">
+                                        @row.Description
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="timestamp">
+                                        <div style="font-weight: 600;">@row.Timestamp.ToString("MMM dd, yyyy")</div>
+                                        <div>@row.Timestamp.ToString("HH:mm:ss")</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-clipboard-list"></i>
+                                    </div>
+                                    <h3 class="empty-title">No Activity Logs</h3>
+                                    <p class="empty-description">
+                                        No activity records found for the selected filters.
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetActivityBadgeClass(string activityType)
+    {
+        if (string.IsNullOrEmpty(activityType))
+            return "activity-system";
+        switch (activityType.ToLower())
+        {
+            case "user":
+            case "user management":
+                return "activity-user";
+            case "event":
+            case "event management":
+                return "activity-event";
+            case "booking":
+            case "ticket":
+                return "activity-booking";
+            case "security":
+            case "authentication":
+                return "activity-security";
+            default:
+                return "activity-system";
+        }
+    }
+
+    private string GetActivityIcon(string activityType)
+    {
+        if (string.IsNullOrEmpty(activityType))
+            return "fa-cog";
+        switch (activityType.ToLower())
+        {
+            case "user":
+            case "user management":
+                return "fa-user";
+            case "event":
+            case "event management":
+                return "fa-calendar-alt";
+            case "booking":
+            case "ticket":
+                return "fa-ticket-alt";
+            case "security":
+            case "authentication":
+                return "fa-shield-alt";
+            default:
+                return "fa-cog";
+        }
+    }
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add smooth animations
+            const sections = document.querySelectorAll('.dashboard-header, .filters-section, .activity-section');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    section.style.transition = 'all 0.5s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Auto-refresh every 30 seconds for real-time monitoring
+            setInterval(() => {
+                const currentUrl = window.location.href;
+                if (!currentUrl.includes('export') && !currentUrl.includes('print')) {
+                    window.location.reload();
+                }
+            }, 30000);
+        });
+    </script>
+}

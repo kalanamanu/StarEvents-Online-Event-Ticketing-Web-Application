@@ -1,0 +1,364 @@
+﻿@model StarEvents.Models.EventCardViewModel
+
+@{
+    var dateStr = Model.EventDate.ToString("MMM dd, yyyy");
+    var timeStr = Model.EventDate.ToString("h:mm tt");
+    var hasPromos = Model.Promotions != null && Model.Promotions.Count > 0;
+    var promoCount = hasPromos ? Model.Promotions.Count : 0;
+    var mainPromo = hasPromos ? Model.Promotions[0] : null;
+}
+
+<div class="event-card-modern"
+     data-category="@Model.Category"
+     data-date="@Model.EventDate.ToString("yyyy-MM-dd")"
+     data-location="@Model.Location?.ToLower()">
+    <div class="event-card-img-wrap-modern">
+        <img src="@Url.Content(Model.ImageUrl)" class="event-card-img-modern" alt="@Model.Title" onerror="this.src='/Content/event-placeholder.jpg'" />
+
+        @if (hasPromos)
+        {
+            <div class="promo-banner-overlay" style="background:@mainPromo.Color;" tabindex="0">
+                @if (promoCount == 1)
+                {
+                    @Html.Raw($"{mainPromo.Icon} <span class='promo-label-text'>{mainPromo.Label}</span>")
+                    if (!string.IsNullOrEmpty(mainPromo.Description))
+                    {
+                        <div class="promo-popover-on-label">
+                            <ul>
+                                <li>
+                                    <span class="promo-offer-icon">@mainPromo.Icon</span>
+                                    <span class="promo-offer-label">@mainPromo.Label</span>
+                                    <span class="promo-offer-desc">@mainPromo.Description</span>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                }
+                else
+                {
+                    @Html.Raw($"🎉 {promoCount} Offers Available ▼")
+                    <div class="promo-popover-on-label">
+                        <ul>
+                            @foreach (var promo in Model.Promotions)
+                            {
+                                <li>
+                                    <span class="promo-offer-icon">@promo.Icon</span>
+                                    <span class="promo-offer-label">@promo.Label</span>
+                                    @if (!string.IsNullOrEmpty(promo.Description))
+                                    {
+                                        <span class="promo-offer-desc">@promo.Description</span>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="event-category-badge-modern">
+            @Html.Raw(GetCategoryIcon(Model.Category))
+            <span>@Model.Category</span>
+        </div>
+    </div>
+    <div class="event-card-body-modern">
+        <h3 class="event-card-title-modern">@Model.Title</h3>
+        <div class="event-card-meta-modern">
+            <span class="meta-item"><i class="far fa-calendar-alt"></i> @dateStr</span>
+            <span class="meta-sep">&bull;</span>
+            <span class="meta-item"><i class="far fa-clock"></i> @timeStr</span>
+        </div>
+        <div class="event-card-location-modern">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>@Model.VenueName</span>
+        </div>
+        <div class="event-card-price-modern">
+            <span class="event-price-modern">@Model.StartingPrice.ToString("N0") LKR</span>
+            <span class="event-upwards">upwards</span>
+        </div>
+    </div>
+    <a href="@Url.Action("Details", "Events", new { id = Model.EventId })" class="event-card-btn-modern">
+        Buy Tickets
+    </a>
+</div>
+
+@functions{
+    public string GetCategoryIcon(string category)
+    {
+        switch (category?.ToLower())
+        {
+            case "concert": return "<i class='fas fa-music'></i>";
+            case "theatre": return "<i class='fas fa-theater-masks'></i>";
+            case "cultural": return "<i class='fas fa-landmark'></i>";
+            case "sports": return "<i class='fas fa-running'></i>";
+            case "comedy": return "<i class='fas fa-laugh'></i>";
+            case "conference": return "<i class='fas fa-users'></i>";
+            case "workshop": return "<i class='fas fa-graduation-cap'></i>";
+            case "exhibition": return "<i class='fas fa-palette'></i>";
+            case "festival": return "<i class='fas fa-glass-cheers'></i>";
+            default: return "<i class='fas fa-calendar'></i>";
+        }
+    }
+}
+
+<style>
+    .event-card-modern {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 20px rgba(18,89,243,0.09);
+        border: 1px solid #eceef2;
+        max-width: 340px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+        transition: box-shadow .17s, transform .17s;
+    }
+    .event-card-modern:hover {
+        box-shadow: 0 8px 32px rgba(18,89,243,0.15);
+        transform: translateY(-3px) scale(1.012);
+    }
+    .event-card-img-wrap-modern {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        border-radius: 18px 18px 0 0;
+        background: #f7f8fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .event-card-img-modern {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: inherit;
+    }
+    .event-category-badge-modern {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: #2563eb;
+        color: #fff;
+        border-radius: 24px;
+        font-size: 0.96rem;
+        padding: 6px 16px 6px 11px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        box-shadow: 0 1.5px 7px rgba(37,99,235,0.15);
+        z-index: 2;
+    }
+    .event-category-badge-modern i {
+        color: #fff;
+        font-size: 1.02em;
+    }
+
+    .promo-banner-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 12px 16px;
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.95) 0%, rgba(21, 128, 61, 0.95) 100%) !important;
+        color: #fff;
+        font-size: 1.05rem;
+        font-weight: 700;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 -4px 20px rgba(34, 197, 94, 0.3);
+        cursor: pointer;
+        z-index: 3;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .promo-banner-overlay:hover,
+    .promo-banner-overlay:focus {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 1) 0%, rgba(21, 128, 61, 1) 100%) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 -6px 25px rgba(34, 197, 94, 0.4);
+    }
+
+    .promo-banner-overlay:active {
+        transform: translateY(0);
+    }
+
+    .promo-banner-overlay .promo-label-text {
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .promo-banner-overlay .promo-popover-on-label {
+        display: none;
+        position: absolute;
+        bottom: 105%;
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 280px;
+        background: #fff;
+        color: #333;
+        border-radius: 16px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+        padding: 16px 0;
+        z-index: 10;
+        animation: slideUpFade 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e8e8e8;
+    }
+
+    .promo-banner-overlay:hover .promo-popover-on-label,
+    .promo-banner-overlay:focus .promo-popover-on-label {
+        display: block;
+    }
+
+    .promo-popover-on-label ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .promo-popover-on-label li {
+        padding: 12px 20px;
+        display: flex;
+        align-items: flex-start;
+        transition: background-color 0.2s ease;
+    }
+
+    .promo-popover-on-label li:hover {
+        background-color: #f8f9fa;
+    }
+
+    .promo-offer-icon {
+        margin-right: 12px;
+        font-size: 1.1em;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    .promo-offer-label {
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 0.95rem;
+    }
+
+    .promo-offer-desc {
+        color: #6b7280;
+        margin-left: 8px;
+        font-size: 0.92em;
+        line-height: 1.4;
+    }
+
+    .promo-popover-on-label li:not(:last-child) {
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    /* Add a subtle arrow to the popover */
+    .promo-popover-on-label::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 8px solid transparent;
+        border-top-color: #fff;
+    }
+
+    .event-card-body-modern {
+        padding: 30px 28px 0 28px;
+        display: flex;
+        flex-direction: column;
+    }
+    .event-card-title-modern {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 1.18rem;
+        color: #222c3d;
+        margin-bottom: 8px;
+        line-height: 1.2;
+    }
+    .event-card-meta-modern {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.99rem;
+        color: #47506a;
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+    .meta-item i {
+        margin-right: 3px;
+        color: #a1a5b7;
+        font-size: 1em;
+    }
+    .meta-sep {
+        color: #bcc0c8;
+        font-size: 1.1em;
+    }
+    .event-card-location-modern {
+        font-size: 0.98rem;
+        color: #6c747f;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 400;
+    }
+    .event-card-desc-modern {
+        color: #525d72;
+        font-size: 0.99rem;
+        margin-bottom: 14px;
+        margin-top: 0;
+    }
+    .event-card-price-modern {
+        font-size: 1.11rem;
+        font-weight: 700;
+        color: #2563eb;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+    }
+    .event-price-modern {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.14rem;
+        font-weight: 800;
+        color: #2563eb;
+    }
+    .event-upwards {
+        color: #7b8499;
+        font-size: 0.98rem;
+        font-weight: 500;
+    }
+    .event-card-btn-modern {
+        width: 100%;
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        border-radius: 0 0 18px 18px;
+        font-weight: 700;
+        font-size: 1.11rem;
+        padding: 17px 0 17px 0;
+        text-align: center;
+        text-decoration: none;
+        transition: background .15s, box-shadow .16s;
+        margin-top: auto;
+        box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+        letter-spacing: 0.01em;
+        cursor: pointer;
+        display: block;
+    }
+    .event-card-btn-modern:hover, .event-card-btn-modern:focus {
+        background: #1a48b9;
+        color: #fff;
+        text-decoration: none;
+        box-shadow: 0 4px 18px rgba(37,99,235,0.16);
+    }
+</style>

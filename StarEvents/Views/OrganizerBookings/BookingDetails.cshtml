@@ -1,0 +1,825 @@
+﻿@model StarEvents.ViewModels.OrganizerBookingDetailsViewModel
+
+@{
+    ViewBag.Title = "Booking #" + Model.BookingId;
+    Layout = "~/Views/Shared/_LayoutOrganizer.cshtml";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #f8fafc;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--dark);
+    }
+
+    .booking-details-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header Section */
+    .dashboard-header {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .header-info {
+        flex: 1;
+    }
+
+    .dashboard-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dashboard-icon {
+        color: var(--primary);
+    }
+
+    .booking-subtitle {
+        color: var(--gray);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-back {
+        background: white;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+        .btn-back:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+    /* Booking Summary Card */
+    .summary-section {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .booking-summary-card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .booking-summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 2px 0 0 2px;
+        }
+
+    .summary-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .summary-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .summary-icon {
+        color: var(--primary);
+    }
+
+    .status-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .status-confirmed {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .status-canceled {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .detail-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .detail-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .event-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 5px;
+    }
+
+    .event-meta {
+        font-size: 0.9rem;
+        color: var(--gray);
+        margin-bottom: 15px;
+    }
+
+    /* Action Card */
+    .action-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        height: fit-content;
+    }
+
+    .action-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .action-icon {
+        color: var(--primary);
+    }
+
+    .btn-cancel {
+        background: white;
+        color: var(--danger);
+        border: 2px solid var(--danger);
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        justify-content: center;
+    }
+
+        .btn-cancel:hover {
+            background: #fef2f2;
+            transform: translateY(-2px);
+            color: var(--danger);
+        }
+
+    /* Tickets Section */
+    .tickets-section {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        margin-bottom: 40px;
+    }
+
+    .section-header {
+        background: var(--gray-light);
+        padding: 20px 25px;
+        border-bottom: 1px solid var(--gray-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-icon {
+        color: var(--primary);
+    }
+
+    .tickets-count {
+        background: var(--primary);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .tickets-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .tickets-table th {
+            background: var(--gray-light);
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--dark);
+            border-bottom: 1px solid var(--gray-border);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tickets-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--gray-border);
+            color: var(--dark);
+        }
+
+        .tickets-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .tickets-table tr:hover {
+            background: var(--gray-light);
+        }
+
+    .ticket-code {
+        font-family: 'Monaco', 'Consolas', monospace;
+        font-weight: 700;
+        color: var(--secondary);
+        background: var(--primary-light);
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+
+    .ticket-status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .status-used {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .status-unused {
+        background: #f1f5f9;
+        color: var(--gray);
+        border: 1px solid var(--gray-border);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-mark-used {
+        background: linear-gradient(135deg, var(--success), #059669);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+        .btn-mark-used:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+    .btn-mark-unused {
+        background: linear-gradient(135deg, var(--warning), #d97706);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+        .btn-mark-unused:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--gray);
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+
+    .empty-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--dark);
+    }
+
+    .empty-description {
+        font-size: 0.95rem;
+        max-width: 400px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .booking-details-container {
+            padding: 15px;
+        }
+
+        .dashboard-header {
+            padding: 25px 20px;
+        }
+
+        .header-content {
+            flex-direction: column;
+        }
+
+        .summary-section {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .tickets-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .dashboard-title {
+            font-size: 1.5rem;
+        }
+
+        .booking-summary-card {
+            padding: 20px;
+        }
+
+        .tickets-table th,
+        .tickets-table td {
+            padding: 12px 15px;
+        }
+    }
+</style>
+
+<div class="booking-details-container">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1 class="dashboard-title">
+                    <i class="fas fa-receipt dashboard-icon"></i>
+                    Booking Details
+                </h1>
+                <div class="booking-subtitle">
+                    Complete information for booking #@Model.BookingId
+                </div>
+            </div>
+            @*<div class="header-actions">
+                <a href="@Url.Action("EventBookings", new { eventId = Model.EventId })" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Bookings
+                </a>
+            </div>*@
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="summary-section">
+        <!-- Booking Summary -->
+        <div class="booking-summary-card">
+            <div class="summary-header">
+                <h2 class="summary-title">
+                    <i class="fas fa-info-circle summary-icon"></i>
+                    Booking Summary
+                </h2>
+                <span id="booking-status" class="status-badge status-@(Model.Status?.ToLower() ?? "confirmed")">
+                    <i class="fas fa-circle" style="font-size: 0.6rem;"></i>
+                    @Model.Status
+                </span>
+            </div>
+
+            <div class="event-info">
+                <div class="event-title">@Model.EventTitle</div>
+                <div class="event-meta">
+                    @Model.EventDate.ToString("MMM dd, yyyy") • @Model.VenueName
+                </div>
+            </div>
+
+            <div class="summary-grid">
+                <div class="detail-group">
+                    <div class="detail-label">Booking Code</div>
+                    <div class="detail-value">@Model.BookingCode</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Booking Date</div>
+                    <div class="detail-value">@Model.BookingDate.ToString("MMM dd, yyyy")</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Customer Name</div>
+                    <div class="detail-value">@Model.CustomerName</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Customer Email</div>
+                    <div class="detail-value">@Model.CustomerEmail</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Ticket Count</div>
+                    <div class="detail-value">@Model.TicketCount</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Total Amount</div>
+                    <div class="detail-value" style="color: var(--success);">LKR @Model.TotalAmount.ToString("N0")</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        @if (Model.Status != "Canceled")
+        {
+            <div class="action-card">
+                <h3 class="action-title">
+                    <i class="fas fa-cog action-icon"></i>
+                    Quick Actions
+                </h3>
+                <button id="cancel-booking-btn" class="btn-cancel"
+                        onclick="cancelBooking(@Model.BookingId)">
+                    <i class="fas fa-times-circle"></i>
+                    Cancel Booking
+                </button>
+            </div>
+        }
+    </div>
+
+    <!-- Tickets Section -->
+    <div class="tickets-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-ticket-alt section-icon"></i>
+                Tickets
+                <span class="tickets-count">@Model.Tickets.Count Tickets</span>
+            </h2>
+        </div>
+
+        @if (!Model.Tickets.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <h3 class="empty-title">No Tickets Found</h3>
+                <p class="empty-description">
+                    No tickets are associated with this booking.
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="table-container">
+                <table class="tickets-table">
+                    <thead>
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Ticket Code</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ticket in Model.Tickets)
+                        {
+                            <tr id="ticket-row-@ticket.TicketId">
+                                <td>#@ticket.TicketId</td>
+                                <td>
+                                    <span class="ticket-code">@ticket.TicketCode</span>
+                                </td>
+                                <td>@ticket.Category</td>
+                                <td id="ticket-status-@ticket.TicketId">
+                                    @if (ticket.IsUsed)
+                                    {
+                                        <span class="ticket-status status-used">
+                                            <i class="fas fa-check-circle"></i>
+                                            Used
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="ticket-status status-unused">
+                                            <i class="fas fa-clock"></i>
+                                            Not Used
+                                        </span>
+                                    }
+                                </td>
+                                <td id="ticket-action-@ticket.TicketId">
+                                    <div class="action-buttons">
+                                        @if (!ticket.IsUsed)
+                                        {
+                                            <button class="btn-mark-used" onclick="markTicket(@ticket.TicketId, true)">
+                                                <i class="fas fa-check"></i>
+                                                Mark Used
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn-mark-unused" onclick="markTicket(@ticket.TicketId, false)">
+                                                <i class="fas fa-undo"></i>
+                                                Mark Unused
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function markTicket(ticketId, use) {
+            var url = use
+                ? '@Url.Action("MarkTicketUsed", "OrganizerBookings")'
+                : '@Url.Action("MarkTicketUnused", "OrganizerBookings")';
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    ticketId: ticketId,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Update the status cell
+                        $('#ticket-status-' + ticketId).html(
+                            use
+                            ? '<span class="ticket-status status-used"><i class="fas fa-check-circle"></i> Used</span>'
+                            : '<span class="ticket-status status-unused"><i class="fas fa-clock"></i> Not Used</span>'
+                        );
+                        // Update the action button
+                        $('#ticket-action-' + ticketId).html(
+                            use
+                            ? '<div class="action-buttons"><button class="btn-mark-unused" onclick="markTicket(' + ticketId + ', false)"><i class="fas fa-undo"></i> Mark Unused</button></div>'
+                            : '<div class="action-buttons"><button class="btn-mark-used" onclick="markTicket(' + ticketId + ', true)"><i class="fas fa-check"></i> Mark Used</button></div>'
+                        );
+
+                        // Add success animation
+                        const row = $('#ticket-row-' + ticketId);
+                        row.css('background', '#f0fdf4');
+                        setTimeout(() => row.css('background', ''), 1000);
+                    } else {
+                        alert('Operation failed.');
+                    }
+                },
+                error: function () {
+                    alert('Error performing operation.');
+                }
+            });
+        }
+
+        function cancelBooking(bookingId) {
+            if (!confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) return;
+
+            $.ajax({
+                url: '@Url.Action("CancelBooking", "OrganizerBookings")',
+                type: 'POST',
+                data: {
+                    bookingId: bookingId,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#booking-status')
+                            .removeClass('status-confirmed').addClass('status-canceled')
+                            .html('<i class="fas fa-circle" style="font-size: 0.6rem;"></i> Canceled');
+                        $('#cancel-booking-btn').remove(); // Remove the cancel button
+
+                        // Show success message
+                        showNotification('Booking cancelled successfully', 'success');
+                    } else {
+                        alert('Failed to cancel the booking.');
+                    }
+                },
+                error: function () {
+                    alert('Error performing operation.');
+                }
+            });
+        }
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = $('<div class="notification">' + message + '</div>');
+            notification.css({
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                background: type === 'success' ? '#10b981' : '#ef4444',
+                color: 'white',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                fontWeight: '600',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                zIndex: '1000',
+                transform: 'translateX(100%)',
+                transition: 'transform 0.3s ease'
+            });
+
+            $('body').append(notification);
+
+            // Animate in
+            setTimeout(() => notification.css('transform', 'translateX(0)'), 100);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.css('transform', 'translateX(100%)');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Add smooth animations on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.booking-summary-card, .action-card, .tickets-section');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Add loading states to buttons
+            document.querySelectorAll('.btn-mark-used, .btn-mark-unused, .btn-cancel').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    this.disabled = true;
+
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+}

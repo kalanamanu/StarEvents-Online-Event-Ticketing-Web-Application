@@ -1,0 +1,1152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="StarEventsDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ActivityLogs">
+          <Key>
+            <PropertyRef Name="ActivityLogId" />
+          </Key>
+          <Property Name="ActivityLogId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Timestamp" Type="datetime" Nullable="false" />
+          <Property Name="ActivityType" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="PerformedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="RelatedEntityId" Type="int" />
+          <Property Name="EntityType" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserId" Type="int" />
+        </EntityType>
+        <EntityType Name="Admins">
+          <Key>
+            <PropertyRef Name="AdminId" />
+          </Key>
+          <Property Name="AdminId" Type="int" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="100" />
+          <Property Name="Notes" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="Bookings">
+          <Key>
+            <PropertyRef Name="BookingId" />
+          </Key>
+          <Property Name="BookingId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EventId" Type="int" Nullable="false" />
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+          <Property Name="BookingCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="BookingDate" Type="datetime" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="TotalAmount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" />
+          <Property Name="PaymentId" Type="int" />
+          <Property Name="SeatCategoryId" Type="int" />
+        </EntityType>
+        <EntityType Name="CustomerCards">
+          <Key>
+            <PropertyRef Name="CardId" />
+          </Key>
+          <Property Name="CardId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+          <Property Name="CardNumber" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="CardHolder" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Expiry" Type="nvarchar" MaxLength="7" Nullable="false" />
+          <Property Name="CVV" Type="nvarchar" MaxLength="4" Nullable="false" />
+          <Property Name="IsDefault" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CustomerProfiles">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+          </Key>
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="PhoneNumber" Type="nvarchar" MaxLength="20" />
+          <Property Name="Address" Type="nvarchar" MaxLength="255" />
+          <Property Name="LoyaltyPoints" Type="int" />
+          <Property Name="ProfilePhoto" Type="nvarchar" MaxLength="255" />
+          <Property Name="DateOfBirth" Type="date" />
+          <Property Name="Gender" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="EventDiscounts">
+          <Key>
+            <PropertyRef Name="DiscountId" />
+          </Key>
+          <Property Name="DiscountId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EventId" Type="int" Nullable="false" />
+          <Property Name="DiscountName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="DiscountType" Type="nvarchar" MaxLength="20" />
+          <Property Name="DiscountPercent" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="DiscountAmount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="SeatCategory" Type="nvarchar" MaxLength="50" />
+          <Property Name="MaxUsage" Type="int" />
+          <Property Name="Description" Type="nvarchar" MaxLength="255" />
+          <Property Name="StartDate" Type="datetime" Nullable="false" />
+          <Property Name="EndDate" Type="datetime" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" />
+          <Property Name="UpdatedAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Events">
+          <Key>
+            <PropertyRef Name="EventId" />
+          </Key>
+          <Property Name="EventId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrganizerId" Type="int" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Category" Type="nvarchar" MaxLength="100" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="EventDate" Type="datetime" Nullable="false" />
+          <Property Name="Location" Type="nvarchar" MaxLength="255" />
+          <Property Name="VenueId" Type="int" />
+          <Property Name="ImageUrl" Type="nvarchar" MaxLength="255" />
+          <Property Name="CreatedAt" Type="datetime" />
+          <Property Name="UpdatedAt" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="IsPublished" Type="bit" />
+        </EntityType>
+        <EntityType Name="LoyaltyPoints">
+          <Key>
+            <PropertyRef Name="LoyaltyId" />
+          </Key>
+          <Property Name="LoyaltyId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="TransactionType" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Points" Type="int" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Description" Type="nvarchar" MaxLength="200" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="RelatedOrderId" Type="int" />
+          <Property Name="Status" Type="nvarchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="OrganizerProfiles">
+          <Key>
+            <PropertyRef Name="OrganizerId" />
+          </Key>
+          <Property Name="OrganizerId" Type="int" Nullable="false" />
+          <Property Name="OrganizationName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="ContactPerson" Type="nvarchar" MaxLength="100" />
+          <Property Name="PhoneNumber" Type="nvarchar" MaxLength="20" />
+          <Property Name="Address" Type="nvarchar" MaxLength="255" />
+          <Property Name="Description" Type="nvarchar" MaxLength="255" />
+          <Property Name="ProfilePhoto" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="Payments">
+          <Key>
+            <PropertyRef Name="PaymentId" />
+          </Key>
+          <Property Name="PaymentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BookingId" Type="int" Nullable="false" />
+          <Property Name="PaymentReference" Type="nvarchar" MaxLength="200" />
+          <Property Name="PaymentMethod" Type="nvarchar" MaxLength="50" />
+          <Property Name="Amount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" />
+          <Property Name="PaidAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="SeatCategories">
+          <Key>
+            <PropertyRef Name="SeatCategoryId" />
+          </Key>
+          <Property Name="SeatCategoryId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EventId" Type="int" Nullable="false" />
+          <Property Name="CategoryName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Price" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="TotalSeats" Type="int" Nullable="false" />
+          <Property Name="AvailableSeats" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Tickets">
+          <Key>
+            <PropertyRef Name="TicketId" />
+          </Key>
+          <Property Name="TicketId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BookingId" Type="int" Nullable="false" />
+          <Property Name="SeatCategoryId" Type="int" Nullable="false" />
+          <Property Name="TicketCode" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="QRCodePath" Type="nvarchar" MaxLength="255" />
+          <Property Name="IsUsed" Type="bit" />
+          <Property Name="CreatedAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="PasswordHash" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Role" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Venues">
+          <Key>
+            <PropertyRef Name="VenueId" />
+          </Key>
+          <Property Name="VenueId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VenueName" Type="nvarchar" MaxLength="150" />
+          <Property Name="Address" Type="nvarchar" MaxLength="255" />
+          <Property Name="City" Type="nvarchar" MaxLength="100" />
+          <Property Name="Capacity" Type="int" />
+        </EntityType>
+        <Association Name="FK__LoyaltyPo__UserI__04E4BC85">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="LoyaltyPoints" Type="Self.LoyaltyPoints" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="LoyaltyPoints">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ActivityLogs_Users">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="ActivityLogs" Type="Self.ActivityLogs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="ActivityLogs">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Admins_Users">
+          <End Role="Users" Type="Self.Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Admins" Type="Self.Admins" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Admins">
+              <PropertyRef Name="AdminId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Bookings_Customers">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="Bookings" Type="Self.Bookings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Bookings">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Bookings_Events">
+          <End Role="Events" Type="Self.Events" Multiplicity="1" />
+          <End Role="Bookings" Type="Self.Bookings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Events">
+              <PropertyRef Name="EventId" />
+            </Principal>
+            <Dependent Role="Bookings">
+              <PropertyRef Name="EventId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CustomerCards_Customers">
+          <End Role="CustomerProfiles" Type="Self.CustomerProfiles" Multiplicity="1" />
+          <End Role="CustomerCards" Type="Self.CustomerCards" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CustomerProfiles">
+              <PropertyRef Name="CustomerId" />
+            </Principal>
+            <Dependent Role="CustomerCards">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CustomerProfiles_Users">
+          <End Role="Users" Type="Self.Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="CustomerProfiles" Type="Self.CustomerProfiles" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="CustomerProfiles">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Event_Venue">
+          <End Role="Venues" Type="Self.Venues" Multiplicity="0..1" />
+          <End Role="Events" Type="Self.Events" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Venues">
+              <PropertyRef Name="VenueId" />
+            </Principal>
+            <Dependent Role="Events">
+              <PropertyRef Name="VenueId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventDiscounts_Events">
+          <End Role="Events" Type="Self.Events" Multiplicity="1" />
+          <End Role="EventDiscounts" Type="Self.EventDiscounts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Events">
+              <PropertyRef Name="EventId" />
+            </Principal>
+            <Dependent Role="EventDiscounts">
+              <PropertyRef Name="EventId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Events_Organizer">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="Events" Type="Self.Events" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Events">
+              <PropertyRef Name="OrganizerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrganizerProfiles_Users">
+          <End Role="Users" Type="Self.Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="OrganizerProfiles" Type="Self.OrganizerProfiles" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="OrganizerProfiles">
+              <PropertyRef Name="OrganizerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Payments_Bookings">
+          <End Role="Bookings" Type="Self.Bookings" Multiplicity="1" />
+          <End Role="Payments" Type="Self.Payments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Bookings">
+              <PropertyRef Name="BookingId" />
+            </Principal>
+            <Dependent Role="Payments">
+              <PropertyRef Name="BookingId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SeatCategories_Events">
+          <End Role="Events" Type="Self.Events" Multiplicity="1" />
+          <End Role="SeatCategories" Type="Self.SeatCategories" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Events">
+              <PropertyRef Name="EventId" />
+            </Principal>
+            <Dependent Role="SeatCategories">
+              <PropertyRef Name="EventId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Tickets_Bookings">
+          <End Role="Bookings" Type="Self.Bookings" Multiplicity="1" />
+          <End Role="Tickets" Type="Self.Tickets" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Bookings">
+              <PropertyRef Name="BookingId" />
+            </Principal>
+            <Dependent Role="Tickets">
+              <PropertyRef Name="BookingId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Tickets_SeatCategories">
+          <End Role="SeatCategories" Type="Self.SeatCategories" Multiplicity="1" />
+          <End Role="Tickets" Type="Self.Tickets" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SeatCategories">
+              <PropertyRef Name="SeatCategoryId" />
+            </Principal>
+            <Dependent Role="Tickets">
+              <PropertyRef Name="SeatCategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="StarEventsDBModelStoreContainer">
+          <EntitySet Name="ActivityLogs" EntityType="Self.ActivityLogs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Admins" EntityType="Self.Admins" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Bookings" EntityType="Self.Bookings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CustomerCards" EntityType="Self.CustomerCards" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CustomerProfiles" EntityType="Self.CustomerProfiles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventDiscounts" EntityType="Self.EventDiscounts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Events" EntityType="Self.Events" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LoyaltyPoints" EntityType="Self.LoyaltyPoints" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrganizerProfiles" EntityType="Self.OrganizerProfiles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Payments" EntityType="Self.Payments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SeatCategories" EntityType="Self.SeatCategories" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tickets" EntityType="Self.Tickets" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Venues" EntityType="Self.Venues" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__LoyaltyPo__UserI__04E4BC85" Association="Self.FK__LoyaltyPo__UserI__04E4BC85">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="LoyaltyPoints" EntitySet="LoyaltyPoints" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ActivityLogs_Users" Association="Self.FK_ActivityLogs_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="ActivityLogs" EntitySet="ActivityLogs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Admins_Users" Association="Self.FK_Admins_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Admins" EntitySet="Admins" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Bookings_Customers" Association="Self.FK_Bookings_Customers">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Bookings" EntitySet="Bookings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Bookings_Events" Association="Self.FK_Bookings_Events">
+            <End Role="Events" EntitySet="Events" />
+            <End Role="Bookings" EntitySet="Bookings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CustomerCards_Customers" Association="Self.FK_CustomerCards_Customers">
+            <End Role="CustomerProfiles" EntitySet="CustomerProfiles" />
+            <End Role="CustomerCards" EntitySet="CustomerCards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CustomerProfiles_Users" Association="Self.FK_CustomerProfiles_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="CustomerProfiles" EntitySet="CustomerProfiles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_Venue" Association="Self.FK_Event_Venue">
+            <End Role="Venues" EntitySet="Venues" />
+            <End Role="Events" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventDiscounts_Events" Association="Self.FK_EventDiscounts_Events">
+            <End Role="Events" EntitySet="Events" />
+            <End Role="EventDiscounts" EntitySet="EventDiscounts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Events_Organizer" Association="Self.FK_Events_Organizer">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Events" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrganizerProfiles_Users" Association="Self.FK_OrganizerProfiles_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="OrganizerProfiles" EntitySet="OrganizerProfiles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Payments_Bookings" Association="Self.FK_Payments_Bookings">
+            <End Role="Bookings" EntitySet="Bookings" />
+            <End Role="Payments" EntitySet="Payments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SeatCategories_Events" Association="Self.FK_SeatCategories_Events">
+            <End Role="Events" EntitySet="Events" />
+            <End Role="SeatCategories" EntitySet="SeatCategories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tickets_Bookings" Association="Self.FK_Tickets_Bookings">
+            <End Role="Bookings" EntitySet="Bookings" />
+            <End Role="Tickets" EntitySet="Tickets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tickets_SeatCategories" Association="Self.FK_Tickets_SeatCategories">
+            <End Role="SeatCategories" EntitySet="SeatCategories" />
+            <End Role="Tickets" EntitySet="Tickets" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="StarEventsDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CustomerProfile">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+          </Key>
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <Property Name="FullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="LoyaltyPoints" Type="Int32" />
+          <NavigationProperty Name="User" Relationship="Self.FK_CustomerProfiles_Users" FromRole="CustomerProfiles" ToRole="Users" />
+          <Property Name="ProfilePhoto" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="DateOfBirth" Type="DateTime" Precision="0" />
+          <Property Name="Gender" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="CustomerCards" Relationship="StarEventsDBModel.FK_CustomerCards_Customers" FromRole="CustomerProfile" ToRole="CustomerCard" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Role" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="CustomerProfile" Relationship="Self.FK_CustomerProfiles_Users" FromRole="Users" ToRole="CustomerProfiles" />
+          <NavigationProperty Name="OrganizerProfile" Relationship="StarEventsDBModel.FK_OrganizerProfiles_Users" FromRole="User" ToRole="OrganizerProfile" />
+          <NavigationProperty Name="Bookings" Relationship="StarEventsDBModel.FK_Bookings_Customers" FromRole="User" ToRole="Booking" />
+          <NavigationProperty Name="Events" Relationship="StarEventsDBModel.FK_Events_Organizer" FromRole="User" ToRole="Event" />
+          <NavigationProperty Name="LoyaltyPoints" Relationship="StarEventsDBModel.FK__LoyaltyPo__UserI__04E4BC85" FromRole="User" ToRole="LoyaltyPoint" />
+          <NavigationProperty Name="Admin" Relationship="StarEventsDBModel.FK_Admins_Users" FromRole="User" ToRole="Admin" />
+          <NavigationProperty Name="ActivityLogs" Relationship="StarEventsDBModel.FK_ActivityLogs_Users" FromRole="User" ToRole="ActivityLog" />
+        </EntityType>
+        <Association Name="FK_CustomerProfiles_Users">
+          <End Role="Users" Type="Self.User" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="CustomerProfiles" Type="Self.CustomerProfile" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="CustomerProfiles">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="StarEventsDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CustomerProfiles" EntityType="Self.CustomerProfile" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <AssociationSet Name="FK_CustomerProfiles_Users" Association="Self.FK_CustomerProfiles_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="CustomerProfiles" EntitySet="CustomerProfiles" />
+          </AssociationSet>
+          <EntitySet Name="OrganizerProfiles" EntityType="StarEventsDBModel.OrganizerProfile" />
+          <AssociationSet Name="FK_OrganizerProfiles_Users" Association="StarEventsDBModel.FK_OrganizerProfiles_Users">
+            <End Role="User" EntitySet="Users" />
+            <End Role="OrganizerProfile" EntitySet="OrganizerProfiles" />
+          </AssociationSet>
+          <EntitySet Name="CustomerCards" EntityType="StarEventsDBModel.CustomerCard" />
+          <AssociationSet Name="FK_CustomerCards_Customers" Association="StarEventsDBModel.FK_CustomerCards_Customers">
+            <End Role="CustomerProfile" EntitySet="CustomerProfiles" />
+            <End Role="CustomerCard" EntitySet="CustomerCards" />
+          </AssociationSet>
+          <EntitySet Name="Bookings" EntityType="StarEventsDBModel.Booking" />
+          <EntitySet Name="Events" EntityType="StarEventsDBModel.Event" />
+          <EntitySet Name="Payments" EntityType="StarEventsDBModel.Payment" />
+          <EntitySet Name="SeatCategories" EntityType="StarEventsDBModel.SeatCategory" />
+          <EntitySet Name="Tickets" EntityType="StarEventsDBModel.Ticket" />
+          <EntitySet Name="Venues" EntityType="StarEventsDBModel.Venue" />
+          <AssociationSet Name="FK_Bookings_Customers" Association="StarEventsDBModel.FK_Bookings_Customers">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Booking" EntitySet="Bookings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Bookings_Events" Association="StarEventsDBModel.FK_Bookings_Events">
+            <End Role="Event" EntitySet="Events" />
+            <End Role="Booking" EntitySet="Bookings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Payments_Bookings" Association="StarEventsDBModel.FK_Payments_Bookings">
+            <End Role="Booking" EntitySet="Bookings" />
+            <End Role="Payment" EntitySet="Payments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tickets_Bookings" Association="StarEventsDBModel.FK_Tickets_Bookings">
+            <End Role="Booking" EntitySet="Bookings" />
+            <End Role="Ticket" EntitySet="Tickets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Events_Organizer" Association="StarEventsDBModel.FK_Events_Organizer">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SeatCategories_Events" Association="StarEventsDBModel.FK_SeatCategories_Events">
+            <End Role="Event" EntitySet="Events" />
+            <End Role="SeatCategory" EntitySet="SeatCategories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tickets_SeatCategories" Association="StarEventsDBModel.FK_Tickets_SeatCategories">
+            <End Role="SeatCategory" EntitySet="SeatCategories" />
+            <End Role="Ticket" EntitySet="Tickets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_Venue" Association="StarEventsDBModel.FK_Event_Venue">
+            <End Role="Venue" EntitySet="Venues" />
+            <End Role="Event" EntitySet="Events" />
+          </AssociationSet>
+          <EntitySet Name="EventDiscounts" EntityType="StarEventsDBModel.EventDiscount" />
+          <AssociationSet Name="FK_EventDiscounts_Events" Association="StarEventsDBModel.FK_EventDiscounts_Events">
+            <End Role="Event" EntitySet="Events" />
+            <End Role="EventDiscount" EntitySet="EventDiscounts" />
+          </AssociationSet>
+          <EntitySet Name="LoyaltyPoints" EntityType="StarEventsDBModel.LoyaltyPoint" />
+          <AssociationSet Name="FK__LoyaltyPo__UserI__04E4BC85" Association="StarEventsDBModel.FK__LoyaltyPo__UserI__04E4BC85">
+            <End Role="User" EntitySet="Users" />
+            <End Role="LoyaltyPoint" EntitySet="LoyaltyPoints" />
+          </AssociationSet>
+          <EntitySet Name="Admins" EntityType="StarEventsDBModel.Admin" />
+          <AssociationSet Name="FK_Admins_Users" Association="StarEventsDBModel.FK_Admins_Users">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Admin" EntitySet="Admins" />
+          </AssociationSet>
+          <EntitySet Name="ActivityLogs" EntityType="StarEventsDBModel.ActivityLog" />
+          <AssociationSet Name="FK_ActivityLogs_Users" Association="StarEventsDBModel.FK_ActivityLogs_Users">
+            <End Role="User" EntitySet="Users" />
+            <End Role="ActivityLog" EntitySet="ActivityLogs" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="OrganizerProfile">
+          <Key>
+            <PropertyRef Name="OrganizerId" />
+          </Key>
+          <Property Name="OrganizerId" Type="Int32" Nullable="false" />
+          <Property Name="OrganizationName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContactPerson" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ProfilePhoto" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="User" Relationship="StarEventsDBModel.FK_OrganizerProfiles_Users" FromRole="OrganizerProfile" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_OrganizerProfiles_Users">
+          <End Type="StarEventsDBModel.User" Role="User" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="StarEventsDBModel.OrganizerProfile" Role="OrganizerProfile" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="OrganizerProfile">
+              <PropertyRef Name="OrganizerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="CustomerCard">
+          <Key>
+            <PropertyRef Name="CardId" />
+          </Key>
+          <Property Name="CardId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <Property Name="CardNumber" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CardHolder" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Expiry" Type="String" Nullable="false" MaxLength="7" FixedLength="false" Unicode="true" />
+          <Property Name="CVV" Type="String" Nullable="false" MaxLength="4" FixedLength="false" Unicode="true" />
+          <Property Name="IsDefault" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="CustomerProfile" Relationship="StarEventsDBModel.FK_CustomerCards_Customers" FromRole="CustomerCard" ToRole="CustomerProfile" />
+        </EntityType>
+        <Association Name="FK_CustomerCards_Customers">
+          <End Type="StarEventsDBModel.CustomerProfile" Role="CustomerProfile" Multiplicity="1" />
+          <End Type="StarEventsDBModel.CustomerCard" Role="CustomerCard" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CustomerProfile">
+              <PropertyRef Name="CustomerId" />
+            </Principal>
+            <Dependent Role="CustomerCard">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Booking">
+          <Key>
+            <PropertyRef Name="BookingId" />
+          </Key>
+          <Property Name="BookingId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EventId" Type="Int32" Nullable="false" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <Property Name="BookingCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="BookingDate" Type="DateTime" Precision="3" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="TotalAmount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentId" Type="Int32" />
+          <NavigationProperty Name="User" Relationship="StarEventsDBModel.FK_Bookings_Customers" FromRole="Booking" ToRole="User" />
+          <NavigationProperty Name="Event" Relationship="StarEventsDBModel.FK_Bookings_Events" FromRole="Booking" ToRole="Event" />
+          <NavigationProperty Name="Payments" Relationship="StarEventsDBModel.FK_Payments_Bookings" FromRole="Booking" ToRole="Payment" />
+          <NavigationProperty Name="Tickets" Relationship="StarEventsDBModel.FK_Tickets_Bookings" FromRole="Booking" ToRole="Ticket" />
+          <Property Name="SeatCategoryId" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="EventId" />
+          </Key>
+          <Property Name="EventId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrganizerId" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Category" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="EventDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Location" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="VenueId" Type="Int32" />
+          <Property Name="ImageUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="IsPublished" Type="Boolean" />
+          <NavigationProperty Name="Bookings" Relationship="StarEventsDBModel.FK_Bookings_Events" FromRole="Event" ToRole="Booking" />
+          <NavigationProperty Name="User" Relationship="StarEventsDBModel.FK_Events_Organizer" FromRole="Event" ToRole="User" />
+          <NavigationProperty Name="SeatCategories" Relationship="StarEventsDBModel.FK_SeatCategories_Events" FromRole="Event" ToRole="SeatCategory" />
+          <NavigationProperty Name="Venue" Relationship="StarEventsDBModel.FK_Event_Venue" FromRole="Event" ToRole="Venue" />
+          <NavigationProperty Name="EventDiscounts" Relationship="StarEventsDBModel.FK_EventDiscounts_Events" FromRole="Event" ToRole="EventDiscount" />
+        </EntityType>
+        <EntityType Name="Payment">
+          <Key>
+            <PropertyRef Name="PaymentId" />
+          </Key>
+          <Property Name="PaymentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BookingId" Type="Int32" Nullable="false" />
+          <Property Name="PaymentReference" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentMethod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PaidAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Booking" Relationship="StarEventsDBModel.FK_Payments_Bookings" FromRole="Payment" ToRole="Booking" />
+        </EntityType>
+        <EntityType Name="SeatCategory">
+          <Key>
+            <PropertyRef Name="SeatCategoryId" />
+          </Key>
+          <Property Name="SeatCategoryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EventId" Type="Int32" Nullable="false" />
+          <Property Name="CategoryName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="TotalSeats" Type="Int32" Nullable="false" />
+          <Property Name="AvailableSeats" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Event" Relationship="StarEventsDBModel.FK_SeatCategories_Events" FromRole="SeatCategory" ToRole="Event" />
+          <NavigationProperty Name="Tickets" Relationship="StarEventsDBModel.FK_Tickets_SeatCategories" FromRole="SeatCategory" ToRole="Ticket" />
+        </EntityType>
+        <EntityType Name="Ticket">
+          <Key>
+            <PropertyRef Name="TicketId" />
+          </Key>
+          <Property Name="TicketId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BookingId" Type="Int32" Nullable="false" />
+          <Property Name="SeatCategoryId" Type="Int32" Nullable="false" />
+          <Property Name="TicketCode" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="QRCodePath" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="IsUsed" Type="Boolean" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Booking" Relationship="StarEventsDBModel.FK_Tickets_Bookings" FromRole="Ticket" ToRole="Booking" />
+          <NavigationProperty Name="SeatCategory" Relationship="StarEventsDBModel.FK_Tickets_SeatCategories" FromRole="Ticket" ToRole="SeatCategory" />
+        </EntityType>
+        <EntityType Name="Venue">
+          <Key>
+            <PropertyRef Name="VenueId" />
+          </Key>
+          <Property Name="VenueId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VenueName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Capacity" Type="Int32" />
+          <NavigationProperty Name="Events" Relationship="StarEventsDBModel.FK_Event_Venue" FromRole="Venue" ToRole="Event" />
+        </EntityType>
+        <Association Name="FK_Bookings_Customers">
+          <End Type="StarEventsDBModel.User" Role="User" Multiplicity="1" />
+          <End Type="StarEventsDBModel.Booking" Role="Booking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Booking">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Bookings_Events">
+          <End Type="StarEventsDBModel.Event" Role="Event" Multiplicity="1" />
+          <End Type="StarEventsDBModel.Booking" Role="Booking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="EventId" />
+            </Principal>
+            <Dependent Role="Booking">
+              <PropertyRef Name="EventId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Payments_Bookings">
+          <End Type="StarEventsDBModel.Booking" Role="Booking" Multiplicity="1" />
+          <End Type="StarEventsDBModel.Payment" Role="Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Booking">
+              <PropertyRef Name="BookingId" />
+            </Principal>
+            <Dependent Role="Payment">
+              <PropertyRef Name="BookingId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Tickets_Bookings">
+          <End Type="StarEventsDBModel.Booking" Role="Booking" Multiplicity="1" />
+          <End Type="StarEventsDBModel.Ticket" Role="Ticket" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Booking">
+              <PropertyRef Name="BookingId" />
+            </Principal>
+            <Dependent Role="Ticket">
+              <PropertyRef Name="BookingId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Events_Organizer">
+          <End Type="StarEventsDBModel.User" Role="User" Multiplicity="1" />
+          <End Type="StarEventsDBModel.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="OrganizerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SeatCategories_Events">
+          <End Type="StarEventsDBModel.Event" Role="Event" Multiplicity="1" />
+          <End Type="StarEventsDBModel.SeatCategory" Role="SeatCategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="EventId" />
+            </Principal>
+            <Dependent Role="SeatCategory">
+              <PropertyRef Name="EventId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Tickets_SeatCategories">
+          <End Type="StarEventsDBModel.SeatCategory" Role="SeatCategory" Multiplicity="1" />
+          <End Type="StarEventsDBModel.Ticket" Role="Ticket" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SeatCategory">
+              <PropertyRef Name="SeatCategoryId" />
+            </Principal>
+            <Dependent Role="Ticket">
+              <PropertyRef Name="SeatCategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Event_Venue">
+          <End Type="StarEventsDBModel.Venue" Role="Venue" Multiplicity="0..1" />
+          <End Type="StarEventsDBModel.Event" Role="Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Venue">
+              <PropertyRef Name="VenueId" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="VenueId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="EventDiscount">
+          <Key>
+            <PropertyRef Name="DiscountId" />
+          </Key>
+          <Property Name="DiscountId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EventId" Type="Int32" Nullable="false" />
+          <Property Name="DiscountName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DiscountType" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="DiscountPercent" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="DiscountAmount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="SeatCategory" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MaxUsage" Type="Int32" />
+          <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Event" Relationship="StarEventsDBModel.FK_EventDiscounts_Events" FromRole="EventDiscount" ToRole="Event" />
+        </EntityType>
+        <Association Name="FK_EventDiscounts_Events">
+          <End Type="StarEventsDBModel.Event" Role="Event" Multiplicity="1" />
+          <End Type="StarEventsDBModel.EventDiscount" Role="EventDiscount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="EventId" />
+            </Principal>
+            <Dependent Role="EventDiscount">
+              <PropertyRef Name="EventId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="LoyaltyPoint">
+          <Key>
+            <PropertyRef Name="LoyaltyId" />
+          </Key>
+          <Property Name="LoyaltyId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="TransactionType" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Points" Type="Int32" Nullable="false" />
+          <Property Name="Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Description" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="RelatedOrderId" Type="Int32" />
+          <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="User" Relationship="StarEventsDBModel.FK__LoyaltyPo__UserI__04E4BC85" FromRole="LoyaltyPoint" ToRole="User" />
+        </EntityType>
+        <Association Name="FK__LoyaltyPo__UserI__04E4BC85">
+          <End Type="StarEventsDBModel.User" Role="User" Multiplicity="1" />
+          <End Type="StarEventsDBModel.LoyaltyPoint" Role="LoyaltyPoint" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="LoyaltyPoint">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Admin">
+          <Key>
+            <PropertyRef Name="AdminId" />
+          </Key>
+          <Property Name="AdminId" Type="Int32" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="User" Relationship="StarEventsDBModel.FK_Admins_Users" FromRole="Admin" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Admins_Users">
+          <End Type="StarEventsDBModel.User" Role="User" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="StarEventsDBModel.Admin" Role="Admin" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Admin">
+              <PropertyRef Name="AdminId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ActivityLog">
+          <Key>
+            <PropertyRef Name="ActivityLogId" />
+          </Key>
+          <Property Name="ActivityLogId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Timestamp" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ActivityType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PerformedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="RelatedEntityId" Type="Int32" />
+          <Property Name="EntityType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="Int32" />
+          <NavigationProperty Name="User" Relationship="StarEventsDBModel.FK_ActivityLogs_Users" FromRole="ActivityLog" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_ActivityLogs_Users">
+          <End Type="StarEventsDBModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="StarEventsDBModel.ActivityLog" Role="ActivityLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="ActivityLog">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="StarEventsDBModelStoreContainer" CdmEntityContainer="StarEventsDBEntities">
+          <EntitySetMapping Name="CustomerProfiles">
+            <EntityTypeMapping TypeName="StarEventsDBModel.CustomerProfile">
+              <MappingFragment StoreEntitySet="CustomerProfiles">
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="ProfilePhoto" ColumnName="ProfilePhoto" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="LoyaltyPoints" ColumnName="LoyaltyPoints" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="StarEventsDBModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrganizerProfiles">
+            <EntityTypeMapping TypeName="StarEventsDBModel.OrganizerProfile">
+              <MappingFragment StoreEntitySet="OrganizerProfiles">
+                <ScalarProperty Name="ProfilePhoto" ColumnName="ProfilePhoto" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="ContactPerson" ColumnName="ContactPerson" />
+                <ScalarProperty Name="OrganizationName" ColumnName="OrganizationName" />
+                <ScalarProperty Name="OrganizerId" ColumnName="OrganizerId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomerCards">
+            <EntityTypeMapping TypeName="StarEventsDBModel.CustomerCard">
+              <MappingFragment StoreEntitySet="CustomerCards">
+                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+                <ScalarProperty Name="CVV" ColumnName="CVV" />
+                <ScalarProperty Name="Expiry" ColumnName="Expiry" />
+                <ScalarProperty Name="CardHolder" ColumnName="CardHolder" />
+                <ScalarProperty Name="CardNumber" ColumnName="CardNumber" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="CardId" ColumnName="CardId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Bookings">
+            <EntityTypeMapping TypeName="StarEventsDBModel.Booking">
+              <MappingFragment StoreEntitySet="Bookings">
+                <ScalarProperty Name="SeatCategoryId" ColumnName="SeatCategoryId" />
+                <ScalarProperty Name="PaymentId" ColumnName="PaymentId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="BookingDate" ColumnName="BookingDate" />
+                <ScalarProperty Name="BookingCode" ColumnName="BookingCode" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+                <ScalarProperty Name="BookingId" ColumnName="BookingId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Events">
+            <EntityTypeMapping TypeName="StarEventsDBModel.Event">
+              <MappingFragment StoreEntitySet="Events">
+                <ScalarProperty Name="IsPublished" ColumnName="IsPublished" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="UpdatedAt" ColumnName="UpdatedAt" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
+                <ScalarProperty Name="VenueId" ColumnName="VenueId" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="EventDate" ColumnName="EventDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="OrganizerId" ColumnName="OrganizerId" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Payments">
+            <EntityTypeMapping TypeName="StarEventsDBModel.Payment">
+              <MappingFragment StoreEntitySet="Payments">
+                <ScalarProperty Name="PaidAt" ColumnName="PaidAt" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="PaymentMethod" ColumnName="PaymentMethod" />
+                <ScalarProperty Name="PaymentReference" ColumnName="PaymentReference" />
+                <ScalarProperty Name="BookingId" ColumnName="BookingId" />
+                <ScalarProperty Name="PaymentId" ColumnName="PaymentId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SeatCategories">
+            <EntityTypeMapping TypeName="StarEventsDBModel.SeatCategory">
+              <MappingFragment StoreEntitySet="SeatCategories">
+                <ScalarProperty Name="AvailableSeats" ColumnName="AvailableSeats" />
+                <ScalarProperty Name="TotalSeats" ColumnName="TotalSeats" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+                <ScalarProperty Name="SeatCategoryId" ColumnName="SeatCategoryId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tickets">
+            <EntityTypeMapping TypeName="StarEventsDBModel.Ticket">
+              <MappingFragment StoreEntitySet="Tickets">
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="IsUsed" ColumnName="IsUsed" />
+                <ScalarProperty Name="QRCodePath" ColumnName="QRCodePath" />
+                <ScalarProperty Name="TicketCode" ColumnName="TicketCode" />
+                <ScalarProperty Name="SeatCategoryId" ColumnName="SeatCategoryId" />
+                <ScalarProperty Name="BookingId" ColumnName="BookingId" />
+                <ScalarProperty Name="TicketId" ColumnName="TicketId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Venues">
+            <EntityTypeMapping TypeName="StarEventsDBModel.Venue">
+              <MappingFragment StoreEntitySet="Venues">
+                <ScalarProperty Name="Capacity" ColumnName="Capacity" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="VenueName" ColumnName="VenueName" />
+                <ScalarProperty Name="VenueId" ColumnName="VenueId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventDiscounts">
+            <EntityTypeMapping TypeName="StarEventsDBModel.EventDiscount">
+              <MappingFragment StoreEntitySet="EventDiscounts">
+                <ScalarProperty Name="UpdatedAt" ColumnName="UpdatedAt" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="MaxUsage" ColumnName="MaxUsage" />
+                <ScalarProperty Name="SeatCategory" ColumnName="SeatCategory" />
+                <ScalarProperty Name="DiscountAmount" ColumnName="DiscountAmount" />
+                <ScalarProperty Name="DiscountPercent" ColumnName="DiscountPercent" />
+                <ScalarProperty Name="DiscountType" ColumnName="DiscountType" />
+                <ScalarProperty Name="DiscountName" ColumnName="DiscountName" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+                <ScalarProperty Name="DiscountId" ColumnName="DiscountId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LoyaltyPoints">
+            <EntityTypeMapping TypeName="StarEventsDBModel.LoyaltyPoint">
+              <MappingFragment StoreEntitySet="LoyaltyPoints">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RelatedOrderId" ColumnName="RelatedOrderId" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Points" ColumnName="Points" />
+                <ScalarProperty Name="TransactionType" ColumnName="TransactionType" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="LoyaltyId" ColumnName="LoyaltyId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Admins">
+            <EntityTypeMapping TypeName="StarEventsDBModel.Admin">
+              <MappingFragment StoreEntitySet="Admins">
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="AdminId" ColumnName="AdminId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ActivityLogs">
+            <EntityTypeMapping TypeName="StarEventsDBModel.ActivityLog">
+              <MappingFragment StoreEntitySet="ActivityLogs">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="EntityType" ColumnName="EntityType" />
+                <ScalarProperty Name="RelatedEntityId" ColumnName="RelatedEntityId" />
+                <ScalarProperty Name="PerformedBy" ColumnName="PerformedBy" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ActivityType" ColumnName="ActivityType" />
+                <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
+                <ScalarProperty Name="ActivityLogId" ColumnName="ActivityLogId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

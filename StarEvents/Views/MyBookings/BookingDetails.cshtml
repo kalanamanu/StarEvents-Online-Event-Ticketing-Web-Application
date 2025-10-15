@@ -1,0 +1,621 @@
+﻿@model StarEvents.ViewModels.BookingDetailsViewModel
+
+@{
+    ViewBag.Title = "Booking Details";
+}
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--dark);
+        min-height: 100vh;
+        padding: 20px 0;
+    }
+
+    .booking-details-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* Header Section */
+    .booking-header {
+        text-align: center;
+        padding: 40px 20px 30px 20px;
+        background: linear-gradient(135deg, var(--primary-light) 0%, #f0f7ff 100%);
+        border-radius: 20px;
+        margin: 0 0 30px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .booking-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="rgba(18,89,243,0.03)"><path d="M50,0 L60,40 L100,50 L60,60 L50,100 L40,60 L0,50 L40,40 Z"/></svg>');
+            background-size: 60px 60px;
+            animation: float 20s infinite linear;
+        }
+
+    @@keyframes float {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: 60px 60px;
+        }
+    }
+
+    .booking-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .booking-subtitle {
+        font-size: 1.1rem;
+        color: var(--gray);
+        position: relative;
+        z-index: 1;
+        font-weight: 500;
+    }
+
+    /* Main Content Layout */
+    .booking-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    /* Booking Summary Card */
+    .summary-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        position: relative;
+        height: fit-content;
+    }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 2px 0 0 2px;
+        }
+
+    .summary-header {
+        background: var(--gray-light);
+        padding: 20px 25px;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+    .summary-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .summary-icon {
+        color: var(--primary);
+    }
+
+    .summary-body {
+        padding: 25px;
+    }
+
+    .detail-grid {
+        display: grid;
+        gap: 16px;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+    .detail-label {
+        font-weight: 600;
+        color: var(--gray);
+        font-size: 0.95rem;
+        min-width: 120px;
+    }
+
+    .detail-value {
+        font-weight: 600;
+        color: var(--dark);
+        text-align: right;
+        flex: 1;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .status-confirmed {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .status-cancelled {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .status-pending {
+        background: linear-gradient(135deg, #fef9c3, #fef08a);
+        color: #92400e;
+        border: 1px solid #fef08a;
+    }
+
+    /* Quick Actions Card */
+    .actions-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-border);
+        overflow: hidden;
+        position: relative;
+        height: fit-content;
+    }
+
+        .actions-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 2px 0 0 2px;
+        }
+
+    .actions-header {
+        background: var(--gray-light);
+        padding: 20px 25px;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+    .actions-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .actions-icon {
+        color: var(--primary);
+    }
+
+    .actions-body {
+        padding: 25px;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 14px 20px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        text-align: center;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(18, 89, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        border-radius: 10px;
+        padding: 14px 20px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        text-align: center;
+    }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+    .btn-danger {
+        background: white;
+        color: var(--danger);
+        border: 2px solid var(--danger);
+        border-radius: 10px;
+        padding: 14px 20px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        text-align: center;
+    }
+
+        .btn-danger:hover {
+            background: #fef2f2;
+            transform: translateY(-2px);
+            color: var(--danger);
+            text-decoration: none;
+        }
+
+    /* Tickets Section */
+    .tickets-section {
+        margin-bottom: 40px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding: 0 10px;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-icon {
+        color: var(--primary);
+    }
+
+    .tickets-count {
+        background: var(--primary);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .booking-content {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .booking-header {
+            padding: 30px 20px 25px 20px;
+        }
+
+        .booking-title {
+            font-size: 1.8rem;
+        }
+
+        .summary-body,
+        .actions-body {
+            padding: 20px;
+        }
+
+        .section-header {
+            flex-direction: column;
+            gap: 15px;
+            align-items: flex-start;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .booking-details-container {
+            padding: 0 15px;
+        }
+
+        .booking-header {
+            padding: 25px 15px 20px 15px;
+        }
+
+        .booking-title {
+            font-size: 1.6rem;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .detail-value {
+            text-align: left;
+        }
+
+        .action-buttons {
+            gap: 10px;
+        }
+    }
+</style>
+
+<div class="booking-details-container">
+    <!-- Header Section -->
+    <div class="booking-header">
+        <h1 class="booking-title">Booking Details</h1>
+        <p class="booking-subtitle">Complete information about your booking</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="booking-content">
+        <!-- Booking Summary -->
+        <div class="summary-card">
+            <div class="summary-header">
+                <h2 class="summary-title">
+                    <i class="fas fa-receipt summary-icon"></i>
+                    Booking Summary
+                </h2>
+            </div>
+            <div class="summary-body">
+                <div class="detail-grid">
+                    <div class="detail-row">
+                        <span class="detail-label">Event</span>
+                        <span class="detail-value">@Model.EventTitle</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date & Time</span>
+                        <span class="detail-value">@Model.EventDate.ToString("MMM dd, yyyy h:mm tt")</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Venue</span>
+                        <span class="detail-value">@Model.VenueName</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Booking Code</span>
+                        <span class="detail-value">@Model.BookingCode</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Booked On</span>
+                        <span class="detail-value">@Model.BookingDate.ToString("MMM dd, yyyy")</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">
+                            <span class="status-badge status-@(Model.Status?.ToLower() ?? "unknown")">
+                                <i class="fas fa-circle" style="font-size: 0.6rem;"></i>
+                                @(Model.Status ?? "Unknown")
+                            </span>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Payment Ref</span>
+                        <span class="detail-value">@Model.PaymentReference</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tickets</span>
+                        <span class="detail-value">@Model.Quantity</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Total Paid</span>
+                        <span class="detail-value">
+                            @if (Model.TotalAmount.HasValue)
+                            {
+                                <text>LKR @Model.TotalAmount.Value.ToString("N2")</text>
+                            }
+                            else
+                            {
+                                <text>-</text>
+                            }
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="actions-card">
+            <div class="actions-header">
+                <h2 class="actions-title">
+                    <i class="fas fa-bolt actions-icon"></i>
+                    Quick Actions
+                </h2>
+            </div>
+            <div class="actions-body">
+                <div class="action-buttons">
+                    <a href="@Url.Action("MyBookings", "MyBookings")" class="btn-primary">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to My Bookings
+                    </a>
+                    <a href="/Contact" class="btn-secondary">
+                        <i class="fas fa-headset"></i>
+                        Contact Support
+                    </a>
+                    <button class="btn-danger" onclick="window.print()">
+                        <i class="fas fa-print"></i>
+                        Print Booking Details
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tickets Section (Unchanged) -->
+    <div class="tickets-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-ticket-alt section-icon"></i>
+                Your Tickets
+                @if (Model.Tickets != null && Model.Tickets.Any())
+                {
+                    <span class="tickets-count">@Model.Tickets.Count() @(Model.Tickets.Count() == 1 ? "Ticket" : "Tickets")</span>
+                }
+            </h2>
+        </div>
+
+        @if (Model.Tickets != null && Model.Tickets.Any())
+        {
+            <div class="tickets-container">
+                @foreach (var ticket in Model.Tickets)
+                {
+                    @Html.Partial("_EticketPartial", ticket)
+                }
+            </div>
+        }
+        else
+        {
+            <div style="text-align: center; color: var(--gray); padding: 40px 20px; background: white; border-radius: 12px; border: 2px dashed var(--gray-border);">
+                <i class="fas fa-ticket-alt" style="font-size: 2rem; margin-bottom: 15px; color: var(--gray);"></i>
+                <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 8px;">No Tickets Found</div>
+                <div style="font-size: 0.95rem;">No tickets are available for this booking.</div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add smooth animations
+        const cards = document.querySelectorAll('.summary-card, .actions-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Add loading states to buttons
+        document.querySelectorAll('.btn-primary, .btn-secondary, .btn-danger').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (this.tagName === 'BUTTON') return; // Don't add loading to print button
+
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                this.disabled = true;
+
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                }, 1500);
+            });
+        });
+    });
+
+    // Add print styles
+    const printStyle = document.createElement('style');
+    printStyle.textContent = `
+        @@media print {
+            body * {
+                visibility: hidden;
+            }
+            .booking-details-container,
+            .booking-details-container * {
+                visibility: visible;
+            }
+            .booking-details-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            .actions-card,
+            .btn-primary,
+            .btn-secondary,
+            .btn-danger {
+                display: none !important;
+            }
+        }
+    `;
+    document.head.appendChild(printStyle);
+</script>

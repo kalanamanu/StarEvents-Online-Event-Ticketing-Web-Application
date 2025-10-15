@@ -1,0 +1,553 @@
+﻿@model StarEvents.ViewModels.TicketPartialViewModel
+
+<style>
+    :root {
+        --primary: #1259f3;
+        --primary-light: #e8efff;
+        --primary-dark: #0d47c1;
+        --secondary: #1a237e;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --gray: #6b7280;
+        --gray-light: #f8fafc;
+        --gray-border: #e5e7eb;
+    }
+
+
+    /* Horizontal E-Ticket Design */
+    .e-ticket {
+        max-width: 1000px;
+        margin: 0 auto 30px auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(18, 89, 243, 0.12);
+        border: 2px solid var(--primary-light);
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .e-ticket:hover {
+            box-shadow: 0 12px 40px rgba(18, 89, 243, 0.18);
+        }
+
+        .e-ticket::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            z-index: 2;
+        }
+
+    .ticket-content {
+        display: flex;
+        min-height: 200px;
+    }
+
+    /* Left Section - Event Details */
+    .ticket-left {
+        flex: 1;
+        padding: 20px 25px;
+        border-right: 2px dashed var(--gray-border);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .event-main {
+        margin-bottom: 15px;
+    }
+
+    .event-title {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 6px;
+        line-height: 1.2;
+    }
+
+    .event-venue {
+        font-size: 1rem;
+        color: var(--secondary);
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .event-date {
+        font-size: 0.9rem;
+        color: var(--gray);
+        font-weight: 500;
+    }
+
+    .attendee-info {
+        background: var(--gray-light);
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid var(--gray-border);
+    }
+
+    .attendee-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 4px;
+    }
+
+    .attendee-contact {
+        font-size: 0.85rem;
+        color: var(--gray);
+    }
+
+    /* Middle Section - Ticket Details */
+    .ticket-middle {
+        flex: 0.8;
+        padding: 20px;
+        border-right: 2px dashed var(--gray-border);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .ticket-meta {
+        margin-bottom: 15px;
+    }
+
+    .ticket-number {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 8px;
+        text-align: center;
+    }
+
+    .detail-grid {
+        display: grid;
+        gap: 6px;
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px 0;
+        border-bottom: 1px solid var(--gray-border);
+    }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+    .detail-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .detail-value {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--gray);
+        text-align: right;
+    }
+
+    .ticket-code-section {
+        text-align: center;
+    }
+
+    .ticket-code {
+        background: var(--primary);
+        color: white;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: inline-block;
+    }
+
+    /* Right Section - QR Code */
+    .ticket-right {
+        flex: 0.6;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .qr-container {
+        text-align: center;
+    }
+
+    .qr-code {
+        width: 110px;
+        height: 110px;
+        border: 2px solid var(--primary-light);
+        border-radius: 8px;
+        background: white;
+        padding: 6px;
+    }
+
+    .qr-label {
+        font-size: 0.75rem;
+        color: var(--gray);
+        margin-top: 6px;
+        font-weight: 600;
+    }
+
+    .ticket-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .btn-download {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        width: 100%;
+    }
+
+        .btn-download:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(18, 89, 243, 0.25);
+        }
+
+    .btn-share {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        width: 100%;
+    }
+
+        .btn-share:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+    /* Perforation Effects */
+    .perforation-vertical {
+        position: absolute;
+        top: 15px;
+        bottom: 15px;
+        width: 10px;
+        background: repeating-linear-gradient( to bottom, transparent, transparent 6px, var(--gray-border) 6px, var(--gray-border) 12px );
+        z-index: 1;
+    }
+
+    .perforation-right {
+        right: -5px;
+    }
+
+    .perforation-left {
+        left: -5px;
+    }
+
+    /* Success Checkmark */
+    .success-check {
+        width: 50px;
+        height: 50px;
+        background: var(--success);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        margin: 0 auto 10px auto;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Print and Download Styles */
+    .no-print {
+        /* This class will be hidden during download/print */
+    }
+
+    /* Small Footer Inside Ticket */
+    .ticket-footer {
+        background: var(--gray-light);
+        color: var(--gray);
+        text-align: center;
+        font-size: 0.65rem;
+        padding: 6px 8px;
+        border-top: 1px solid var(--gray-border);
+        letter-spacing: 0.02em;
+        line-height: 1.2;
+    }
+
+        .ticket-footer b {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .confirmation-title {
+            font-size: 1.6rem;
+        }
+
+        .confirmation-subtitle {
+            font-size: 0.95rem;
+        }
+
+        .ticket-content {
+            flex-direction: column;
+        }
+
+        .ticket-left,
+        .ticket-middle,
+        .ticket-right {
+            border-right: none;
+            border-bottom: 2px dashed var(--gray-border);
+            padding: 15px;
+        }
+
+        .ticket-right {
+            border-bottom: none;
+        }
+
+        .perforation-vertical {
+            display: none;
+        }
+
+        .ticket-footer {
+            font-size: 0.6rem;
+            padding: 5px 6px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .confirmation-header {
+            padding: 20px 15px 15px 15px;
+        }
+
+        .confirmation-title {
+            font-size: 1.4rem;
+        }
+
+        .e-ticket {
+            max-width: 100%;
+            margin: 0 auto 20px auto;
+        }
+
+        .ticket-left,
+        .ticket-middle,
+        .ticket-right {
+            padding: 12px;
+        }
+
+        .event-title {
+            font-size: 1.2rem;
+        }
+
+        .qr-code {
+            width: 90px;
+            height: 90px;
+        }
+
+        .ticket-footer {
+            font-size: 0.55rem;
+            padding: 4px 5px;
+        }
+
+        .ticket-used {
+            opacity: 0.55;
+            filter: grayscale(1);
+            pointer-events: none;
+        }
+</style>
+
+<div class="e-ticket@(Model.IsUsed ? "ticket-used" : "")" id="ticket-@Model.TicketNumber">
+    <div class="ticket-content">
+        <div class="perforation-vertical perforation-left"></div>
+        <div class="perforation-vertical perforation-right"></div>
+
+        <!-- Left Section - Event Details -->
+        <div class="ticket-left">
+            <div class="event-main">
+                <div class="event-title">@Model.EventTitle</div>
+                <div class="event-venue">@Model.VenueName</div>
+                <div class="event-date">@Model.EventDate.ToString("ddd, MMM dd, yyyy • h:mm tt")</div>
+            </div>
+            <div class="attendee-info">
+                <div class="attendee-name">@Model.CustomerName</div>
+                <div class="attendee-contact">
+                    @Model.CustomerPhone • @Model.CustomerEmail
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle Section - Ticket Details -->
+        <div class="ticket-middle">
+            <div class="ticket-meta">
+                <div class="ticket-number">Ticket #@Model.TicketNumber</div>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Seat Category:</span>
+                        <span class="detail-value">@Model.SeatCategory</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Booking Code:</span>
+                        <span class="detail-value">@Model.BookingCode</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Payment Ref:</span>
+                        <span class="detail-value">@Model.PaymentReference</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date:</span>
+                        <span class="detail-value">@Model.EventDate.ToString("MMM dd, yyyy")</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Time:</span>
+                        <span class="detail-value">@Model.EventDate.ToString("h:mm tt")</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ticket-code-section">
+                <div class="ticket-code">Code: @Model.TicketCode</div>
+            </div>
+        </div>
+
+        <!-- Right Section - QR Code -->
+        <div class="ticket-right">
+            <div class="qr-container">
+                <img src="@Model.QRCodeUrl" alt="QR Code" class="qr-code" id="qrimg-@Model.TicketNumber" />
+                <div class="qr-label">SCAN FOR ENTRY</div>
+            </div>
+            @if (!Model.IsUsed)
+            {
+                <div class="ticket-actions no-print">
+                    <button class="btn-download" onclick="downloadTicket('@Model.TicketNumber')">
+                        <i class="fas fa-download"></i>
+                        Download
+                    </button>
+                    <button class="btn-share" onclick="shareTicket('@Model.TicketNumber')">
+                        <i class="fas fa-share-alt"></i>
+                        Share
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="ticket-footer">
+        This is a system generated e-ticket by <b>StarEvents PVT LTD</b> • Please present this at the event entry for validation.
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    function downloadTicket(ticketNum) {
+        const ticketDiv = document.getElementById('ticket-' + ticketNum);
+
+        // Hide buttons before capturing
+        const buttons = ticketDiv.querySelector('.ticket-actions');
+        buttons.style.display = 'none';
+
+        html2canvas(ticketDiv, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            backgroundColor: '#ffffff'
+        }).then(function (canvas) {
+            var link = document.createElement('a');
+            link.download = 'E-Ticket-' + ticketNum + '.png';
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+
+            // Restore button visibility
+            buttons.style.display = 'flex';
+        }).catch(function (error) {
+            console.error('Error generating ticket:', error);
+            // Restore button visibility on error
+            buttons.style.display = 'flex';
+            alert('Error downloading ticket. Please try again.');
+        });
+    }
+
+    function shareTicket(ticketNum) {
+        if (navigator.share) {
+            navigator.share({
+                title: 'My Event Ticket - @Model.EventTitle',
+                text: 'Check out my ticket for @Model.EventTitle at @Model.VenueName',
+                url: window.location.href
+            }).catch(console.error);
+        } else {
+            // Fallback: Download instead
+            downloadTicket(ticketNum);
+        }
+    }
+
+    // Add print styles
+    const style = document.createElement('style');
+    style.textContent = `
+        @@media print {
+            body * {
+                visibility: hidden;
+            }
+            .e-ticket, .e-ticket * {
+                visibility: visible;
+            }
+            .e-ticket {
+                position: absolute;
+                left: 0;
+                top: 0;
+                box-shadow: none;
+                border: 2px solid #000;
+                margin: 0;
+                break-inside: avoid;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .confirmation-header, .security-notice {
+                display: none;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Add keyboard shortcut for printing
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'p') {
+            e.preventDefault();
+            window.print();
+        }
+    });
+
+    // Add click animation to buttons
+    document.querySelectorAll('.btn-download, .btn-share').forEach(button => {
+        button.addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
+    });
+</script>

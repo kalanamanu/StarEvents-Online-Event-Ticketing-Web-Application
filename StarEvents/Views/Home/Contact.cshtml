@@ -1,0 +1,232 @@
+﻿@{
+    ViewBag.Title = "Contact Us";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root {
+    --primary-color: #1259f3;
+    --primary-hover: #0d47c1;
+    --secondary-color: #1a237e;
+    --success-color: #28a745;
+    --info-color: #17a2b8;
+    --danger-color: #e74c3c;
+    --light-bg: #f5f7fa;
+    --dark-text-color: #181c32;
+    --card-bg: #fff;
+}
+body { background: var(--light-bg); color: var(--dark-text-color); }
+.contact-header-bg {
+    width: 100vw;
+    position: relative;
+    left: 50%; right: 50%;
+    margin-left: -50vw; margin-right: -50vw;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #fff;
+    padding: 80px 0 56px 0;
+    text-align: center;
+    margin-bottom: 0;
+}
+.contact-header-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 2;
+}
+.contact-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.8rem;
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+}
+.contact-lead {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #dbeafe;
+    margin-bottom: 0;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.contact-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    border-radius: 24px;
+    box-shadow: 0 4px 24px rgba(18,89,243,0.07);
+    padding: 56px 30px 40px 30px;
+    margin-top: -48px;
+    margin-bottom: 60px;
+    position: relative;
+    z-index: 3;
+}
+.contact-info-title,
+.contact-form-title,
+.contact-map-title {
+    font-weight: 800;
+    font-size: 1.45rem;
+    color: var(--primary-color);
+    margin-bottom: 22px;
+    letter-spacing: -0.01em;
+}
+.card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 14px rgba(18,89,243,0.07);
+    padding: 28px 22px 22px 22px;
+    margin-bottom: 24px;
+    border: none;
+}
+.contact-list i {
+    color: var(--primary-color);
+    margin-right: 8px;
+}
+.contact-list a {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+.contact-list a:hover,
+.contact-list a:focus {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+.btn-contact {
+    background: var(--primary-color);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.14rem;
+    border-radius: 14px;
+    padding: 15px 38px;
+    text-decoration: none;
+    border: none;
+    display: inline-block;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 18px rgba(18,89,243,0.13);
+}
+.btn-contact:hover,
+.btn-contact:focus {
+    background: var(--primary-hover);
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(18,89,243,0.20);
+    text-decoration: none;
+}
+.form-group label {
+    font-weight: 600;
+}
+.embed-responsive {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+}
+.embed-responsive::before {
+    display: block;
+    content: "";
+}
+.embed-responsive-21by9::before {
+    padding-top: 42.8571%;
+}
+.embed-responsive .embed-responsive-item,
+.embed-responsive iframe,
+.embed-responsive embed,
+.embed-responsive object,
+.embed-responsive video {
+    position: absolute;
+    top: 0; bottom: 0; left: 0; right: 0;
+    width: 100%; height: 100%;
+    border: 0;
+}
+
+</style>
+
+<div class="contact-header-bg">
+    <div class="contact-header-content">
+        <h1 class="contact-title">Get in Touch with StarEvents</h1>
+        <p class="contact-lead">We're here to help you with ticketing, events, and partnerships.</p>
+    </div>
+</div>
+
+<div class="contact-section shadow-lg mt-0">
+    <div class="row">
+        <div class="col-lg-5 mb-5 mb-lg-0">
+            <div class="contact-info-title mb-3">Our Information</div>
+            <div class="card mb-4">
+                <h5 class="font-weight-bold mb-2">Headquarters</h5>
+                <p class="mb-1">
+                    <i class="fas fa-map-marker-alt"></i>
+                    No 70 EventStar PVT LTD, Gall Road<br />
+                    Colombo, Sri Lanka
+                </p>
+                <p class="mb-0">
+                    <i class="fas fa-phone-alt"></i>
+                    <span class="font-weight-bold">Phone:</span> (076) 123 4 567
+                </p>
+            </div>
+            <div class="card">
+                <h5 class="font-weight-bold mb-2">Direct Contacts</h5>
+                <ul class="list-unstyled contact-list mb-0">
+                    <li class="mb-2">
+                        <i class="fas fa-headset"></i>
+                        <span class="font-weight-bold">Customer Support:</span>
+                        <a href="mailto:support@starevents.com">support@starevents.com</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-chart-line"></i>
+                        <span class="font-weight-bold">Partnerships:</span>
+                        <a href="mailto:partners@starevents.com">partners@starevents.com</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-briefcase"></i>
+                        <span class="font-weight-bold">Careers:</span>
+                        <a href="mailto:careers@starevents.com">careers@starevents.com</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="contact-form-title mb-3">Send Us a Message</div>
+            <div class="card shadow-lg">
+                <form action="/Home/SendMessage" method="post">
+                    <div class="form-group mb-3">
+                        <label for="name">Your Name</label>
+                        <input type="text" class="form-control" id="name" name="Name" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="email">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="Email" required>
+                        <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="subject">Subject</label>
+                        <select class="form-control" id="subject" name="Subject" required>
+                            <option value="">-- Select Subject --</option>
+                            <option value="Ticketing Inquiry">Ticketing Inquiry</option>
+                            <option value="Event Suggestion">Event Suggestion</option>
+                            <option value="Partnership Opportunity">Partnership Opportunity</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="message">Message</label>
+                        <textarea class="form-control" id="message" name="Message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-contact btn-block btn-lg">
+                        <i class="fas fa-paper-plane mr-2"></i> Submit Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="contact-map-title mb-3">Find Us</div>
+            <div class="embed-responsive embed-responsive-21by9 rounded shadow">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3768.2734702726752!2d79.9816231773383!3d6.4670638768282345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae259256a51ac51%3A0x532cbd59adf38266!2sGalle%20-%20Colombo%20Rd!5e1!3m2!1sen!2slk!4v1760550448505!5m2!1sen!2slk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </div>
+</div>

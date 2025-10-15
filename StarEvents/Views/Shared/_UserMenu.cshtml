@@ -1,0 +1,99 @@
+﻿@model StarEvents.Controllers.UserMenuViewModel
+@using System.Web
+
+@{
+    var defaultAvatar = Url.Content("~/Content/images/avatar-default.png");
+    string photoUrl = defaultAvatar;
+    if (Model?.ProfilePhoto != null && !String.IsNullOrEmpty(Model.ProfilePhoto))
+    {
+        photoUrl = Url.Content(Model.ProfilePhoto);
+    }
+}
+
+@if (Model == null || string.IsNullOrEmpty(Model.Email))
+{
+    <!-- Not logged in: show Login/Register as BUTTONS -->
+    <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item d-flex align-items-center">
+            <a class="nav-link mr-2" href="@Url.Action("Index","Register")" >Register</a>
+            <a class="btn btn-login"href="@Url.Action("Index","Login")">Login</a>
+        </li>
+    </ul>
+}
+else
+{
+    <ul class="navbar-nav ms-auto align-items-center">
+        <!-- Notification bell -->
+        <li class="nav-item me-1">
+            <a class="nav-link position-relative" href="@Url.Action("Notifications","Customer")" title="Notifications">
+                <i class="fas fa-bell fa-lg" style="color:#1259f3;"></i>
+                <!-- Optional: Notification badge
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  3
+                  <span class="visually-hidden">unread messages</span>
+                </span>
+                -->
+            </a>
+        </li>
+        <!-- Avatar dropdown -->
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userMenuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="@photoUrl" alt="avatar" class="rounded-circle" style="width:36px;height:36px;object-fit:cover;margin-right:8px;" />
+                <span class="d-none d-md-inline">@Model.FullName</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown" style="min-width:220px;">
+                <li class="dropdown-item-text">
+                    <strong>@Model.FullName</strong><br />
+                    <small class="text-muted">@Model.Email</small>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                    <a class="dropdown-item" href="@Url.Action("Profile","Customer")">
+                        <i class="fas fa-user-circle me-2"></i> My Account
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="@Url.Action("UpcomingEvents","CustomerEvents")">
+                        <i class="fas fa-calendar-alt me-2"></i> My Upcoming Events
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="@Url.Action("Index","MyBookings")">
+                        <i class="fas fa-calendar-check me-2"></i> My Bookings
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="@Url.Action("MyTickets","CustomerTickets")">
+                        <i class="fas fa-ticket-alt me-2"></i> My Tickets
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="@Url.Action("Index","CustomerLoyalty")">
+                        <i class="fas fa-gift me-2"></i> My Loyalty Program
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="@Url.Action("DiscountedEvents","CustomerDiscounts")">
+                        <i class="fas fa-percent me-2"></i> Discounted Events
+                    </a>
+                </li>
+                @*<li>
+            <a class="dropdown-item" href="@Url.Action("Notifications","Customer")">
+                <i class="fas fa-bell me-2"></i> Notifications
+            </a>
+        </li>*@
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                    <a class="dropdown-item" href="@Url.Action("Settings","Customer")">
+                        <i class="fas fa-cog me-2"></i> Settings
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item text-danger" href="@Url.Action("Logout","Login")">
+                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+}

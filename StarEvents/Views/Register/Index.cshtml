@@ -1,0 +1,679 @@
+﻿@model StarEvents.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    :root {
+        --primary-color: #1259f3;
+        --primary-hover: #0d47c1;
+        --secondary-color: #1a237e;
+        --light-bg: #f5f7fa;
+        --dark-text-color: #181c32;
+        --danger-color: #d32f2f;
+    }
+
+    body {
+        background: var(--light-bg);
+        color: var(--dark-text-color);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .register-page-wrapper {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: 56px;
+    }
+
+    .register-section {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto 48px auto;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 8px 40px rgba(18,89,243,0.10);
+        padding: 38px 32px 32px 32px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .register-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        font-size: 1.9rem;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+        text-align: center;
+        color: var(--primary-color);
+    }
+
+    .register-lead {
+        font-size: 1.07rem;
+        font-weight: 500;
+        color: #4e5d78;
+        margin-bottom: 26px;
+        text-align: center;
+        max-width: 420px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .role-tabs {
+        display: flex;
+        background: #f0f4ff;
+        border-radius: 14px;
+        padding: 6px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(18,89,243,0.08);
+    }
+
+    .role-tab {
+        flex: 1;
+        text-align: center;
+        padding: 14px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        color: var(--dark-text-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 1.07rem;
+    }
+
+        .role-tab:hover {
+            background: rgba(18,89,243,0.08);
+        }
+
+        .role-tab.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(18,89,243,0.2);
+        }
+
+        .role-tab i {
+            font-size: 1.1rem;
+        }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-control {
+        border-radius: 12px !important;
+        border: 1.5px solid #e0e4f5;
+        font-size: 1.03rem;
+        padding: 13px 16px;
+        color: var(--dark-text-color);
+        background: #f8faff;
+        margin-bottom: 2px;
+        transition: border 0.19s, box-shadow 0.19s;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(18,89,243,0.09);
+            background: #fff;
+        }
+
+    select.form-control {
+        padding-right: 35px;
+    }
+
+    .form-group {
+        margin-bottom: 17px;
+    }
+
+    .role-fields {
+        display: none;
+        margin-bottom: 0;
+        padding: 0;
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
+        animation: fadeIn 0.3s ease;
+    }
+
+        .role-fields.active {
+            display: block;
+        }
+
+    .password-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        color: #9aa5b8;
+        font-size: 1.15em;
+        padding: 0 4px;
+    }
+
+    .text-danger, .field-validation-error {
+        color: var(--danger-color);
+        font-size: 0.96em;
+        margin-top: 3px;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .phone-helper {
+        font-size: 0.96em;
+        color: #6c757d;
+        margin-top: 3px;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .btn-primary {
+        font-size: 1.13rem;
+        font-weight: 700;
+        border-radius: 12px;
+        background: var(--primary-color);
+        border: none;
+        box-shadow: 0 4px 14px rgba(18,89,243,0.09);
+        padding: 13px 0;
+        transition: background 0.18s, box-shadow 0.18s;
+        letter-spacing: 0.01em;
+        width: 100%;
+        cursor: pointer;
+        color: white;
+    }
+
+        .btn-primary:hover, .btn-primary:focus {
+            background: var(--primary-hover);
+            color: #fff;
+            box-shadow: 0 8px 32px rgba(18,89,243,0.14);
+            text-decoration: none;
+        }
+
+    .alert {
+        border-radius: 10px;
+        font-size: 1.04rem;
+        margin-bottom: 18px;
+        padding: 12px 16px;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .mt-3 {
+        margin-top: 1rem !important;
+    }
+
+    .gender-radio-group {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+
+    .gender-radio {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 1.02rem;
+    }
+
+    .drag-drop-upload {
+        border: 2px dashed #bfc7d1;
+        border-radius: 14px;
+        background: #fff;
+        padding: 30px 20px 24px 20px;
+        text-align: center;
+        cursor: pointer;
+        margin-bottom: 2px;
+        transition: border-color 0.2s;
+        position: relative;
+    }
+
+        .drag-drop-upload.dragover {
+            border-color: #1259f3;
+            background: #f6faff;
+        }
+
+    .upload-icon {
+        color: #94b1fd;
+        font-size: 2.3em;
+        margin-bottom: 10px;
+    }
+
+    .drag-drop-text {
+        font-size: 1.15em;
+        color: #222;
+        margin-bottom: 4px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+    }
+
+    .file-types {
+        font-size: 0.98em;
+        color: #98a0a8;
+        margin-bottom: 18px;
+    }
+
+    .browse-btn {
+        background: #a2b9fb;
+        color: #fff;
+        border: none;
+        border-radius: 7px;
+        font-size: 1.04em;
+        font-weight: 600;
+        padding: 9px 28px;
+        cursor: pointer;
+        transition: background 0.16s;
+        margin-bottom: 5px;
+    }
+
+        .browse-btn:hover {
+            background: #1259f3;
+        }
+
+    .drag-drop-filename {
+        font-size: 0.99em;
+        color: #1a237e;
+        margin-top: 8px;
+        margin-bottom: 0;
+        word-break: break-all;
+    }
+
+    .profile-photo-preview {
+        max-width: 90px;
+        max-height: 90px;
+        border-radius: 12px;
+        border: 1.5px solid #e0e4f5;
+        object-fit: cover;
+        display: block;
+    }
+</style>
+
+<div class="register-page-wrapper">
+    <div class="register-section shadow-lg">
+
+        <div class="register-title">Register</div>
+        <div class="register-lead">Create your StarEvents account and join a world of amazing experiences.</div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-success">@ViewBag.Message</div>
+            <script>
+                setTimeout(function () {
+                    window.location.href = '/Account/Login';
+                }, 2000);
+            </script>
+        }
+
+        @using (Html.BeginForm("Index", "Register", FormMethod.Post, new { @id = "registerForm", autocomplete = "off", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.Role, new { id = "selectedRole" })
+
+            <div class="role-tabs">
+                <div class="role-tab active" data-role="Customer">
+                    <i class="fas fa-user"></i>
+                    <span>Customer</span>
+                </div>
+                <div class="role-tab" data-role="Organizer">
+                    <i class="fas fa-building"></i>
+                    <span>Event Organizer</span>
+                </div>
+            </div>
+
+            <!-- CUSTOMER FIELDS -->
+            <div id="customerFields" class="role-fields active">
+                <div class="form-group">
+                    <label class="form-label" for="FullName">Full Name</label>
+                    @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", placeholder = "Your full name", autocomplete = "name", required = "required", maxlength = "60", id = "FullName" })
+                    @Html.ValidationMessageFor(m => m.FullName, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="CustomerUsername">Username</label>
+                    @Html.TextBoxFor(m => m.Username, new { @class = "form-control", id = "CustomerUsername", required = "required", placeholder = "Enter a unique username", autocomplete = "username", maxlength = "30" })
+                    @Html.ValidationMessageFor(m => m.Username, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="CustomerEmail">Email</label>
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", id = "CustomerEmail", type = "email", required = "required", placeholder = "your@email.com", autocomplete = "email", maxlength = "80" })
+                    @Html.ValidationMessageFor(m => m.Email, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="customerPassword">Password</label>
+                    <div class="password-wrapper">
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", id = "customerPassword", required = "required", placeholder = "Choose a secure password", autocomplete = "new-password", minlength = "6", maxlength = "100" })
+                        <button type="button" class="password-toggle" tabindex="-1" data-target="customerPassword" aria-label="Show/hide password">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                    <span class="text-danger field-validation-error" id="customerPasswordError"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="CustomerPhone">Phone</label>
+                    @Html.TextBoxFor(m => m.CustomerPhone, new
+                    {
+                        @class = "form-control",
+                        placeholder = "e.g. +1 234 567 8901",
+                        autocomplete = "tel",
+                        maxlength = "20",
+                        id = "CustomerPhone",
+                        required = "required",
+                        pattern = @"^\+?[0-9\s\-]{7,20}$",
+                        title = "Only digits, spaces, dashes, and + are accepted."
+                    })
+
+                    @Html.ValidationMessageFor(m => m.CustomerPhone, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="CustomerAddress">Address</label>
+                    @Html.TextBoxFor(m => m.CustomerAddress, new { @class = "form-control", id = "CustomerAddress", placeholder = "Home address", autocomplete = "street-address", maxlength = "100", required = "required" })
+                    @Html.ValidationMessageFor(m => m.CustomerAddress, null, new { @class = "text-danger" })
+                </div>
+
+                <!-- CUSTOMER PROFILE PHOTO & GENDER, Date of Birth -->
+                <div class="form-group">
+                    <label class="form-label" for="CustomerProfilePhoto">Profile Photo</label>
+                    <div class="drag-drop-upload"
+                         id="CustomerProfilePhotoDrop"
+                         onclick="document.getElementById('CustomerProfilePhoto').click();"
+                         ondragover="event.preventDefault(); this.classList.add('dragover');"
+                         ondragleave="this.classList.remove('dragover');"
+                         ondrop="handleFileDrop(event, 'CustomerProfilePhoto');">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="drag-drop-text">select your file or drag and drop</div>
+                        <div class="file-types">png, jpg, jpeg accepted</div>
+                        <button type="button" class="browse-btn" onclick="document.getElementById('CustomerProfilePhoto').click(); event.stopPropagation();">browse</button>
+                        <input type="file" name="CustomerProfilePhoto" id="CustomerProfilePhoto" accept="image/png,image/jpeg,image/jpg"
+                               style="display:none;" required />
+                        <div class="drag-drop-filename" id="CustomerProfilePhotoFilename"></div>
+                        <img id="CustomerPhotoPreview" class="profile-photo-preview" style="display:none; margin:auto; margin-top:12px;" />
+                    </div>
+                    @Html.ValidationMessage("CustomerProfilePhoto", null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="CustomerDateOfBirth">Date of Birth</label>
+                    @Html.TextBoxFor(m => m.CustomerDateOfBirth, new { @class = "form-control", id = "CustomerDateOfBirth", type = "date", placeholder = "Date of Birth (optional)" })
+                    @Html.ValidationMessageFor(m => m.CustomerDateOfBirth, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Gender</label>
+                    <div class="gender-radio-group">
+                        <label class="gender-radio">
+                            <input type="radio" name="CustomerGender" value="Male" required @(Model.CustomerGender == "Male" ? "checked" : "") /> Male
+                        </label>
+                        <label class="gender-radio">
+                            <input type="radio" name="CustomerGender" value="Female" required @(Model.CustomerGender == "Female" ? "checked" : "") /> Female
+                        </label>
+                    </div>
+                    @Html.ValidationMessage("CustomerGender", null, new { @class = "text-danger" })
+                </div>
+            </div>
+            <!-- ORGANIZER FIELDS -->
+            <div id="organizerFields" class="role-fields">
+                <div class="form-group">
+                    <label class="form-label" for="OrganizationName">Organization Name</label>
+                    @Html.TextBoxFor(m => m.OrganizationName, new { @class = "form-control", id = "OrganizationName", placeholder = "Organization name", maxlength = "100", required = "required" })
+                    @Html.ValidationMessageFor(m => m.OrganizationName, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ContactPerson">Contact Person</label>
+                    @Html.TextBoxFor(m => m.ContactPerson, new { @class = "form-control", id = "ContactPerson", placeholder = "Main contact person", maxlength = "60", required = "required" })
+                    @Html.ValidationMessageFor(m => m.ContactPerson, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="OrganizerUsername">Username</label>
+                    @Html.TextBoxFor(m => m.Username, new { @class = "form-control", id = "OrganizerUsername", required = "required", placeholder = "Enter a unique username", autocomplete = "username", maxlength = "30" })
+                    @Html.ValidationMessageFor(m => m.Username, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="OrganizerEmail">Email</label>
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", id = "OrganizerEmail", type = "email", required = "required", placeholder = "your@email.com", autocomplete = "email", maxlength = "80" })
+                    @Html.ValidationMessageFor(m => m.Email, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="organizerPassword">Password</label>
+                    <div class="password-wrapper">
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", id = "organizerPassword", required = "required", placeholder = "Choose a secure password", autocomplete = "new-password", minlength = "6", maxlength = "100" })
+                        <button type="button" class="password-toggle" tabindex="-1" data-target="organizerPassword" aria-label="Show/hide password">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                    <span class="text-danger field-validation-error" id="organizerPasswordError"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="OrganizerPhone">Phone</label>
+                    @Html.TextBoxFor(m => m.OrganizerPhone, new
+                    {
+                        @class = "form-control",
+                        placeholder = "e.g. +1 234 567 8901",
+                        autocomplete = "tel",
+                        maxlength = "20",
+                        id = "OrganizerPhone",
+                        required = "required",
+                        pattern = @"^\+?[0-9\s\-]{7,20}$",
+                        title = "Only digits, spaces, dashes, and + are accepted."
+                    })
+                    <span class="phone-helper">Only digits, spaces, dashes, and + are accepted.</span>
+                    @Html.ValidationMessageFor(m => m.OrganizerPhone, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="OrganizerAddress">Address</label>
+                    @Html.TextBoxFor(m => m.OrganizerAddress, new { @class = "form-control", id = "OrganizerAddress", placeholder = "Organization address", autocomplete = "street-address", maxlength = "100", required = "required" })
+                    @Html.ValidationMessageFor(m => m.OrganizerAddress, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="Description">Description</label>
+                    @Html.TextBoxFor(m => m.Description, new { @class = "form-control", id = "Description", placeholder = "Describe your organization", maxlength = "200", required = "required" })
+                    @Html.ValidationMessageFor(m => m.Description, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="OrganizerProfilePhoto">Profile Photo</label>
+                    <div class="drag-drop-upload"
+                         id="OrganizerProfilePhotoDrop"
+                         onclick="document.getElementById('OrganizerProfilePhoto').click();"
+                         ondragover="event.preventDefault(); this.classList.add('dragover');"
+                         ondragleave="this.classList.remove('dragover');"
+                         ondrop="handleFileDrop(event, 'OrganizerProfilePhoto');">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="drag-drop-text">select your file or drag and drop</div>
+                        <div class="file-types">png, jpg, jpeg accepted</div>
+                        <button type="button" class="browse-btn" onclick="document.getElementById('OrganizerProfilePhoto').click(); event.stopPropagation();">browse</button>
+                        <input type="file" name="OrganizerProfilePhoto" id="OrganizerProfilePhoto" accept="image/png,image/jpeg,image/jpg"
+                               style="display:none;" required />
+                        <div class="drag-drop-filename" id="OrganizerProfilePhotoFilename"></div>
+                        <img id="OrganizerPhotoPreview" class="profile-photo-preview" style="display:none; margin:auto; margin-top:12px;" />
+                    </div>
+                    @Html.ValidationMessage("OrganizerProfilePhoto", null, new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3"><i class="fas fa-user-plus mr-2"></i>Register</button>
+
+            <div class="text-center mt-3">
+                Already have an account?
+                <a href="/Login/Index" style="color: var(--primary-color); font-weight:600;">Login</a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const roleTabs = document.querySelectorAll('.role-tab');
+            const customerFields = document.getElementById('customerFields');
+            const organizerFields = document.getElementById('organizerFields');
+            const selectedRole = document.getElementById('selectedRole');
+            const registerForm = document.getElementById("registerForm");
+
+            // Always set an initial value for Role if it's blank
+            if (!selectedRole.value) selectedRole.value = "Customer";
+            updateFields(selectedRole.value);
+
+            // Tab switching logic
+            roleTabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    const role = this.getAttribute('data-role');
+                    roleTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedRole.value = role;
+                    updateFields(role);
+                });
+            });
+
+            function updateFields(role) {
+                customerFields.classList.remove('active');
+                organizerFields.classList.remove('active');
+                Array.from(customerFields.querySelectorAll('input, select, textarea')).forEach(el => el.disabled = true);
+                Array.from(organizerFields.querySelectorAll('input, select, textarea')).forEach(el => el.disabled = true);
+
+                selectedRole.disabled = false;
+
+                if (role === 'Customer') {
+                    customerFields.classList.add('active');
+                    Array.from(customerFields.querySelectorAll('input, select, textarea')).forEach(el => el.disabled = false);
+                    attachPasswordFeatures('customerPassword', 'customerPasswordError');
+                } else if (role === 'Organizer') {
+                    organizerFields.classList.add('active');
+                    Array.from(organizerFields.querySelectorAll('input, select, textarea')).forEach(el => el.disabled = false);
+                    attachPasswordFeatures('organizerPassword', 'organizerPasswordError');
+                }
+                selectedRole.disabled = false;
+            }
+
+            // Attach show/hide & validation to the right password field
+            function attachPasswordFeatures(passwordId, errorId) {
+                const pwInputOld = document.getElementById(passwordId);
+                const pwInputNew = pwInputOld.cloneNode(true);
+                pwInputOld.parentNode.replaceChild(pwInputNew, pwInputOld);
+
+                // Show/hide toggle
+                const wrapper = pwInputNew.parentNode;
+                const toggleBtn = wrapper.querySelector('.password-toggle');
+                if (toggleBtn) {
+                    toggleBtn.onclick = function (e) {
+                        e.preventDefault();
+                        const icon = toggleBtn.querySelector('i');
+                        if (pwInputNew.type === 'password') {
+                            pwInputNew.type = 'text';
+                            icon.classList.remove('fa-eye');
+                            icon.classList.add('fa-eye-slash');
+                        } else {
+                            pwInputNew.type = 'password';
+                            icon.classList.remove('fa-eye-slash');
+                            icon.classList.add('fa-eye');
+                        }
+                    };
+                }
+
+                // Password validation
+                const error = document.getElementById(errorId);
+                pwInputNew.addEventListener('input', function () {
+                    if (pwInputNew.value.length > 0 && pwInputNew.value.length < 6) {
+                        error.textContent = "Password must be at least 6 characters.";
+                    } else {
+                        error.textContent = "";
+                    }
+                });
+            }
+
+            // On page load, attach to default tab
+            attachPasswordFeatures('customerPassword', 'customerPasswordError');
+
+            // Form submit validation
+            registerForm.addEventListener("submit", function (e) {
+                let valid = true;
+                if (customerFields.classList.contains('active')) {
+                    const customerPw = document.getElementById("customerPassword");
+                    if (customerPw.value.length < 6) {
+                        document.getElementById("customerPasswordError").textContent = "Password must be at least 6 characters.";
+                        valid = false;
+                    }
+                }
+                if (organizerFields.classList.contains('active')) {
+                    const organizerPw = document.getElementById("organizerPassword");
+                    if (organizerPw.value.length < 6) {
+                        document.getElementById("organizerPasswordError").textContent = "Password must be at least 6 characters.";
+                        valid = false;
+                    }
+                }
+                if (!valid) e.preventDefault();
+            });
+
+            // Drag & drop and preview for Customer photo
+            document.getElementById('CustomerProfilePhoto').addEventListener('change', function () {
+                triggerProfilePhotoPreview('CustomerProfilePhoto');
+            });
+            // Drag & drop and preview for Organizer photo
+            document.getElementById('OrganizerProfilePhoto').addEventListener('change', function () {
+                triggerProfilePhotoPreview('OrganizerProfilePhoto');
+            });
+
+            // Drag & drop handler for both
+            window.handleFileDrop = function (evt, inputId) {
+                evt.preventDefault();
+                evt.currentTarget.classList.remove('dragover');
+                const input = document.getElementById(inputId);
+                const files = evt.dataTransfer.files;
+                if (files && files.length) {
+                    input.files = files;
+                    triggerProfilePhotoPreview(inputId);
+                }
+            };
+
+            function triggerProfilePhotoPreview(inputId) {
+                const input = document.getElementById(inputId);
+                const label = document.getElementById(inputId + 'Filename');
+                // Decide which preview image to use based on inputId
+                const preview = document.getElementById(
+                    inputId === "CustomerProfilePhoto" ? 'CustomerPhotoPreview' : 'OrganizerPhotoPreview'
+                );
+                if (input.files && input.files[0]) {
+                    label.textContent = input.files[0].name;
+                    const file = input.files[0];
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function (ev) {
+                            preview.src = ev.target.result;
+                            preview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        preview.style.display = 'none';
+                    }
+                } else {
+                    label.textContent = '';
+                    preview.style.display = 'none';
+                }
+            }
+        });
+    </script>
+}
