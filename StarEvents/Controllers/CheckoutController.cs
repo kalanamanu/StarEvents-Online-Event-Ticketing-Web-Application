@@ -191,7 +191,7 @@ namespace StarEvents.Controllers
             seatCategory.AvailableSeats -= model.Quantity;
             db.Entry(seatCategory).State = System.Data.Entity.EntityState.Modified;
 
-            // 1. Add Booking (Status and PaymentId will be set after payment record)
+            // Add Booking (Status and PaymentId will be set after payment record)
             var booking = new Booking
             {
                 EventId = @event.EventId,
@@ -207,7 +207,7 @@ namespace StarEvents.Controllers
             db.Bookings.Add(booking);
             db.SaveChanges();
 
-            // 2. Create Payment record linked to this booking
+            //Create Payment record linked to this booking
             var payment = new Payment
             {
                 BookingId = booking.BookingId,
@@ -220,7 +220,7 @@ namespace StarEvents.Controllers
             db.Payments.Add(payment);
             db.SaveChanges();
 
-            // 3. Update Booking with PaymentId
+            //Update Booking with PaymentId
             booking.PaymentId = payment.PaymentId;
             db.Entry(booking).State = System.Data.Entity.EntityState.Modified;
             db.SaveChanges();
