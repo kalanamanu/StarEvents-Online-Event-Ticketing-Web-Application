@@ -498,7 +498,6 @@
                             <th>Type</th>
                             <th>Discount</th>
                             <th>Seat Category</th>
-                            
                             <th>Validity</th>
                             <th>Usage</th>
                             <th>Status</th>
@@ -509,7 +508,7 @@
                         @foreach (var promoVm in Model)
                         {
                             var promo = promoVm.Discount;
-                            <tr>
+                            <tr id="promo-row-@promo.DiscountId">
                                 <td>
                                     <div class="fw-bold">@promo.DiscountName</div>
                                     <small class="text-muted">@promo.Description</small>
@@ -526,7 +525,6 @@
                                     }
                                 </td>
                                 <td>@promo.SeatCategory</td>
-                                
                                 <td>
                                     <div>@promo.StartDate.ToString("MMM dd")</div>
                                     <div class="text-muted small">to @promo.EndDate.ToString("MMM dd, yyyy")</div>
@@ -551,17 +549,12 @@
                                            title="Edit Promotion">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        @using (Html.BeginForm("DeleteEventPromotion", "Organizer", FormMethod.Post,
-                                               new { onsubmit = "return confirm('Are you sure you want to delete this promotion?');", style = "display:inline;" }))
-                                        {
-                                            @Html.AntiForgeryToken()
-                                            @Html.Hidden("id", promo.DiscountId)
-                                            <button type="submit"
-                                                    class="btn btn-danger btn-sm"
-                                                    title="Delete Promotion">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        }
+                                        <button type="button"
+                                                class="btn btn-danger btn-sm"
+                                                title="Delete Promotion"
+                                                onclick="deletePromotion(@promo.DiscountId, @eventId)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -591,14 +584,13 @@
         @foreach (var promoVm in Model)
         {
             var promo = promoVm.Discount;
-            <div class="promotion-card">
+            <div class="promotion-card" id="promo-card-@promo.DiscountId">
                 <div class="promotion-header">
                     <h3 class="promotion-title">@promo.DiscountName</h3>
                     <div class="promotion-type">@promo.DiscountType</div>
                 </div>
                 <div class="promotion-body">
                     <p class="text-muted mb-3">@promo.Description</p>
-
                     <div class="promotion-details">
                         <div class="detail-item">
                             <span class="detail-label">Discount</span>
@@ -617,32 +609,7 @@
                             <span class="detail-label">Seat Category</span>
                             <span class="detail-value">@promo.SeatCategory</span>
                         </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Original Price</span>
-                            <span class="detail-value">
-                                @if (promoVm.SeatBasePrice != null)
-                                {
-                                    <text>Rs. @promoVm.SeatBasePrice.Value.ToString("0.##")</text>
-                                }
-                                else
-                                {
-                                    <text>-</text>
-                                }
-                            </span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Discounted Price</span>
-                            <span class="detail-value text-success">
-                                @if (promoVm.SeatDiscountedPrice != null)
-                                {
-                                    <text>Rs. @promoVm.SeatDiscountedPrice.Value.ToString("0.##")</text>
-                                }
-                                else
-                                {
-                                    <text>-</text>
-                                }
-                            </span>
-                        </div>
+                        
                         <div class="detail-item">
                             <span class="detail-label">Max Usage</span>
                             <span class="detail-value">@(promo.MaxUsage?.ToString() ?? "Unlimited")</span>
@@ -669,15 +636,12 @@
                            class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i>
                         </a>
-                        @using (Html.BeginForm("DeleteEventPromotion", "Organizer", FormMethod.Post,
-                               new { onsubmit = "return confirm('Are you sure you want to delete this promotion?');", style = "display:inline;" }))
-                        {
-                            @Html.AntiForgeryToken()
-                            @Html.Hidden("id", promo.DiscountId)
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        }
+                        <button type="button"
+                                class="btn btn-danger btn-sm"
+                                title="Delete Promotion"
+                                onclick="deletePromotion(@promo.DiscountId, @eventId, true)">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -686,6 +650,41 @@
 </div>
 
 <script>
+    // Helper to get AntiForgery token value
+    function getAntiForgeryToken() {
+        return document.querySelector('input[name="__RequestVerificationToken"]').value;
+    }
+
+    // Delete Promotion AJAX function
+    function deletePromotion(discountId, eventId, isCardView = false) {
+        if (!confirm('Are you sure you want to delete this promotion?')) return;
+
+        let rowSelector = isCardView ? `#promo-card-${discountId}` : `#promo-row-${discountId}`;
+        let row = document.querySelector(rowSelector);
+        if (row) row.style.opacity = "0.5";
+
+        fetch('/Organizer/DeleteEventPromotion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': getAntiForgeryToken()
+            },
+            body: 'id=' + discountId
+        })
+        .then(resp => {
+            if (resp.ok) {
+                if (row) row.remove();
+            } else {
+                alert('Delete failed!');
+                if (row) row.style.opacity = "1";
+            }
+        })
+        .catch(() => {
+            alert('Delete failed!');
+            if (row) row.style.opacity = "1";
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // View toggle functionality
         const toggleButtons = document.querySelectorAll('.toggle-btn');
@@ -695,12 +694,8 @@
         toggleButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const view = this.dataset.view;
-
-                // Update active button
                 toggleButtons.forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
-
-                // Show/hide views
                 if (view === 'table') {
                     tableView.style.display = 'block';
                     gridView.style.display = 'none';
@@ -711,28 +706,8 @@
             });
         });
 
-        // Initialize grid view if no promotions
         if (!@Model.Any()) {
             gridView.style.display = 'none';
         }
-
-        // Add loading states to delete buttons
-        const deleteForms = document.querySelectorAll('form');
-        deleteForms.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                const submitBtn = this.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    const originalHTML = submitBtn.innerHTML;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                    submitBtn.disabled = true;
-
-                    // Revert after 5 seconds (fallback)
-                    setTimeout(() => {
-                        submitBtn.innerHTML = originalHTML;
-                        submitBtn.disabled = false;
-                    }, 5000);
-                }
-            });
-        });
     });
 </script>

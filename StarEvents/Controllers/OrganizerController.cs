@@ -417,7 +417,6 @@ namespace StarEvents.Controllers
                 evt.EventDate = model.EventDate;
                 evt.Location = model.Location;
                 evt.ImageUrl = model.ImageUrl;
-                // Venue update or create
                 var venue = db.Venues.FirstOrDefault(v => v.VenueName == model.VenueName.Trim());
                 if (venue == null)
                 {
@@ -457,7 +456,7 @@ namespace StarEvents.Controllers
                             CategoryName = sc.CategoryName,
                             Price = sc.Price,
                             TotalSeats = sc.TotalSeats,
-                            AvailableSeats = sc.TotalSeats // (or adjust if you want to keep old availability)
+                            AvailableSeats = sc.TotalSeats 
                         });
                     }
                 }
