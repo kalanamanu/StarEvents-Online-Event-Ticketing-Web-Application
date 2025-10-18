@@ -215,7 +215,7 @@ namespace StarEvents.Controllers
             return View(model);
         }
 
-        // POST: Admin/EditUser/5
+        // POST: Admin/EditUser/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditUser(EditUserViewModel model, HttpPostedFileBase ProfilePhotoUpload)
@@ -502,7 +502,7 @@ namespace StarEvents.Controllers
             return View(model);
         }
 
-        // GET: Admin/EventDetails/5
+        // GET: Admin/EventDetails/{id}
         public ActionResult EventDetails(int id)
         {
             var e = db.Events
@@ -615,7 +615,7 @@ namespace StarEvents.Controllers
             if (evt == null)
                 return Json(new { success = false, message = "Event not found." });
 
-            // 1. Delete tickets and bookings
+            // Delete tickets and bookings
             var bookings = evt.Bookings.ToList();
             foreach (var booking in bookings)
             {
@@ -630,13 +630,13 @@ namespace StarEvents.Controllers
                 db.Bookings.Remove(booking);
             }
 
-            // 2. Delete seat categories
+            // Delete seat categories
             db.SeatCategories.RemoveRange(evt.SeatCategories);
 
-            // 3. Delete event discounts
+            // Delete event discounts
             db.EventDiscounts.RemoveRange(evt.EventDiscounts);
 
-            // 4. Remove the event itself
+            // Remove the event itself
             db.Events.Remove(evt);
 
             db.SaveChanges();

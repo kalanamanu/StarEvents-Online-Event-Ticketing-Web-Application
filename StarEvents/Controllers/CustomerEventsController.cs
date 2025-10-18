@@ -32,7 +32,7 @@ namespace StarEvents.Controllers
                 .OrderBy(b => b.Event.EventDate)
                 .Select(b => new UpcomingEventViewModel
                 {
-                    BookingId = b.BookingId, // <-- Added!
+                    BookingId = b.BookingId, 
                     EventId = b.Event.EventId,
                     Title = b.Event.Title,
                     Category = b.Event.Category,

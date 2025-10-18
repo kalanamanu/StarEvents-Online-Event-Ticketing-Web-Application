@@ -35,14 +35,14 @@ namespace StarEvents.Controllers
                     ModelState["OrganizerPhone"]?.Errors.Clear();
                     ModelState["OrganizerAddress"]?.Errors.Clear();
                     ModelState["Description"]?.Errors.Clear();
-                    ModelState["ProfilePhoto"]?.Errors.Clear(); // For OrganizerProfile
+                    ModelState["ProfilePhoto"]?.Errors.Clear(); 
                 }
                 else if (model.Role == "Organizer")
                 {
                     ModelState["FullName"]?.Errors.Clear();
                     ModelState["CustomerPhone"]?.Errors.Clear();
                     ModelState["CustomerAddress"]?.Errors.Clear();
-                    ModelState["ProfilePhoto"]?.Errors.Clear(); // For CustomerProfile
+                    ModelState["ProfilePhoto"]?.Errors.Clear(); 
                     ModelState["DateOfBirth"]?.Errors.Clear();
                     ModelState["Gender"]?.Errors.Clear();
                     ModelState["LoyaltyPoints"]?.Errors.Clear();

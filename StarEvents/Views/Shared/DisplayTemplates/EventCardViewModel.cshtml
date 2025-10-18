@@ -13,7 +13,7 @@
      data-date="@Model.EventDate.ToString("yyyy-MM-dd")"
      data-location="@Model.Location?.ToLower()">
     <div class="event-card-img-wrap-modern">
-        <img src="@Url.Content(Model.ImageUrl)" class="event-card-img-modern" alt="@Model.Title" onerror="this.src='/Content/event-placeholder.jpg'" />
+        <img src="@Url.Content(string.IsNullOrEmpty(Model.ImageUrl) ? "/Content/event-placeholder.jpg" : Model.ImageUrl)" class="event-card-img-modern" alt="@Model.Title" />
 
         @if (hasPromos)
         {

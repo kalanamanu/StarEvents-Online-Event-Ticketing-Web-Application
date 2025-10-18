@@ -103,7 +103,6 @@ namespace StarEvents.Controllers
                 customer.Address = model.Address;
                 customer.Gender = model.Gender;
 
-                // ---- HANDLE FILE UPLOAD like Register ----
                 if (CustomerProfilePhoto != null && CustomerProfilePhoto.ContentLength > 0)
                 {
                     string uploadsDir = Server.MapPath("~/uploads/");
@@ -114,10 +113,8 @@ namespace StarEvents.Controllers
                     string fileName = $"customer_{Guid.NewGuid()}{extension}";
                     string filePath = Path.Combine(uploadsDir, fileName);
                     CustomerProfilePhoto.SaveAs(filePath);
-                    customer.ProfilePhoto = "/uploads/" + fileName; // Save relative URL
+                    customer.ProfilePhoto = "/uploads/" + fileName; 
                 }
-                // else: Keep old photo
-
                 db.SaveChanges();
                 return RedirectToAction("Profile");
             }
@@ -292,13 +289,6 @@ namespace StarEvents.Controllers
             if (string.IsNullOrEmpty(cardNumber) || cardNumber.Length < 4)
                 return "****";
             return new string('*', cardNumber.Length - 4).PadLeft(cardNumber.Length - 4, '*') + cardNumber.Substring(cardNumber.Length - 4);
-        }
-
-        // Placeholder for password hashing -- replace with secure hash in production!
-        private string HashPassword(string password)
-        {
-            // Use a proper hashing algorithm in production!
-            return password; // Placeholder: replace with real hash
         }
     }
 }

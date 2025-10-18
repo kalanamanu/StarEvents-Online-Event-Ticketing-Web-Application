@@ -15,9 +15,9 @@ namespace StarEvents.Controllers
         [HttpGet]
         public ActionResult Eticket(int bookingId)
         {
-            // Fetch the booking (with Event only, since SeatCategory/CustomerProfile are not navigation properties)
+            // Fetch the booking 
             var booking = db.Bookings
-                .Include("Event") // Only if you have an Event navigation property
+                .Include("Event") 
                 .FirstOrDefault(b => b.BookingId == bookingId);
 
             if (booking == null)
@@ -25,7 +25,6 @@ namespace StarEvents.Controllers
                 return HttpNotFound();
             }
 
-            // Fetch related entities manually since Booking doesn't have nav props for them
             var seatCategory = db.SeatCategories.FirstOrDefault(sc => sc.SeatCategoryId == booking.SeatCategoryId);
             var customerProfile = db.CustomerProfiles.FirstOrDefault(cp => cp.CustomerId == booking.CustomerId);
             var userEntity = db.Users.FirstOrDefault(u => u.UserId == customerProfile.CustomerId);

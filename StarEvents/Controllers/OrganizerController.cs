@@ -388,10 +388,9 @@ namespace StarEvents.Controllers
                     Price = sc.Price,
                     TotalSeats = sc.TotalSeats
                 }).ToList()
-                // Note: Image not pre-filled for security, handle as needed
             };
 
-            ViewBag.EventId = id; // For routing/form posting
+            ViewBag.EventId = id; 
             return View(model);
         }
 
@@ -431,7 +430,6 @@ namespace StarEvents.Controllers
                 }
                 evt.VenueId = venue.VenueId;
 
-                // Image upload (optional)
                 if (model.ImageFile != null && model.ImageFile.ContentLength > 0)
                 {
                     var fileName = System.IO.Path.GetFileName(model.ImageFile.FileName);
@@ -443,12 +441,32 @@ namespace StarEvents.Controllers
 
                 evt.UpdatedAt = DateTime.Now;
 
-                // Update seat categories: Remove all and add new
-                db.SeatCategories.RemoveRange(evt.SeatCategories);
-                db.SaveChanges();
-                foreach (var sc in model.SeatCategories)
+                var newSeatCategories = model.SeatCategories
+                    .Where(sc => !string.IsNullOrWhiteSpace(sc.CategoryName) && sc.Price > 0 && sc.TotalSeats > 0)
+                    .ToList();
+
+                var currentSeatCategories = evt.SeatCategories.ToList();
+
+                foreach (var oldCat in currentSeatCategories)
                 {
-                    if (!string.IsNullOrWhiteSpace(sc.CategoryName) && sc.Price > 0 && sc.TotalSeats > 0)
+                    bool existsInNew = newSeatCategories.Any(sc => sc.CategoryName.Trim().Equals(oldCat.CategoryName, StringComparison.OrdinalIgnoreCase));
+                    bool hasTickets = db.Tickets.Any(t => t.SeatCategoryId == oldCat.SeatCategoryId);
+                    if (!existsInNew && !hasTickets)
+                    {
+                        db.SeatCategories.Remove(oldCat);
+                    }
+                }
+
+                // Add or update seat categories
+                foreach (var sc in newSeatCategories)
+                {
+                    var existing = currentSeatCategories.FirstOrDefault(c => c.CategoryName.Trim().Equals(sc.CategoryName.Trim(), StringComparison.OrdinalIgnoreCase));
+                    if (existing != null)
+                    {
+                        existing.Price = sc.Price;
+                        existing.TotalSeats = sc.TotalSeats;
+                    }
+                    else
                     {
                         db.SeatCategories.Add(new SeatCategory
                         {
@@ -456,7 +474,7 @@ namespace StarEvents.Controllers
                             CategoryName = sc.CategoryName,
                             Price = sc.Price,
                             TotalSeats = sc.TotalSeats,
-                            AvailableSeats = sc.TotalSeats 
+                            AvailableSeats = sc.TotalSeats
                         });
                     }
                 }
@@ -565,8 +583,20 @@ namespace StarEvents.Controllers
             return View(viewModel);
         }
 
+        //Event PRomotions
         public ActionResult EventPromotions(int id)
         {
+            // Deactivate expired promotions before displaying
+            var expiredPromos = db.EventDiscounts
+                .Where(d => d.EventId == id && d.EndDate < DateTime.Now && d.IsActive)
+                .ToList();
+
+            foreach (var promo in expiredPromos)
+            {
+                promo.IsActive = false;
+            }
+            db.SaveChanges();
+
             var discounts = db.EventDiscounts.Where(d => d.EventId == id).ToList();
             var seatCategories = db.SeatCategories.Where(sc => sc.EventId == id).ToList();
 
@@ -958,7 +988,7 @@ namespace StarEvents.Controllers
             int totalEvents = events.Count;
             int totalTicketsSold = 0;
             decimal totalRevenue = 0;
-            decimal totalDiscountGiven = 0; // Cannot calculate actual discount given with current schema
+            decimal totalDiscountGiven = 0;
 
             var eventSummaries = new List<EventSummary>();
             var salesTrendDict = new SortedDictionary<DateTime, (int tickets, decimal revenue)>();

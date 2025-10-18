@@ -41,7 +41,7 @@ namespace StarEvents.Controllers
 
             var ticketVMs = allTickets.Select(t =>
             {
-                // Get Payment using PaymentId (since Booking may not have a Payment navigation property)
+                // Get Payment using PaymentId 
                 Payment payment = null;
                 if (t.Booking.PaymentId != null)
                     payment = db.Payments.FirstOrDefault(p => p.PaymentId == t.Booking.PaymentId);

@@ -64,13 +64,10 @@ namespace StarEvents.Controllers
                 return HttpNotFound();
             }
 
-            // You can build a details view model to show booking + ticket details here
-            // Example: pass booking, event, tickets, etc. to a view
-
             return View(booking);
         }
 
-        // Updated Booking Details Page
+        // Booking Details Page
         public ActionResult BookingDetails(int id)
         {
             var user = db.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
@@ -92,7 +89,7 @@ namespace StarEvents.Controllers
                 .Where(t => t.BookingId == booking.BookingId)
                 .Select(t => new TicketPartialViewModel
                 {
-                    TicketNumber = t.TicketId, // or t.TicketId if you don't have TicketNumber
+                    TicketNumber = t.TicketId, 
                     TicketCode = t.TicketCode,
                     QRCodeUrl = t.QRCodePath,
                     EventTitle = booking.Event.Title,
@@ -119,7 +116,7 @@ namespace StarEvents.Controllers
                 TotalAmount = booking.TotalAmount,
                 Status = booking.Status,
                 PaymentReference = payment.PaymentReference,
-                Tickets = tickets // Now a List<TicketPartialViewModel>
+                Tickets = tickets 
             };
             return View(model);
         }
