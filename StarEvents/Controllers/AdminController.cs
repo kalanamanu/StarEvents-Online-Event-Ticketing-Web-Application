@@ -293,7 +293,6 @@ namespace StarEvents.Controllers
                         organizer.ProfilePhoto = model.OrganizerProfilePhoto; // keep existing if not uploading new
                     }
                 }
-                // else: optionally, create an OrganizerProfiles row here
             }
 
             db.SaveChanges();
@@ -408,7 +407,6 @@ namespace StarEvents.Controllers
                 var customer = db.CustomerProfiles.FirstOrDefault(c => c.CustomerId == user.UserId);
                 if (customer != null) db.CustomerProfiles.Remove(customer);
 
-                // Optionally delete bookings and tickets
                 var bookings = db.Bookings.Where(b => b.CustomerId == user.UserId).ToList();
                 foreach (var booking in bookings)
                 {
@@ -426,7 +424,6 @@ namespace StarEvents.Controllers
                 var organizer = db.OrganizerProfiles.FirstOrDefault(o => o.OrganizerId == user.UserId);
                 if (organizer != null) db.OrganizerProfiles.Remove(organizer);
 
-                // Optionally delete their events, bookings, etc.
                 var events = db.Events.Where(e => e.OrganizerId == user.UserId).ToList();
                 foreach (var ev in events)
                 {
@@ -563,9 +560,8 @@ namespace StarEvents.Controllers
                     });
                 }
             }
-            // -------------------------------------------------------------------
 
-            // Bookings summary (most recent first, up to 10 for performance)
+            // Bookings summary 
             var bookingsSummary = bookings
                 .OrderByDescending(b => b.BookingDate)
                 .Take(10)
@@ -1148,7 +1144,7 @@ namespace StarEvents.Controllers
             var now = DateTime.Today;
             var regTrendCutoff = now.AddMonths(-11);
 
-            // Step 1: Get raw data from database, no ToString or string concatenation here!
+            // Get raw data from database, no ToString or string concatenation here!
             var regTrendsRaw = db.Users
                 .Where(u => u.CreatedAt >= regTrendCutoff)
                 .GroupBy(u => new { u.CreatedAt.Year, u.CreatedAt.Month })
@@ -1161,7 +1157,7 @@ namespace StarEvents.Controllers
                 .OrderBy(x => x.Year).ThenBy(x => x.Month)
                 .ToList();
 
-            // Step 2: Do string formatting in-memory
+            // Do string formatting in-memory
             var regTrends = regTrendsRaw
                 .Select(x => new RegistrationTrendPoint
                 {
@@ -1328,7 +1324,6 @@ namespace StarEvents.Controllers
             }
         }
 
-        // GET: Admin/OrganizerReport
         // GET: Admin/OrganizerReport
         public ActionResult OrganizerReport(DateTime? from = null, DateTime? to = null, string search = "")
         {
